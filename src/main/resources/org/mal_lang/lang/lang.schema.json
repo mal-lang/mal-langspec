@@ -1,0 +1,329 @@
+{
+  "definitions": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "optionalIdentifier": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "meta": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "category": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        },
+        "meta": {
+          "$ref": "#/definitions/meta"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "meta"
+      ]
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        },
+        "meta": {
+          "$ref": "#/definitions/meta"
+        },
+        "category": {
+          "$ref": "#/definitions/identifier"
+        },
+        "isAbstract": {
+          "type": "boolean"
+        },
+        "superAsset": {
+          "$ref": "#/definitions/optionalIdentifier"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/variable"
+          }
+        },
+        "attackSteps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attackStep"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "meta",
+        "category",
+        "isAbstract",
+        "superAsset",
+        "variables",
+        "attackSteps"
+      ]
+    },
+    "variable": {
+      "$comment": "TODO: 'let <name> = <expression>'",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ]
+    },
+    "attackStep": {
+      "$comment": "TODO: '(<- <expression>, ...)? (->|+> <expression>, ...)?'",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        },
+        "meta": {
+          "$ref": "#/definitions/meta"
+        },
+        "type": {
+          "enum": [
+            "or",
+            "and",
+            "defense",
+            "exist",
+            "notExist"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/identifier"
+          }
+        },
+        "risk": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "confidentiality",
+              "integrity",
+              "availability"
+            ]
+          }
+        },
+        "ttc": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ttcExpression"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "meta",
+        "type",
+        "tags"
+      ]
+    },
+    "ttcExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
+                "addition",
+                "subtraction",
+                "multiplication",
+                "division",
+                "exponentiation"
+              ]
+            },
+            "lhs": {
+              "$ref": "#/definitions/ttcExpression"
+            },
+            "rhs": {
+              "$ref": "#/definitions/ttcExpression"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "lhs",
+            "rhs"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
+                "function"
+              ]
+            },
+            "name": {
+              "$ref": "#/definitions/identifier"
+            },
+            "arguments": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "name",
+            "arguments"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
+                "number"
+              ]
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ]
+        }
+      ]
+    },
+    "association": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        },
+        "meta": {
+          "$ref": "#/definitions/meta"
+        },
+        "leftAsset": {
+          "$ref": "#/definitions/identifier"
+        },
+        "leftField": {
+          "$ref": "#/definitions/identifier"
+        },
+        "leftMultiplicity": {
+          "$ref": "#/definitions/multiplicity"
+        },
+        "rightAsset": {
+          "$ref": "#/definitions/identifier"
+        },
+        "rightField": {
+          "$ref": "#/definitions/identifier"
+        },
+        "rightMultiplicity": {
+          "$ref": "#/definitions/multiplicity"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "meta",
+        "leftAsset",
+        "leftField",
+        "leftMultiplicity",
+        "rightAsset",
+        "rightField",
+        "rightMultiplicity"
+      ]
+    },
+    "multiplicity": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "max": {
+          "enum": [
+            1
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "min"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "formatVersion": {
+      "enum": [
+        "0.1.0"
+      ]
+    },
+    "defines": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "string"
+      },
+      "required": [
+        "id",
+        "version"
+      ]
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/category"
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/asset"
+      }
+    },
+    "associations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/association"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "formatVersion",
+    "defines",
+    "categories",
+    "assets",
+    "associations"
+  ]
+}
