@@ -36,7 +36,7 @@ public final class Asset {
   private final Map<String, AttackStep> attackSteps = new LinkedHashMap<>();
   private final Map<String, Field> fields = new LinkedHashMap<>();
 
-  private Asset(String name, Meta meta, Category category, boolean isAbstract) {
+  Asset(String name, Meta meta, Category category, boolean isAbstract) {
     this.name = name;
     this.meta = meta;
     this.category = category;
@@ -404,228 +404,17 @@ public final class Asset {
     return jsonAsset.add("variables", jsonVariables).add("attackSteps", jsonAttackSteps).build();
   }
 
-  /** A builder for creating {@link Asset} objects. */
-  public static final class Builder {
-    private final String name;
-    private Meta.Builder meta = Meta.builder();
-    private final String category;
-    private boolean isAbstract = false;
-    private String superAsset = null;
-    private final Map<String, Variable.Builder> variables = new LinkedHashMap<>();
-    private final Map<String, AttackStep.Builder> attackSteps = new LinkedHashMap<>();
-
-    private Builder(String name, String category) {
-      this.name = name;
-      this.category = category;
-    }
-
-    /**
-     * Returns the name of this {@code Asset.Builder} object.
-     *
-     * @return the name of this {@code Asset.Builder} object
-     */
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Returns the meta info of this {@code Asset.Builder} object.
-     *
-     * @return the meta info of this {@code Asset.Builder} object
-     */
-    public Meta.Builder getMeta() {
-      return meta;
-    }
-
-    /**
-     * Sets the meta info of this {@code Asset.Builder} object.
-     *
-     * @param meta the meta info to set
-     * @return this {@code Asset.Builder} object
-     * @throws NullPointerException if {@code meta} is {@code null}
-     */
-    public Builder setMeta(Meta.Builder meta) {
-      checkNotNull(meta);
-      this.meta = meta;
-      return this;
-    }
-
-    /**
-     * Returns the category of this {@code Asset.Builder} object.
-     *
-     * @return the category of this {@code Asset.Builder} object
-     */
-    public String getCategory() {
-      return category;
-    }
-
-    /**
-     * Returns whether this {@code Asset.Builder} object is abstract.
-     *
-     * @return whether this {@code Asset.Builder} object is abstract
-     */
-    public boolean isAbstract() {
-      return isAbstract;
-    }
-
-    /**
-     * Sets whether this {@code Asset.Builder} object is abstract.
-     *
-     * @param isAbstract whether this {@code Asset.Builder} object is abstract
-     * @return this {@code Asset.Builder} object
-     */
-    public Builder setAbstract(boolean isAbstract) {
-      this.isAbstract = isAbstract;
-      return this;
-    }
-
-    /**
-     * Returns the super asset of this {@code Asset.Builder} object, or {@code null}.
-     *
-     * @return the super asset of this {@code Asset.Builder} object, or {@code null}
-     */
-    public String getSuperAsset() {
-      return superAsset;
-    }
-
-    /**
-     * Sets the super asset of this {@code Asset.Builder} object.
-     *
-     * @param superAsset the super asset to set, or {@code null}
-     * @return this {@code Asset.Builder} object
-     */
-    public Builder setSuperAsset(String superAsset) {
-      this.superAsset = superAsset;
-      return this;
-    }
-
-    /**
-     * Adds a variable to this {@code Asset.Builder} object.
-     *
-     * @param variable the variable to add
-     * @return this {@code Asset.Builder} object
-     * @throws NullPointerException if {@code variable} is {@code null}
-     */
-    public Builder addVariable(Variable.Builder variable) {
-      checkNotNull(variable);
-      variables.put(variable.getName(), variable);
-      return this;
-    }
-
-    /**
-     * Adds an attack step to this {@code Asset.Builder} object.
-     *
-     * @param attackStep the attack step to add
-     * @return this {@code Asset.Builder} object
-     * @throws NullPointerException if {@code attackStep} is {@code null}
-     */
-    public Builder addAttackStep(AttackStep.Builder attackStep) {
-      checkNotNull(attackStep);
-      attackSteps.put(attackStep.getName(), attackStep);
-      return this;
-    }
-
-    /**
-     * Creates a new {@link Asset} object.
-     *
-     * @param categories a map of all categories in the language
-     * @return a new {@link Asset} object
-     * @throws NullPointerException if {@code categories} is {@code null}
-     * @throws IllegalArgumentException if {@code categories} does not contain the category of this
-     *     {@code Asset.Builder} object
-     */
-    public Asset build(Map<String, Category> categories) {
-      checkNotNull(categories);
-      if (!categories.containsKey(category)) {
-        throw new IllegalArgumentException(String.format("Category \"%s\" not found", category));
-      }
-      return new Asset(name, meta.build(), categories.get(category), isAbstract);
-    }
-
-    /**
-     * Connects the super asset to a built {@link Asset} object.
-     *
-     * @param assets a map of all assets in the language
-     * @throws NullPointerException if {@code assets} is {@code null}
-     * @throws IllegalArgumentException if {@code assets} does not contain this asset or the super
-     *     asset of this {@code Asset.Builder} object
-     */
-    public void connectSuperAsset(Map<String, Asset> assets) {
-      checkNotNull(assets);
-      if (!assets.containsKey(name)) {
-        throw new IllegalArgumentException(String.format("Asset \"%s\" not found", name));
-      }
-      if (superAsset != null) {
-        if (!assets.containsKey(superAsset)) {
-          throw new IllegalArgumentException(String.format("Asset \"%s\" not found", superAsset));
-        }
-        assets.get(name).setSuperAsset(assets.get(superAsset));
-      }
-    }
-
-    /**
-     * Builds the variables of this {@code Asset.Builder} object.
-     *
-     * @param asset the built asset
-     * @throws NullPointerException if {@code asset} is {@code null}
-     */
-    public void buildVariables(Asset asset) {
-      checkNotNull(asset);
-      for (var variable : variables.values()) {
-        variable.build(asset);
-      }
-    }
-
-    /**
-     * Builds the attack steps of this {@code Asset.Builder} object.
-     *
-     * @param asset the built asset
-     * @throws NullPointerException if {@code asset} is {@code null}
-     */
-    public void buildAttackSteps(Asset asset) {
-      checkNotNull(asset);
-      for (var attackStep : attackSteps.values()) {
-        attackStep.build(asset);
-      }
-    }
-
-    static Builder fromJson(JsonObject jsonAsset) {
-      var assetBuilder =
-          Asset.builder(jsonAsset.getString("name"), jsonAsset.getString("category"))
-              .setMeta(Meta.Builder.fromJson(jsonAsset.getJsonObject("meta")))
-              .setAbstract(jsonAsset.getBoolean("isAbstract"))
-              .setSuperAsset(
-                  jsonAsset.isNull("superAsset") ? null : jsonAsset.getString("superAsset"));
-
-      var jsonVariables = jsonAsset.getJsonArray("variables");
-      for (int i = 0; i < jsonVariables.size(); i++) {
-        var jsonVariable = jsonVariables.getJsonObject(i);
-        var variableBuilder = Variable.Builder.fromJson(jsonVariable);
-        assetBuilder.addVariable(variableBuilder);
-      }
-
-      var jsonAttackSteps = jsonAsset.getJsonArray("attackSteps");
-      for (int i = 0; i < jsonAttackSteps.size(); i++) {
-        var jsonAttackStep = jsonAttackSteps.getJsonObject(i);
-        var attackStepBuilder = AttackStep.Builder.fromJson(jsonAttackStep);
-        assetBuilder.addAttackStep(attackStepBuilder);
-      }
-
-      return assetBuilder;
-    }
-  }
-
   /**
-   * Creates a new {@link Builder} object.
+   * Creates a new {@link AssetBuilder} object.
    *
    * @param name the name of the asset
    * @param category the category of the asset
-   * @return a new {@link Builder} object
+   * @return a new {@link AssetBuilder} object
    * @throws NullPointerException if {@code name} or {@code category} is {@code null}
    * @throws IllegalArgumentException if {@code name} or {@code category} is not a valid identifier
    */
-  public static Builder builder(String name, String category) {
+  public static AssetBuilder builder(String name, String category) {
     checkIdentifier(name, category);
-    return new Builder(name, category);
+    return new AssetBuilder(name, category);
   }
 }

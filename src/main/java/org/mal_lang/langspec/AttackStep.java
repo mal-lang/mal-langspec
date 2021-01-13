@@ -21,7 +21,6 @@ import static org.mal_lang.langspec.Utils.checkNotNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +36,7 @@ public final class AttackStep {
   private final Risk risk;
   private final TtcExpression ttc;
 
-  private AttackStep(
+  AttackStep(
       String name,
       Meta meta,
       Asset asset,
@@ -287,161 +286,18 @@ public final class AttackStep {
     return jsonAttackStep.build();
   }
 
-  /** A builder for creating {@link AttackStep} objects. */
-  public static final class Builder {
-    private final String name;
-    private Meta.Builder meta = Meta.builder();
-    private final AttackStepType type;
-    private final List<String> tags = new ArrayList<>();
-    private Risk risk = null;
-    private TtcExpression ttc = null;
-
-    private Builder(String name, AttackStepType type) {
-      this.name = name;
-      this.type = type;
-    }
-
-    /**
-     * Returns the name of this {@code AttackStep.Builder} object.
-     *
-     * @return the name of this {@code AttackStep.Builder} object
-     */
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Returns the meta info of this {@code AttackStep.Builder} object.
-     *
-     * @return the meta info of this {@code AttackStep.Builder} object
-     */
-    public Meta.Builder getMeta() {
-      return meta;
-    }
-
-    /**
-     * Sets the meta info of this {@code AttackStep.Builder} object.
-     *
-     * @param meta the meta info to set
-     * @return this {@code AttackStep.Builder} object
-     * @throws NullPointerException if {@code meta} is {@code null}
-     */
-    public Builder setMeta(Meta.Builder meta) {
-      checkNotNull(meta);
-      this.meta = meta;
-      return this;
-    }
-
-    /**
-     * Adds a tag to this {@code AttackStep.Builder} object.
-     *
-     * @param tag the tag to add
-     * @return this {@code AttackStep.Builder} object
-     * @throws NullPointerException if {@code tag} is {@code null}
-     */
-    public Builder addTag(String tag) {
-      checkNotNull(tag);
-      tags.add(tag);
-      return this;
-    }
-
-    /**
-     * Returns the risk of this {@code AttackStep.Builder} object, or {@code null}.
-     *
-     * @return the risk of this {@code AttackStep.Builder} object, or {@code null}
-     */
-    public Risk getRisk() {
-      return risk;
-    }
-
-    /**
-     * Sets the risk of this {@code AttackStep.Builder} object.
-     *
-     * @param risk the risk to set, or {@code null}
-     * @return this {@code AttackStep.Builder} object
-     */
-    public Builder setRisk(Risk risk) {
-      this.risk = risk;
-      return this;
-    }
-
-    /**
-     * Returns the TTC of this {@code AttackStep.Builder} object, or {@code null}.
-     *
-     * @return the TTC of this {@code AttackStep.Builder} object, or {@code null}
-     */
-    public TtcExpression getTtc() {
-      return ttc;
-    }
-
-    /**
-     * Sets the TTC of this {@code AttackStep.Builder} object.
-     *
-     * @param ttc the TTC to set, or {@code null}
-     * @return this {@code AttackStep.Builder} object
-     */
-    public Builder setTtc(TtcExpression ttc) {
-      this.ttc = ttc;
-      return this;
-    }
-
-    /**
-     * Creates a new {@link AttackStep} object.
-     *
-     * @param asset the built asset
-     * @return a new {@link AttackStep} object
-     * @throws NullPointerException if {@code asset} is {@code null}
-     */
-    public AttackStep build(Asset asset) {
-      checkNotNull(asset);
-      return new AttackStep(name, meta.build(), asset, type, tags, risk, ttc);
-    }
-
-    static Builder fromJson(JsonObject jsonAttackStep) {
-      var attackStepBuilder =
-          AttackStep.builder(
-                  jsonAttackStep.getString("name"),
-                  AttackStepType.fromString(jsonAttackStep.getString("type")))
-              .setMeta(Meta.Builder.fromJson(jsonAttackStep.getJsonObject("meta")));
-
-      var jsonTags = jsonAttackStep.getJsonArray("tags");
-      for (int i = 0; i < jsonTags.size(); i++) {
-        var tag = jsonTags.getString(i);
-        attackStepBuilder.addTag(tag);
-      }
-
-      if (jsonAttackStep.containsKey("risk")) {
-        var jsonRisk = jsonAttackStep.getJsonArray("risk");
-        var risk = Risk.fromJson(jsonRisk);
-        attackStepBuilder.setRisk(risk);
-      }
-
-      if (jsonAttackStep.containsKey("ttc")) {
-        if (jsonAttackStep.isNull("ttc")) {
-          attackStepBuilder.setTtc(TtcExpression.EMPTY);
-        } else {
-          var jsonTtc = jsonAttackStep.getJsonObject("ttc");
-          var ttc = TtcExpression.fromJson(jsonTtc);
-          attackStepBuilder.setTtc(ttc);
-        }
-      }
-
-      return attackStepBuilder;
-    }
-  }
-
   /**
-   * Creates a new {@link Builder} object.
+   * Creates a new {@link AttackStepBuilder} object.
    *
    * @param name the name of the attack step
    * @param type the type of the attack step
-   * @return a new {@link Builder} object
+   * @return a new {@link AttackStepBuilder} object
    * @throws NullPointerException if {@code name} or {@code type} is {@code null}
    * @throws IllegalArgumentException if {@code name} is not a valid identifier
    */
-  public static Builder builder(String name, AttackStepType type) {
+  public static AttackStepBuilder builder(String name, AttackStepType type) {
     checkIdentifier(name);
     checkNotNull(type);
-    return new Builder(name, type);
+    return new AttackStepBuilder(name, type);
   }
 }

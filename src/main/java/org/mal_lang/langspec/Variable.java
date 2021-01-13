@@ -17,7 +17,6 @@
 package org.mal_lang.langspec;
 
 import static org.mal_lang.langspec.Utils.checkIdentifier;
-import static org.mal_lang.langspec.Utils.checkNotNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -27,7 +26,7 @@ public final class Variable {
   private final String name;
   private final Asset asset;
 
-  private Variable(String name, Asset asset) {
+  Variable(String name, Asset asset) {
     this.name = name;
     this.asset = asset;
     asset.addVariable(this);
@@ -60,50 +59,16 @@ public final class Variable {
     return Json.createObjectBuilder().add("name", name).build();
   }
 
-  /** A builder for creating {@link Variable} objects. */
-  public static final class Builder {
-    private final String name;
-
-    private Builder(String name) {
-      this.name = name;
-    }
-
-    /**
-     * Returns the name of this {@code Variable.Builder} object.
-     *
-     * @return the name of this {@code Variable.Builder} object
-     */
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Creates a new {@link Variable} object.
-     *
-     * @param asset the built asset
-     * @return a new {@link Variable} object
-     * @throws NullPointerException if {@code asset} is {@code null}
-     */
-    public Variable build(Asset asset) {
-      checkNotNull(asset);
-      return new Variable(name, asset);
-    }
-
-    static Builder fromJson(JsonObject jsonVariable) {
-      return Variable.builder(jsonVariable.getString("name"));
-    }
-  }
-
   /**
-   * Creates a new {@link Builder} object.
+   * Creates a new {@link VariableBuilder} object.
    *
    * @param name the name of the variable
-   * @return a new {@link Builder} object
+   * @return a new {@link VariableBuilder} object
    * @throws NullPointerException if {@code name} is {@code null}
    * @throws IllegalArgumentException if {@code name} is not a valid identifier
    */
-  public static Builder builder(String name) {
+  public static VariableBuilder builder(String name) {
     checkIdentifier(name);
-    return new Builder(name);
+    return new VariableBuilder(name);
   }
 }
