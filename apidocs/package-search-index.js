@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"m":"org.mal_lang.langspec","l":"org.mal_lang.langspec"},{"m":"org.mal_lang.langspec","l":"org.mal_lang.langspec.ttc"}]
