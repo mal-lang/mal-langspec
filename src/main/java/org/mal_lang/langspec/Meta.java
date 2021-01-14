@@ -16,12 +16,10 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkIdentifier;
 import static org.mal_lang.langspec.Utils.checkNotNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +29,7 @@ import java.util.Map;
 public final class Meta {
   private final Map<String, String> entries;
 
-  private Meta(Map<String, String> entries) {
+  Meta(Map<String, String> entries) {
     this.entries = Map.copyOf(entries);
   }
 
@@ -85,52 +83,12 @@ public final class Meta {
     return jsonMeta.build();
   }
 
-  /** A builder for creating {@link Meta} objects. */
-  public static final class Builder {
-    private final Map<String, String> entries = new LinkedHashMap<>();
-
-    private Builder() {}
-
-    /**
-     * Adds an entry to this {@code Meta.Builder} object.
-     *
-     * @param key the key of the entry
-     * @param value the value of the entry
-     * @return this {@code Meta.Builder} object
-     * @throws NullPointerException if {@code key} or {@code value} is {@code null}
-     * @throws IllegalArgumentException if {@code key} is not a valid identifier
-     */
-    public Builder addEntry(String key, String value) {
-      checkIdentifier(key);
-      checkNotNull(value);
-      entries.put(key, value);
-      return this;
-    }
-
-    /**
-     * Creates a new {@link Meta} object.
-     *
-     * @return a new {@link Meta} object
-     */
-    public Meta build() {
-      return new Meta(entries);
-    }
-
-    static Builder fromJson(JsonObject jsonMeta) {
-      var metaBuilder = Meta.builder();
-      for (var key : jsonMeta.keySet()) {
-        metaBuilder.addEntry(key, jsonMeta.getString(key));
-      }
-      return metaBuilder;
-    }
-  }
-
   /**
-   * Creates a new {@link Builder} object.
+   * Creates a new {@link MetaBuilder} object.
    *
-   * @return a new {@link Builder} object
+   * @return a new {@link MetaBuilder} object
    */
-  public static Builder builder() {
-    return new Builder();
+  public static MetaBuilder builder() {
+    return new MetaBuilder();
   }
 }

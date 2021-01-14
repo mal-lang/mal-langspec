@@ -31,7 +31,7 @@ public final class Category {
   private final Meta meta;
   private final Map<String, Asset> assets = new LinkedHashMap<>();
 
-  private Category(String name, Meta meta) {
+  Category(String name, Meta meta) {
     this.name = name;
     this.meta = meta;
   }
@@ -104,71 +104,16 @@ public final class Category {
     return Json.createObjectBuilder().add("name", name).add("meta", meta.toJson()).build();
   }
 
-  /** A builder for creating {@link Category} objects. */
-  public static final class Builder {
-    private final String name;
-    private Meta.Builder meta = Meta.builder();
-
-    private Builder(String name) {
-      this.name = name;
-    }
-
-    /**
-     * Returns the name of this {@code Category.Builder} object.
-     *
-     * @return the name of this {@code Category.Builder} object
-     */
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Returns the meta info of this {@code Category.Builder} object.
-     *
-     * @return the meta info of this {@code Category.Builder} object
-     */
-    public Meta.Builder getMeta() {
-      return meta;
-    }
-
-    /**
-     * Sets the meta info of this {@code Category.Builder} object.
-     *
-     * @param meta the meta info to set
-     * @return this {@code Category.Builder} object
-     * @throws NullPointerException if {@code meta} is {@code null}
-     */
-    public Builder setMeta(Meta.Builder meta) {
-      checkNotNull(meta);
-      this.meta = meta;
-      return this;
-    }
-
-    /**
-     * Creates a new {@link Category} object.
-     *
-     * @return a new {@link Category} object
-     */
-    public Category build() {
-      return new Category(name, meta.build());
-    }
-
-    static Builder fromJson(JsonObject jsonCategory) {
-      return Category.builder(jsonCategory.getString("name"))
-          .setMeta(Meta.Builder.fromJson(jsonCategory.getJsonObject("meta")));
-    }
-  }
-
   /**
-   * Creates a new {@link Builder} object.
+   * Creates a new {@link CategoryBuilder} object.
    *
    * @param name the name of the category
-   * @return a new {@link Builder} object
+   * @return a new {@link CategoryBuilder} object
    * @throws NullPointerException if {@code name} is {@code null}
    * @throws IllegalArgumentException if {@code name} is not a valid identifier
    */
-  public static Builder builder(String name) {
+  public static CategoryBuilder builder(String name) {
     checkIdentifier(name);
-    return new Builder(name);
+    return new CategoryBuilder(name);
   }
 }
