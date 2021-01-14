@@ -88,7 +88,15 @@ public final class Utils {
     return isLetter(ch) || isDigit(ch) || ch == '_';
   }
 
-  private static boolean isIdentifier(String str) {
+  /**
+   * Returns whether {@code str} is a valid identifier.
+   *
+   * @param str the string to check
+   * @return whether {@code str} is a valid identifier
+   * @throws NullPointerException if {@code str} is {@code null}
+   */
+  public static boolean isIdentifier(String str) {
+    checkNotNull(str);
     if (str.length() < 1 || !isIdentifierStart(str.charAt(0))) {
       return false;
     }

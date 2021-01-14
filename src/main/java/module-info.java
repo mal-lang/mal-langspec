@@ -20,5 +20,6 @@ module org.mal_lang.langspec {
   exports org.mal_lang.langspec.ttc;
 
   requires transitive jakarta.json;
+  requires org.leadpony.joy.core;
   requires org.leadpony.justify;
 }

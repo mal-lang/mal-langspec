@@ -31,6 +31,8 @@ public final class LangBuilder {
   private final Map<String, CategoryBuilder> categories = new LinkedHashMap<>();
   private final Map<String, AssetBuilder> assets = new LinkedHashMap<>();
   private final List<AssociationBuilder> associations = new ArrayList<>();
+  private String license = null;
+  private String notice = null;
 
   LangBuilder() {}
 
@@ -90,6 +92,46 @@ public final class LangBuilder {
   }
 
   /**
+   * Returns the license of this {@code LangBuilder} object, or {@code null}.
+   *
+   * @return the license of this {@code LangBuilder} object, or {@code null}.
+   */
+  public String getLicense() {
+    return license;
+  }
+
+  /**
+   * Sets the license of this {@code LangBuilder} object.
+   *
+   * @param license the license to set, or {@code null}
+   * @return this {@code LangBuilder} object
+   */
+  public LangBuilder setLicense(String license) {
+    this.license = license;
+    return this;
+  }
+
+  /**
+   * Returns the notice of this {@code LangBuilder} object, or {@code null}.
+   *
+   * @return the notice of this {@code LangBuilder} object, or {@code null}.
+   */
+  public String getNotice() {
+    return notice;
+  }
+
+  /**
+   * Sets the notice of this {@code LangBuilder} object.
+   *
+   * @param notice the notice to set, or {@code null}
+   * @return this {@code LangBuilder} object
+   */
+  public LangBuilder setNotice(String notice) {
+    this.notice = notice;
+    return this;
+  }
+
+  /**
    * Creates a new {@link Lang} object.
    *
    * @return a new {@link Lang} object
@@ -122,10 +164,10 @@ public final class LangBuilder {
       langAssociations.add(langAssociation);
     }
 
-    return new Lang(defines, langCategories, langAssets, langAssociations);
+    return new Lang(defines, langCategories, langAssets, langAssociations, license, notice);
   }
 
-  static LangBuilder fromJson(JsonObject jsonLang) {
+  static LangBuilder fromJson(JsonObject jsonLang, Map<String, byte[]> icons) {
     var langBuilder = Lang.builder();
 
     // Defines
@@ -148,6 +190,16 @@ public final class LangBuilder {
       var jsonAsset = jsonAssets.getJsonObject(i);
       var assetBuilder = AssetBuilder.fromJson(jsonAsset);
       langBuilder.addAsset(assetBuilder);
+      // SVG icon
+      var svgIconName = String.format("%s.svg", assetBuilder.getName());
+      if (icons.containsKey(svgIconName)) {
+        assetBuilder.setSvgIcon(icons.get(svgIconName));
+      }
+      // PNG icon
+      var pngIconName = String.format("%s.png", assetBuilder.getName());
+      if (icons.containsKey(pngIconName)) {
+        assetBuilder.setPngIcon(icons.get(svgIconName));
+      }
     }
 
     // Associations
