@@ -65,7 +65,7 @@ public final class LangReader {
   }
 
   private void readIcon(ZipInputStream zipIn, String name) throws IOException {
-    // Remove "lang/" prefix
+    // Remove "icons/" prefix
     var fileName = name.substring(6);
     if (!fileName.endsWith(".png") && !fileName.endsWith(".svg")) {
       return;
@@ -104,7 +104,6 @@ public final class LangReader {
             this.notice = readString(zipIn);
           }
         }
-        zipIn.closeEntry();
       }
     }
     if (this.langSpec == null) {
