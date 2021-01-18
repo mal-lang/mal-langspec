@@ -90,17 +90,30 @@ public final class LangReader {
    * @throws IllegalArgumentException if the input stream contains invalid data
    */
   public Lang read() throws IOException {
+    return read(true, true);
+  }
+
+  /**
+   * Reads a {@link Lang} object from the input stream.
+   *
+   * @param readIcons whether icons should be read
+   * @param readLicense whether license and notice should be read
+   * @return a {@link Lang} object from the input stream
+   * @throws IOException if an I/O error has occurred
+   * @throws IllegalArgumentException if the input stream contains invalid data
+   */
+  public Lang read(boolean readIcons, boolean readLicense) throws IOException {
     try (var zipIn = new ZipInputStream(in)) {
       for (var zipEntry = zipIn.getNextEntry(); zipEntry != null; zipEntry = zipIn.getNextEntry()) {
         if (!zipEntry.isDirectory()) {
           var name = zipEntry.getName();
           if (name.equals("langspec.json")) {
             readLangSpec(zipIn);
-          } else if (name.startsWith("icons/")) {
+          } else if (readIcons && name.startsWith("icons/")) {
             readIcon(zipIn, name);
-          } else if (name.equals("LICENSE")) {
+          } else if (readLicense && name.equals("LICENSE")) {
             this.license = readString(zipIn);
-          } else if (name.equals("NOTICE")) {
+          } else if (readLicense && name.equals("NOTICE")) {
             this.notice = readString(zipIn);
           }
         }

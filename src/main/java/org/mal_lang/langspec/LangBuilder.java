@@ -198,7 +198,7 @@ public final class LangBuilder {
       // PNG icon
       var pngIconName = String.format("%s.png", assetBuilder.getName());
       if (icons.containsKey(pngIconName)) {
-        assetBuilder.setPngIcon(icons.get(svgIconName));
+        assetBuilder.setPngIcon(icons.get(pngIconName));
       }
     }
 
