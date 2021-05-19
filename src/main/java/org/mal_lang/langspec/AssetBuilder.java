@@ -31,6 +31,8 @@ public final class AssetBuilder {
   private String superAsset = null;
   private final Map<String, VariableBuilder> variables = new LinkedHashMap<>();
   private final Map<String, AttackStepBuilder> attackSteps = new LinkedHashMap<>();
+  private byte[] svgIcon = null;
+  private byte[] pngIcon = null;
 
   AssetBuilder(String name, String category) {
     this.name = name;
@@ -144,6 +146,46 @@ public final class AssetBuilder {
   }
 
   /**
+   * Returns the SVG icon of this {@code AssetBuilder} object, or {@code null}.
+   *
+   * @return the SVG icon of this {@code AssetBuilder} object, or {@code null}
+   */
+  public byte[] getSvgIcon() {
+    return svgIcon == null ? null : svgIcon.clone();
+  }
+
+  /**
+   * Sets the SVG icon of this {@code AssetBuilder} object.
+   *
+   * @param svgIcon the SVG icon to set, or {@code null}
+   * @return this {@code AssetBuilder} object
+   */
+  public AssetBuilder setSvgIcon(byte[] svgIcon) {
+    this.svgIcon = svgIcon == null ? null : svgIcon.clone();
+    return this;
+  }
+
+  /**
+   * Returns the PNG icon of this {@code AssetBuilder} object, or {@code null}.
+   *
+   * @return the PNG icon of this {@code AssetBuilder} object, or {@code null}
+   */
+  public byte[] getPngIcon() {
+    return pngIcon == null ? null : pngIcon.clone();
+  }
+
+  /**
+   * Sets the PNG icon of this {@code AssetBuilder} object.
+   *
+   * @param pngIcon the PNG icon to set, or {@code null}
+   * @return this {@code AssetBuilder} object
+   */
+  public AssetBuilder setPngIcon(byte[] pngIcon) {
+    this.pngIcon = pngIcon == null ? null : pngIcon.clone();
+    return this;
+  }
+
+  /**
    * Creates a new {@link Asset} object.
    *
    * @param categories a map of all categories in the language
@@ -157,7 +199,7 @@ public final class AssetBuilder {
     if (!categories.containsKey(category)) {
       throw new IllegalArgumentException(String.format("Category \"%s\" not found", category));
     }
-    return new Asset(name, meta.build(), categories.get(category), isAbstract);
+    return new Asset(name, meta.build(), categories.get(category), isAbstract, svgIcon, pngIcon);
   }
 
   /**

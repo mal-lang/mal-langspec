@@ -35,12 +35,22 @@ public final class Asset {
   private final Map<String, Variable> variables = new LinkedHashMap<>();
   private final Map<String, AttackStep> attackSteps = new LinkedHashMap<>();
   private final Map<String, Field> fields = new LinkedHashMap<>();
+  private final byte[] svgIcon;
+  private final byte[] pngIcon;
 
-  Asset(String name, Meta meta, Category category, boolean isAbstract) {
+  Asset(
+      String name,
+      Meta meta,
+      Category category,
+      boolean isAbstract,
+      byte[] svgIcon,
+      byte[] pngIcon) {
     this.name = name;
     this.meta = meta;
     this.category = category;
     this.isAbstract = isAbstract;
+    this.svgIcon = svgIcon == null ? null : svgIcon.clone();
+    this.pngIcon = pngIcon == null ? null : pngIcon.clone();
     category.addAsset(this);
   }
 
@@ -370,6 +380,100 @@ public final class Asset {
    */
   public List<Field> getFields() {
     return List.copyOf(getFieldsMap().values());
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has a local SVG icon.
+   *
+   * @return whether this {@code Asset} object has a local SVG icon
+   */
+  public boolean hasLocalSvgIcon() {
+    return svgIcon != null;
+  }
+
+  /**
+   * Returns the local SVG icon of this {@code Asset} object.
+   *
+   * @return the local SVG icon of this {@code Asset} object
+   * @throws UnsupportedOperationException if this {@code Asset} object does not have a local SVG
+   *     icon
+   */
+  public byte[] getLocalSvgIcon() {
+    if (!hasLocalSvgIcon()) {
+      throw new UnsupportedOperationException(
+          String.format("Asset \"%s\" does not have a local SVG icon", name));
+    }
+    return svgIcon.clone();
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has an SVG icon.
+   *
+   * @return whether this {@code Asset} object has an SVG icon
+   */
+  public boolean hasSvgIcon() {
+    return hasLocalSvgIcon() || hasSuperAsset() && getSuperAsset().hasSvgIcon();
+  }
+
+  /**
+   * Returns the SVG icon of this {@code Asset} object.
+   *
+   * @return the SVG icon of this {@code Asset} object
+   * @throws UnsupportedOperationException if this {@code Asset} object does not have an SVG icon
+   */
+  public byte[] getSvgIcon() {
+    if (!hasSvgIcon()) {
+      throw new UnsupportedOperationException(
+          String.format("Asset \"%s\" does not have an SVG icon", name));
+    }
+    return hasLocalSvgIcon() ? getLocalSvgIcon() : getSuperAsset().getSvgIcon();
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has a local PNG icon.
+   *
+   * @return whether this {@code Asset} object has a local PNG icon
+   */
+  public boolean hasLocalPngIcon() {
+    return pngIcon != null;
+  }
+
+  /**
+   * Returns the local PNG icon of this {@code Asset} object.
+   *
+   * @return the local PNG icon of this {@code Asset} object
+   * @throws UnsupportedOperationException if this {@code Asset} object does not have a local PNG
+   *     icon
+   */
+  public byte[] getLocalPngIcon() {
+    if (!hasLocalPngIcon()) {
+      throw new UnsupportedOperationException(
+          String.format("Asset \"%s\" does not have a local PNG icon", name));
+    }
+    return pngIcon.clone();
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has a PNG icon.
+   *
+   * @return whether this {@code Asset} object has a PNG icon
+   */
+  public boolean hasPngIcon() {
+    return hasLocalPngIcon() || hasSuperAsset() && getSuperAsset().hasPngIcon();
+  }
+
+  /**
+   * Returns the PNG icon of this {@code Asset} object.
+   *
+   * @return the PNG icon of this {@code Asset} object
+   * @throws UnsupportedOperationException if this {@code Asset} object does not have a PNG icon
+   */
+  public byte[] getPngIcon() {
+    if (!hasPngIcon()) {
+      throw new UnsupportedOperationException(
+          String.format("Asset \"%s\" does not have an PNG icon", name));
+    }
+    return hasLocalPngIcon() ? getLocalPngIcon() : getSuperAsset().getPngIcon();
   }
 
   /**

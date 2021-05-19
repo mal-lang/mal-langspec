@@ -29,16 +29,22 @@ public final class Lang {
   private final Map<String, Category> categories;
   private final Map<String, Asset> assets;
   private final List<Association> associations;
+  private final String license;
+  private final String notice;
 
   Lang(
       Map<String, String> defines,
       Map<String, Category> categories,
       Map<String, Asset> assets,
-      List<Association> associations) {
+      List<Association> associations,
+      String license,
+      String notice) {
     this.defines = Map.copyOf(defines);
     this.categories = Map.copyOf(categories);
     this.assets = Map.copyOf(assets);
     this.associations = List.copyOf(associations);
+    this.license = license;
+    this.notice = notice;
   }
 
   /**
@@ -162,6 +168,50 @@ public final class Lang {
   }
 
   /**
+   * Returns whether this {@code Lang} object has a license.
+   *
+   * @return whether this {@code Lang} object has a license.
+   */
+  public boolean hasLicense() {
+    return license != null;
+  }
+
+  /**
+   * Returns the license of this {@code Lang} object.
+   *
+   * @return the license of this {@code Lang} object
+   * @throws UnsupportedOperationException if this {@code Lang} object does not have a license
+   */
+  public String getLicense() {
+    if (!hasLicense()) {
+      throw new UnsupportedOperationException("Lang object does not have a license");
+    }
+    return license;
+  }
+
+  /**
+   * Returns whether this {@code Lang} object has a notice.
+   *
+   * @return whether this {@code Lang} object has a notice.
+   */
+  public boolean hasNotice() {
+    return notice != null;
+  }
+
+  /**
+   * Returns the notice of this {@code Lang} object.
+   *
+   * @return the notice of this {@code Lang} object
+   * @throws UnsupportedOperationException if this {@code Lang} object does not have a notice
+   */
+  public String getNotice() {
+    if (!hasNotice()) {
+      throw new UnsupportedOperationException("Lang object does not have a notice");
+    }
+    return notice;
+  }
+
+  /**
    * Returns the JSON representation of this {@code Lang} object.
    *
    * @return the JSON representation of this {@code Lang} object
@@ -206,13 +256,59 @@ public final class Lang {
    * @param jsonLang the JSON representation of a {@code Lang} object
    * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
    * @throws NullPointerException if {@code jsonLang} is {@code null}
-   * @throws IllegalArgumentException if {@code jsonLang} does not comply with the schema
+   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
    */
   public static Lang fromJson(JsonObject jsonLang) {
+    return fromJson(jsonLang, null, null, null);
+  }
+
+  /**
+   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
+   *
+   * @param jsonLang the JSON representation of a {@code Lang} object
+   * @param icons a mapping from icon file name to icon file content, or {@code null}
+   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
+   * @throws NullPointerException if {@code jsonLang} is {@code null}
+   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
+   */
+  public static Lang fromJson(JsonObject jsonLang, Map<String, byte[]> icons) {
+    return fromJson(jsonLang, icons, null, null);
+  }
+
+  /**
+   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
+   *
+   * @param jsonLang the JSON representation of a {@code Lang} object
+   * @param license the license of the language, or {@code null}
+   * @param notice the notice of the language, or {@code null}
+   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
+   * @throws NullPointerException if {@code jsonLang} is {@code null}
+   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
+   */
+  public static Lang fromJson(JsonObject jsonLang, String license, String notice) {
+    return fromJson(jsonLang, null, license, notice);
+  }
+
+  /**
+   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
+   *
+   * @param jsonLang the JSON representation of a {@code Lang} object
+   * @param icons a mapping from icon file name to icon file content, or {@code null}
+   * @param license the license of the language, or {@code null}
+   * @param notice the notice of the language, or {@code null}
+   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
+   * @throws NullPointerException if {@code jsonLang} is {@code null}
+   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
+   */
+  public static Lang fromJson(
+      JsonObject jsonLang, Map<String, byte[]> icons, String license, String notice) {
     if (!Utils.isValidJsonLang(jsonLang)) {
-      throw new IllegalArgumentException("Invalid jsonLang");
+      throw new IllegalArgumentException("Invalid JSON langspec");
     }
-    return LangBuilder.fromJson(jsonLang).build();
+    return LangBuilder.fromJson(jsonLang, icons == null ? Map.of() : icons)
+        .setLicense(license)
+        .setNotice(notice)
+        .build();
   }
 
   /**
