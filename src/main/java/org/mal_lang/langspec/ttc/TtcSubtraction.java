@@ -16,19 +16,25 @@
 
 package org.mal_lang.langspec.ttc;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
 /**
- * Immutable class representing a TTC subtraction of an attack step or a defense in a MAL language.
+ * Immutable class representing a TTC subtraction in a MAL language.
+ *
+ * @since 1.0.0
  */
 public final class TtcSubtraction extends TtcBinaryOperation {
   /**
    * Constructs a new {@code TtcSubtraction} object.
    *
-   * @param lhs the left-hand side of the new {@code TtcSubtraction} object
-   * @param rhs the right-hand side of the new {@code TtcSubtraction} object
-   * @throws NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @param lhs the left-hand side of the subtraction
+   * @param rhs the right-hand side of the subtraction
+   * @throws java.lang.NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @since 1.0.0
    */
   public TtcSubtraction(TtcExpression lhs, TtcExpression rhs) {
-    super(TtcExpression.SUBTRACTION, lhs, rhs);
+    super(lhs, rhs);
   }
 
   @Override
@@ -36,5 +42,14 @@ public final class TtcSubtraction extends TtcBinaryOperation {
     double lhsMean = getLhs().getMeanTtc();
     double rhsMean = getRhs().getMeanTtc();
     return lhsMean - rhsMean;
+  }
+
+  @Override
+  public JsonObject toJson() {
+    return Json.createObjectBuilder()
+        .add("type", "subtraction")
+        .add("lhs", this.getLhs().toJson())
+        .add("rhs", this.getRhs().toJson())
+        .build();
   }
 }

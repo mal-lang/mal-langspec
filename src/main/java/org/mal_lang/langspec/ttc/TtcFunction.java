@@ -16,74 +16,98 @@
 
 package org.mal_lang.langspec.ttc;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
-import static org.mal_lang.langspec.Utils.checkNotNullList;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
-import jakarta.json.JsonValue;
-import java.util.List;
+import jakarta.json.JsonObject;
 
-/** Immutable class representing a TTC function of an attack step or a defense in a MAL language. */
+/**
+ * Immutable class representing a TTC function in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class TtcFunction extends TtcExpression {
   private final TtcDistribution distribution;
-  private final List<Double> arguments;
+  private final double[] arguments;
 
   /**
    * Constructs a new {@code TtcFunction} object.
    *
-   * @param distribution the distribution of the new {@code TtcFunction} object
-   * @param arguments the arguments of the new {@code TtcFunction} object
-   * @throws NullPointerException if {@code distribution}, {@code arguments}, or any object in
-   *     {@code arguments} is {@code null}
-   * @throws IllegalArgumentException if {@code arguments} is not valid for {@code distribution}
+   * @param distribution the distribution of the function
+   * @param arguments the arguments of the function
+   * @throws java.lang.NullPointerException if {@code distribution} or {@code arguments} is {@code
+   *     null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for {@code
+   *     distribution}
+   * @since 1.0.0
    */
-  public TtcFunction(TtcDistribution distribution, List<Double> arguments) {
-    super(TtcExpression.FUNCTION);
-    checkNotNull(distribution);
-    checkNotNullList(arguments);
-    distribution.checkArguments(arguments);
+  public TtcFunction(TtcDistribution distribution, double... arguments) {
+    requireNonNull(distribution);
+    requireNonNull(arguments);
+    distribution.validateArguments(arguments);
     this.distribution = distribution;
-    this.arguments = List.copyOf(arguments);
+    this.arguments = arguments.clone();
   }
 
   /**
    * Returns the distribution of this {@code TtcFunction} object.
    *
    * @return the distribution of this {@code TtcFunction} object
+   * @since 1.0.0
    */
   public TtcDistribution getDistribution() {
-    return distribution;
+    return this.distribution;
   }
 
   /**
    * Returns the arguments of this {@code TtcFunction} object.
    *
    * @return the arguments of this {@code TtcFunction} object
+   * @since 1.0.0
    */
-  public List<Double> getArguments() {
-    return arguments;
+  public double[] getArguments() {
+    return this.arguments.clone();
   }
 
   @Override
   public double getMeanTtc() {
-    return distribution.getMeanTtc(arguments);
+    return this.distribution.getMeanTtc(this.arguments);
   }
 
   @Override
   public double getMeanProbability() {
-    return distribution.getMeanProbability(arguments);
+    return this.distribution.getMeanProbability(this.arguments);
   }
 
   @Override
-  public JsonValue toJson() {
+  public JsonObject toJson() {
     var jsonArguments = Json.createArrayBuilder();
-    for (double argument : arguments) {
+    for (var argument : this.arguments) {
       jsonArguments.add(argument);
     }
     return Json.createObjectBuilder()
-        .add("type", getType())
-        .add("name", distribution.getName())
+        .add("type", "function")
+        .add("name", this.distribution.toString())
         .add("arguments", jsonArguments)
         .build();
+  }
+
+  /**
+   * Creates a new {@code TtcFunction} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonTtcFunction the {@link jakarta.json.JsonObject}
+   * @return a new {@code TtcFunction}
+   * @throws java.lang.NullPointerException if {@code jsonTtcFunction} is {@code null}
+   * @since 1.0.0
+   */
+  public static TtcFunction fromJson(JsonObject jsonTtcFunction) {
+    requireNonNull(jsonTtcFunction);
+    var distribution = TtcDistribution.fromString(jsonTtcFunction.getString("name"));
+    var jsonArguments = jsonTtcFunction.getJsonArray("arguments");
+    var arguments = new double[jsonArguments.size()];
+    for (int i = 0; i < jsonArguments.size(); i++) {
+      arguments[i] = jsonArguments.getJsonNumber(i).doubleValue();
+    }
+    return new TtcFunction(distribution, arguments);
   }
 }

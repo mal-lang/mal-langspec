@@ -14,5 +14,9 @@
  * limitations under the License.
  */
 
-/** Provides classes for creating and using TTC expressions and distributions in MAL languages. */
+/**
+ * Provides classes for TTC expressions and distributions.
+ *
+ * @since 1.0.0
+ */
 package org.mal_lang.langspec.ttc;

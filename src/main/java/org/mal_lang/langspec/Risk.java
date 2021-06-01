@@ -16,27 +16,28 @@
 
 package org.mal_lang.langspec;
 
+import static java.util.Objects.requireNonNull;
+
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import jakarta.json.JsonObject;
 
-/** Immutable class representing the risk of an attack step in a MAL language. */
+/**
+ * Immutable class representing the risk of an attack step in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class Risk {
-  private static final String CONFIDENTIALITY = "confidentiality";
-  private static final String INTEGRITY = "integrity";
-  private static final String AVAILABILITY = "availability";
-
   private final boolean isConfidentiality;
   private final boolean isIntegrity;
   private final boolean isAvailability;
 
   /**
-   * Construct a new {@code Risk} object.
+   * Constructs a new {@code Risk} object.
    *
    * @param isConfidentiality whether this {@code Risk} object is confidentiality
    * @param isIntegrity whether this {@code Risk} object is integrity
    * @param isAvailability whether this {@code Risk} object is availability
+   * @since 1.0.0
    */
   public Risk(boolean isConfidentiality, boolean isIntegrity, boolean isAvailability) {
     this.isConfidentiality = isConfidentiality;
@@ -48,60 +49,53 @@ public final class Risk {
    * Returns whether this {@code Risk} object is confidentiality.
    *
    * @return whether this {@code Risk} object is confidentiality
+   * @since 1.0.0
    */
   public boolean isConfidentiality() {
-    return isConfidentiality;
+    return this.isConfidentiality;
   }
 
   /**
    * Returns whether this {@code Risk} object is integrity.
    *
    * @return whether this {@code Risk} object is integrity
+   * @since 1.0.0
    */
   public boolean isIntegrity() {
-    return isIntegrity;
+    return this.isIntegrity;
   }
 
   /**
    * Returns whether this {@code Risk} object is availability.
    *
    * @return whether this {@code Risk} object is availability
+   * @since 1.0.0
    */
   public boolean isAvailability() {
-    return isAvailability;
+    return this.isAvailability;
+  }
+
+  JsonObject toJson() {
+    return Json.createObjectBuilder()
+        .add("isConfidentiality", this.isConfidentiality)
+        .add("isIntegrity", this.isIntegrity)
+        .add("isAvailability", this.isAvailability)
+        .build();
   }
 
   /**
-   * Returns the JSON representation of this {@code Risk} object.
+   * Creates a new {@code Risk} from a {@link jakarta.json.JsonObject}.
    *
-   * @return the JSON representation of this {@code Risk} object
+   * @param jsonRisk the {@link jakarta.json.JsonObject}
+   * @return a new {@code Risk}
+   * @throws java.lang.NullPointerException if {@code jsonRisk} is {@code null}
+   * @since 1.0.0
    */
-  public JsonArray toJson() {
-    var jsonRisk = Json.createArrayBuilder();
-    if (isConfidentiality) {
-      jsonRisk.add(CONFIDENTIALITY);
-    }
-    if (isIntegrity) {
-      jsonRisk.add(INTEGRITY);
-    }
-    if (isAvailability) {
-      jsonRisk.add(AVAILABILITY);
-    }
-    return jsonRisk.build();
-  }
-
-  static Risk fromJson(JsonArray jsonRisk) {
-    Map<String, Boolean> riskMap =
-        new LinkedHashMap<>(
-            Map.ofEntries(
-                Map.entry(CONFIDENTIALITY, false),
-                Map.entry(INTEGRITY, false),
-                Map.entry(AVAILABILITY, false)));
-    for (int i = 0; i < jsonRisk.size(); i++) {
-      var risk = jsonRisk.getString(i);
-      riskMap.put(risk, true);
-    }
+  public static Risk fromJson(JsonObject jsonRisk) {
+    requireNonNull(jsonRisk);
     return new Risk(
-        riskMap.get(CONFIDENTIALITY), riskMap.get(INTEGRITY), riskMap.get(AVAILABILITY));
+        jsonRisk.getBoolean("isConfidentiality"),
+        jsonRisk.getBoolean("isIntegrity"),
+        jsonRisk.getBoolean("isAvailability"));
   }
 }

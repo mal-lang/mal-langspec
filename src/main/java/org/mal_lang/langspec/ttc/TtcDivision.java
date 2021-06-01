@@ -16,17 +16,25 @@
 
 package org.mal_lang.langspec.ttc;
 
-/** Immutable class representing a TTC division of an attack step or a defense in a MAL language. */
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
+/**
+ * Immutable class representing a TTC division in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class TtcDivision extends TtcBinaryOperation {
   /**
    * Constructs a new {@code TtcDivision} object.
    *
-   * @param lhs the left-hand side of the new {@code TtcDivision} object
-   * @param rhs the right-hand side of the new {@code TtcDivision} object
-   * @throws NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @param lhs the left-hand side of the division
+   * @param rhs the right-hand side of the division
+   * @throws java.lang.NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @since 1.0.0
    */
   public TtcDivision(TtcExpression lhs, TtcExpression rhs) {
-    super(TtcExpression.DIVISION, lhs, rhs);
+    super(lhs, rhs);
   }
 
   @Override
@@ -34,5 +42,14 @@ public final class TtcDivision extends TtcBinaryOperation {
     double lhsMean = getLhs().getMeanTtc();
     double rhsMean = getRhs().getMeanTtc();
     return lhsMean / rhsMean;
+  }
+
+  @Override
+  public JsonObject toJson() {
+    return Json.createObjectBuilder()
+        .add("type", "division")
+        .add("lhs", this.getLhs().toJson())
+        .add("rhs", this.getRhs().toJson())
+        .build();
   }
 }

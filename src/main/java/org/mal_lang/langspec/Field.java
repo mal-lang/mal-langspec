@@ -16,18 +16,24 @@
 
 package org.mal_lang.langspec;
 
-/** Immutable class representing a field of an asset in a MAL language. */
+import static java.util.Objects.requireNonNull;
+
+/**
+ * Immutable class representing a field of an asset in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class Field {
   private final String name;
   private final Asset asset;
-  private Association association;
-  private Field target;
   private final Multiplicity multiplicity;
+  private Field target;
+  private Association association;
 
   Field(String name, Asset asset, Multiplicity multiplicity) {
-    this.name = name;
-    this.asset = asset;
-    this.multiplicity = multiplicity;
+    this.name = requireNonNull(name);
+    this.asset = requireNonNull(asset);
+    this.multiplicity = requireNonNull(multiplicity);
     asset.addField(this);
   }
 
@@ -35,52 +41,57 @@ public final class Field {
    * Returns the name of this {@code Field} object.
    *
    * @return the name of this {@code Field} object
+   * @since 1.0.0
    */
   public String getName() {
-    return name;
+    return this.name;
   }
 
   /**
    * Returns the asset of this {@code Field} object.
    *
    * @return the asset of this {@code Field} object
+   * @since 1.0.0
    */
   public Asset getAsset() {
-    return asset;
-  }
-
-  void setAssociation(Association association) {
-    this.association = association;
-  }
-
-  /**
-   * Returns the association of this {@code Field} object.
-   *
-   * @return the association of this {@code Field} object
-   */
-  public Association getAssociation() {
-    return association;
-  }
-
-  void setTarget(Field target) {
-    this.target = target;
-  }
-
-  /**
-   * Returns the target of this {@code Field} object.
-   *
-   * @return the target of this {@code Field} object
-   */
-  public Field getTarget() {
-    return target;
+    return this.asset;
   }
 
   /**
    * Returns the multiplicity of this {@code Field} object.
    *
    * @return the multiplicity of this {@code Field} object
+   * @since 1.0.0
    */
   public Multiplicity getMultiplicity() {
-    return multiplicity;
+    return this.multiplicity;
+  }
+
+  /**
+   * Returns the target of this {@code Field} object.
+   *
+   * @return the target of this {@code Field} object
+   * @since 1.0.0
+   */
+  public Field getTarget() {
+    return this.target;
+  }
+
+  void setTarget(Field target) {
+    this.target = requireNonNull(target);
+  }
+
+  /**
+   * Returns the association of this {@code Field} object.
+   *
+   * @return the association of this {@code Field} object
+   * @since 1.0.0
+   */
+  public Association getAssociation() {
+    return this.association;
+  }
+
+  void setAssociation(Association association) {
+    this.association = requireNonNull(association);
   }
 }

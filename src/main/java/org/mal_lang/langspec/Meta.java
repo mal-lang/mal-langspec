@@ -16,21 +16,25 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import java.util.Map;
+import org.mal_lang.langspec.builders.MetaBuilder;
 
 /**
- * Immutable class representing meta info of {@link Category}, {@link Asset}, {@link AttackStep},
- * and {@link Association} objects.
+ * Immutable class representing meta info of {@link org.mal_lang.langspec.Category}, {@link
+ * org.mal_lang.langspec.Asset}, {@link org.mal_lang.langspec.AttackStep}, and {@link
+ * org.mal_lang.langspec.Association} objects.
+ *
+ * @since 1.0.0
  */
 public final class Meta {
   private final Map<String, String> entries;
 
-  Meta(Map<String, String> entries) {
-    this.entries = Map.copyOf(entries);
+  private Meta(Map<String, String> entries) {
+    this.entries = Map.copyOf(requireNonNull(entries));
   }
 
   /**
@@ -38,57 +42,49 @@ public final class Meta {
    *
    * @param key the key of the entry
    * @return whether {@code key} is the key of an entry in this {@code Meta} object
-   * @throws NullPointerException if {@code key} is {@code null}
+   * @throws java.lang.NullPointerException if {@code key} is {@code null}
+   * @since 1.0.0
    */
   public boolean hasEntry(String key) {
-    checkNotNull(key);
-    return entries.containsKey(key);
+    return this.entries.containsKey(requireNonNull(key));
   }
 
   /**
-   * Returns the value of the entry in this {@code Meta} object with the key {@code key}.
+   * Returns the value of the entry with the key {@code key} in this {@code Meta} object.
    *
    * @param key the key of the entry
-   * @return the value of the entry in this {@code Meta} object with the key {@code key}
-   * @throws NullPointerException if {@code key} is {@code null}
-   * @throws IllegalArgumentException if {@code key} is not the key of an entry in this {@code Meta}
-   *     object
+   * @return the value of the entry with the key {@code key} in this {@code Meta} object
+   * @throws java.lang.NullPointerException if {@code key} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code key} is not the key of an entry in this
+   *     {@code Meta} object
+   * @since 1.0.0
    */
   public String getEntry(String key) {
-    if (!hasEntry(key)) {
+    if (!this.hasEntry(key)) {
       throw new IllegalArgumentException(String.format("Entry \"%s\" not found", key));
     }
-    return entries.get(key);
+    return this.entries.get(key);
   }
 
   /**
    * Returns all entries in this {@code Meta} object.
    *
    * @return all entries in this {@code Meta} object
+   * @since 1.0.0
    */
   public Map<String, String> getEntries() {
-    return entries;
+    return this.entries;
   }
 
-  /**
-   * Returns the JSON representation of this {@code Meta} object.
-   *
-   * @return the JSON representation of this {@code Meta} object
-   */
-  public JsonObject toJson() {
+  JsonObject toJson() {
     var jsonMeta = Json.createObjectBuilder();
-    for (var entry : entries.entrySet()) {
+    for (var entry : this.entries.entrySet()) {
       jsonMeta.add(entry.getKey(), entry.getValue());
     }
     return jsonMeta.build();
   }
 
-  /**
-   * Creates a new {@link MetaBuilder} object.
-   *
-   * @return a new {@link MetaBuilder} object
-   */
-  public static MetaBuilder builder() {
-    return new MetaBuilder();
+  static Meta fromBuilder(MetaBuilder builder) {
+    return new Meta(requireNonNull(builder).getEntries());
   }
 }

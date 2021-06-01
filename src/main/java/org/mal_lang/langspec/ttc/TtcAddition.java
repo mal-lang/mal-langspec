@@ -16,17 +16,25 @@
 
 package org.mal_lang.langspec.ttc;
 
-/** Immutable class representing a TTC addition of an attack step or a defense in a MAL language. */
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
+/**
+ * Immutable class representing a TTC addition in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class TtcAddition extends TtcBinaryOperation {
   /**
    * Constructs a new {@code TtcAddition} object.
    *
-   * @param lhs the left-hand side of the new {@code TtcAddition} object
-   * @param rhs the right-hand side of the new {@code TtcAddition} object
-   * @throws NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @param lhs the left-hand side of the addition
+   * @param rhs the right-hand side of the addition
+   * @throws java.lang.NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @since 1.0.0
    */
   public TtcAddition(TtcExpression lhs, TtcExpression rhs) {
-    super(TtcExpression.ADDITION, lhs, rhs);
+    super(lhs, rhs);
   }
 
   @Override
@@ -34,5 +42,14 @@ public final class TtcAddition extends TtcBinaryOperation {
     double lhsMean = getLhs().getMeanTtc();
     double rhsMean = getRhs().getMeanTtc();
     return lhsMean + rhsMean;
+  }
+
+  @Override
+  public JsonObject toJson() {
+    return Json.createObjectBuilder()
+        .add("type", "addition")
+        .add("lhs", this.getLhs().toJson())
+        .add("rhs", this.getRhs().toJson())
+        .build();
   }
 }

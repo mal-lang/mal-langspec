@@ -2,5 +2,4 @@
 
 <suppressions>
   <suppress checks="PackageName"/>
-  <suppress checks="SingleLineJavadoc"/>
 </suppressions>

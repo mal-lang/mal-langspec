@@ -16,38 +16,42 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkIdentifier;
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.mal_lang.langspec.builders.AssetBuilder;
 
-/** Immutable class representing an asset in a MAL language. */
+/**
+ * Immutable class representing an asset in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class Asset {
   private final String name;
   private final Meta meta;
   private final Category category;
   private final boolean isAbstract;
   private Asset superAsset;
+  private final Map<String, Field> fields = new LinkedHashMap<>();
   private final Map<String, Variable> variables = new LinkedHashMap<>();
   private final Map<String, AttackStep> attackSteps = new LinkedHashMap<>();
-  private final Map<String, Field> fields = new LinkedHashMap<>();
   private final byte[] svgIcon;
   private final byte[] pngIcon;
 
-  Asset(
+  private Asset(
       String name,
       Meta meta,
       Category category,
       boolean isAbstract,
       byte[] svgIcon,
       byte[] pngIcon) {
-    this.name = name;
-    this.meta = meta;
-    this.category = category;
+    this.name = requireNonNull(name);
+    this.meta = requireNonNull(meta);
+    this.category = requireNonNull(category);
     this.isAbstract = isAbstract;
     this.svgIcon = svgIcon == null ? null : svgIcon.clone();
     this.pngIcon = pngIcon == null ? null : pngIcon.clone();
@@ -58,245 +62,69 @@ public final class Asset {
    * Returns the name of this {@code Asset} object.
    *
    * @return the name of this {@code Asset} object
+   * @since 1.0.0
    */
   public String getName() {
-    return name;
+    return this.name;
   }
 
   /**
    * Returns the meta info of this {@code Asset} object.
    *
    * @return the meta info of this {@code Asset} object
+   * @since 1.0.0
    */
   public Meta getMeta() {
-    return meta;
+    return this.meta;
   }
 
   /**
    * Returns the category of this {@code Asset} object.
    *
    * @return the category of this {@code Asset} object
+   * @since 1.0.0
    */
   public Category getCategory() {
-    return category;
+    return this.category;
   }
 
   /**
    * Returns whether this {@code Asset} object is abstract.
    *
    * @return whether this {@code Asset} object is abstract
+   * @since 1.0.0
    */
   public boolean isAbstract() {
-    return isAbstract;
-  }
-
-  void setSuperAsset(Asset superAsset) {
-    this.superAsset = superAsset;
+    return this.isAbstract;
   }
 
   /**
    * Returns whether this {@code Asset} object has a super asset.
    *
    * @return whether this {@code Asset} object has a super asset
+   * @since 1.0.0
    */
   public boolean hasSuperAsset() {
-    return superAsset != null;
+    return this.superAsset != null;
   }
 
   /**
    * Returns the super asset of this {@code Asset} object.
    *
    * @return the super asset of this {@code Asset} object
-   * @throws UnsupportedOperationException if this {@code Asset} object does not have a super asset
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have a
+   *     super asset
+   * @since 1.0.0
    */
   public Asset getSuperAsset() {
-    if (!hasSuperAsset()) {
-      throw new UnsupportedOperationException(
-          String.format("Asset \"%s\" does not have a super asset", name));
+    if (!this.hasSuperAsset()) {
+      throw new UnsupportedOperationException("Super asset not found");
     }
-    return superAsset;
+    return this.superAsset;
   }
 
-  void addVariable(Variable variable) {
-    variables.put(variable.getName(), variable);
-  }
-
-  /**
-   * Returns whether {@code name} is the name of a local variable in this {@code Asset} object.
-   *
-   * @param name the name of the local variable
-   * @return whether {@code name} is the name of a local variable in this {@code Asset} object
-   * @throws NullPointerException if {@code name} is {@code null}
-   */
-  public boolean hasLocalVariable(String name) {
-    checkNotNull(name);
-    return variables.containsKey(name);
-  }
-
-  /**
-   * Returns the local variable in this {@code Asset} object with the name {@code name}.
-   *
-   * @param name the name of the local variable
-   * @return the local variable in this {@code Asset} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a local variable in this
-   *     {@code Asset} object
-   */
-  public Variable getLocalVariable(String name) {
-    if (!hasLocalVariable(name)) {
-      throw new IllegalArgumentException(String.format("Local variable \"%s\" not found", name));
-    }
-    return variables.get(name);
-  }
-
-  /**
-   * Returns a list of all local variables in this {@code Asset} object.
-   *
-   * @return a list of all local variables in this {@code Asset} object
-   */
-  public List<Variable> getLocalVariables() {
-    return List.copyOf(variables.values());
-  }
-
-  /**
-   * Returns whether {@code name} is the name of a variable in this {@code Asset} object.
-   *
-   * @param name the name of the variable
-   * @return whether {@code name} is the name of a variable in this {@code Asset} object
-   * @throws NullPointerException if {@code name} is {@code null}
-   */
-  public boolean hasVariable(String name) {
-    checkNotNull(name);
-    return hasLocalVariable(name) || hasSuperAsset() && getSuperAsset().hasVariable(name);
-  }
-
-  /**
-   * Returns the variable in this {@code Asset} object with the name {@code name}.
-   *
-   * @param name the name of the variable
-   * @return the variable in this {@code Asset} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a variable in this {@code
-   *     Asset} object
-   */
-  public Variable getVariable(String name) {
-    if (!hasVariable(name)) {
-      throw new IllegalArgumentException(String.format("Variable \"%s\" not found", name));
-    }
-    return hasLocalVariable(name) ? getLocalVariable(name) : getSuperAsset().getVariable(name);
-  }
-
-  private Map<String, Variable> getVariablesMap() {
-    var variablesMap =
-        hasSuperAsset() ? getSuperAsset().getVariablesMap() : new LinkedHashMap<String, Variable>();
-    for (var entry : variables.entrySet()) {
-      variablesMap.put(entry.getKey(), entry.getValue());
-    }
-    return variablesMap;
-  }
-
-  /**
-   * Returns a list of all variables in this {@code Asset} object.
-   *
-   * @return a list of all variables in this {@code Asset} object
-   */
-  public List<Variable> getVariables() {
-    return List.copyOf(getVariablesMap().values());
-  }
-
-  void addAttackStep(AttackStep attackStep) {
-    attackSteps.put(attackStep.getName(), attackStep);
-  }
-
-  /**
-   * Returns whether {@code name} is the name of a local attack step in this {@code Asset} object.
-   *
-   * @param name the name of the local attack step
-   * @return whether {@code name} is the name of a local attack step in this {@code Asset} object
-   * @throws NullPointerException if {@code name} is {@code null}
-   */
-  public boolean hasLocalAttackStep(String name) {
-    checkNotNull(name);
-    return attackSteps.containsKey(name);
-  }
-
-  /**
-   * Returns the local attack step in this {@code Asset} object with the name {@code name}.
-   *
-   * @param name the name of the local attack step
-   * @return the local attack step in this {@code Asset} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a local attack step in this
-   *     {@code Asset} object
-   */
-  public AttackStep getLocalAttackStep(String name) {
-    if (!hasLocalAttackStep(name)) {
-      throw new IllegalArgumentException(String.format("Local attack step \"%s\" not found", name));
-    }
-    return attackSteps.get(name);
-  }
-
-  /**
-   * Returns a list of all local attack steps in this {@code Asset} object.
-   *
-   * @return a list of all local attack steps in this {@code Asset} object
-   */
-  public List<AttackStep> getLocalAttackSteps() {
-    return List.copyOf(attackSteps.values());
-  }
-
-  /**
-   * Returns whether {@code name} is the name of an attack step in this {@code Asset} object.
-   *
-   * @param name the name of the attack step
-   * @return whether {@code name} is the name of an attack step in this {@code Asset} object
-   * @throws NullPointerException if {@code name} is {@code null}
-   */
-  public boolean hasAttackStep(String name) {
-    checkNotNull(name);
-    return hasLocalAttackStep(name) || hasSuperAsset() && getSuperAsset().hasAttackStep(name);
-  }
-
-  /**
-   * Returns the attack step in this {@code Asset} object with the name {@code name}.
-   *
-   * @param name the name of the attack step
-   * @return the attack step in this {@code Asset} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of an attack step in this
-   *     {@code Asset} object
-   */
-  public AttackStep getAttackStep(String name) {
-    if (!hasAttackStep(name)) {
-      throw new IllegalArgumentException(String.format("Attack step \"%s\" not found", name));
-    }
-    return hasLocalAttackStep(name)
-        ? getLocalAttackStep(name)
-        : getSuperAsset().getAttackStep(name);
-  }
-
-  private Map<String, AttackStep> getAttackStepsMap() {
-    var attackStepsMap =
-        hasSuperAsset()
-            ? getSuperAsset().getAttackStepsMap()
-            : new LinkedHashMap<String, AttackStep>();
-    for (var entry : attackSteps.entrySet()) {
-      attackStepsMap.put(entry.getKey(), entry.getValue());
-    }
-    return attackStepsMap;
-  }
-
-  /**
-   * Returns a list of all attack steps in this {@code Asset} object.
-   *
-   * @return a list of all attack steps in this {@code Asset} object
-   */
-  public List<AttackStep> getAttackSteps() {
-    return List.copyOf(getAttackStepsMap().values());
-  }
-
-  void addField(Field field) {
-    fields.put(field.getName(), field);
+  void setSuperAsset(Asset superAsset) {
+    this.superAsset = requireNonNull(superAsset);
   }
 
   /**
@@ -304,36 +132,38 @@ public final class Asset {
    *
    * @param name the name of the local field
    * @return whether {@code name} is the name of a local field in this {@code Asset} object
-   * @throws NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
    */
   public boolean hasLocalField(String name) {
-    checkNotNull(name);
-    return fields.containsKey(name);
+    return this.fields.containsKey(requireNonNull(name));
   }
 
   /**
-   * Returns the local field in this {@code Asset} object with the name {@code name}.
+   * Returns the local field with the name {@code name} in this {@code Asset} object.
    *
    * @param name the name of the local field
-   * @return the local field in this {@code Asset} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a local field in this
-   *     {@code Asset} object
+   * @return the local field with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a local field in
+   *     this {@code Asset} object
+   * @since 1.0.0
    */
   public Field getLocalField(String name) {
-    if (!hasLocalField(name)) {
+    if (!this.hasLocalField(name)) {
       throw new IllegalArgumentException(String.format("Local field \"%s\" not found", name));
     }
-    return fields.get(name);
+    return this.fields.get(name);
   }
 
   /**
    * Returns a list of all local fields in this {@code Asset} object.
    *
    * @return a list of all local fields in this {@code Asset} object
+   * @since 1.0.0
    */
   public List<Field> getLocalFields() {
-    return List.copyOf(fields.values());
+    return List.copyOf(this.fields.values());
   }
 
   /**
@@ -341,184 +171,443 @@ public final class Asset {
    *
    * @param name the name of the field
    * @return whether {@code name} is the name of a field in this {@code Asset} object
-   * @throws NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
    */
   public boolean hasField(String name) {
-    checkNotNull(name);
-    return hasLocalField(name) || hasSuperAsset() && getSuperAsset().hasField(name);
+    return this.hasLocalField(name) || this.hasSuperAsset() && this.getSuperAsset().hasField(name);
   }
 
   /**
-   * Returns the field in this {@code Asset} object with the name {@code name}.
+   * Returns the field with the name {@code name} in this {@code Asset} object.
    *
    * @param name the name of the field
-   * @return the field in this {@code Asset} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a field in this {@code
-   *     Asset} object
+   * @return the field with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a field in this
+   *     {@code Asset} object
+   * @since 1.0.0
    */
   public Field getField(String name) {
-    if (!hasField(name)) {
+    if (!this.hasField(name)) {
       throw new IllegalArgumentException(String.format("Field \"%s\" not found", name));
     }
-    return hasLocalField(name) ? getLocalField(name) : getSuperAsset().getField(name);
-  }
-
-  private Map<String, Field> getFieldsMap() {
-    var fieldsMap =
-        hasSuperAsset() ? getSuperAsset().getFieldsMap() : new LinkedHashMap<String, Field>();
-    for (var entry : fields.entrySet()) {
-      fieldsMap.put(entry.getKey(), entry.getValue());
-    }
-    return fieldsMap;
+    return this.hasLocalField(name)
+        ? this.getLocalField(name)
+        : this.getSuperAsset().getField(name);
   }
 
   /**
    * Returns a list of all fields in this {@code Asset} object.
    *
    * @return a list of all fields in this {@code Asset} object
+   * @since 1.0.0
    */
   public List<Field> getFields() {
-    return List.copyOf(getFieldsMap().values());
+    return List.copyOf(this.getFieldsMap().values());
+  }
+
+  void addField(Field field) {
+    requireNonNull(field);
+    this.fields.put(field.getName(), field);
+  }
+
+  private Map<String, Field> getFieldsMap() {
+    var fieldsMap =
+        this.hasSuperAsset()
+            ? this.getSuperAsset().getFieldsMap()
+            : new LinkedHashMap<String, Field>();
+    for (var entry : this.fields.entrySet()) {
+      fieldsMap.put(entry.getKey(), entry.getValue());
+    }
+    return fieldsMap;
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a local variable in this {@code Asset} object.
+   *
+   * @param name the name of the local variable
+   * @return whether {@code name} is the name of a local variable in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasLocalVariable(String name) {
+    return this.variables.containsKey(requireNonNull(name));
+  }
+
+  /**
+   * Returns the local variable with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the local variable
+   * @return the local variable with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a local variable
+   *     in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Variable getLocalVariable(String name) {
+    if (!this.hasLocalVariable(name)) {
+      throw new IllegalArgumentException(String.format("Local variable \"%s\" not found", name));
+    }
+    return this.variables.get(name);
+  }
+
+  /**
+   * Returns a list of all local variables in this {@code Asset} object.
+   *
+   * @return a list of all local variables in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List<Variable> getLocalVariables() {
+    return List.copyOf(this.variables.values());
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a variable in this {@code Asset} object.
+   *
+   * @param name the name of the variable
+   * @return whether {@code name} is the name of a variable in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasVariable(String name) {
+    return this.hasLocalVariable(name)
+        || this.hasSuperAsset() && this.getSuperAsset().hasVariable(name);
+  }
+
+  /**
+   * Returns the variable with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the variable
+   * @return the variable with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a variable in
+   *     this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Variable getVariable(String name) {
+    if (!this.hasVariable(name)) {
+      throw new IllegalArgumentException(String.format("Variable \"%s\" not found", name));
+    }
+    return this.hasLocalVariable(name)
+        ? this.getLocalVariable(name)
+        : this.getSuperAsset().getVariable(name);
+  }
+
+  /**
+   * Returns a list of all variables in this {@code Asset} object.
+   *
+   * @return a list of all variables in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List<Variable> getVariables() {
+    return List.copyOf(this.getVariablesMap().values());
+  }
+
+  private void addVariable(Variable variable) {
+    requireNonNull(variable);
+    this.variables.put(variable.getName(), variable);
+  }
+
+  private Map<String, Variable> getVariablesMap() {
+    var variablesMap =
+        this.hasSuperAsset()
+            ? this.getSuperAsset().getVariablesMap()
+            : new LinkedHashMap<String, Variable>();
+    for (var entry : this.variables.entrySet()) {
+      variablesMap.put(entry.getKey(), entry.getValue());
+    }
+    return variablesMap;
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a local attack step in this {@code Asset} object.
+   *
+   * @param name the name of the local attack step
+   * @return whether {@code name} is the name of a local attack step in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasLocalAttackStep(String name) {
+    return this.attackSteps.containsKey(requireNonNull(name));
+  }
+
+  /**
+   * Returns the local attack step with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the local attack step
+   * @return the local attack step with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a local attack
+   *     step in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public AttackStep getLocalAttackStep(String name) {
+    if (!this.hasLocalAttackStep(name)) {
+      throw new IllegalArgumentException(String.format("Local attack step \"%s\" not found", name));
+    }
+    return this.attackSteps.get(name);
+  }
+
+  /**
+   * Returns a list of all local attack steps in this {@code Asset} object.
+   *
+   * @return a list of all local attack steps in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List<AttackStep> getLocalAttackSteps() {
+    return List.copyOf(this.attackSteps.values());
+  }
+
+  /**
+   * Returns whether {@code name} is the name of an attack step in this {@code Asset} object.
+   *
+   * @param name the name of the attack step
+   * @return whether {@code name} is the name of an attack step in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasAttackStep(String name) {
+    return this.hasLocalAttackStep(name)
+        || this.hasSuperAsset() && this.getSuperAsset().hasAttackStep(name);
+  }
+
+  /**
+   * Returns the attack step with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the attack step
+   * @return the attack step with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of an attack step in
+   *     this {@code Asset} object
+   * @since 1.0.0
+   */
+  public AttackStep getAttackStep(String name) {
+    if (!this.hasAttackStep(name)) {
+      throw new IllegalArgumentException(String.format("Attack step \"%s\" not found", name));
+    }
+    return this.hasLocalAttackStep(name)
+        ? this.getLocalAttackStep(name)
+        : this.getSuperAsset().getAttackStep(name);
+  }
+
+  /**
+   * Returns a list of all attack steps in this {@code Asset} object.
+   *
+   * @return a list of all attack steps in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List<AttackStep> getAttackSteps() {
+    return List.copyOf(this.getAttackStepsMap().values());
+  }
+
+  private void addAttackStep(AttackStep attackStep) {
+    requireNonNull(attackStep);
+    this.attackSteps.put(attackStep.getName(), attackStep);
+  }
+
+  private Map<String, AttackStep> getAttackStepsMap() {
+    var attackStepsMap =
+        this.hasSuperAsset()
+            ? this.getSuperAsset().getAttackStepsMap()
+            : new LinkedHashMap<String, AttackStep>();
+    for (var entry : this.attackSteps.entrySet()) {
+      attackStepsMap.put(entry.getKey(), entry.getValue());
+    }
+    return attackStepsMap;
   }
 
   /**
    * Returns whether this {@code Asset} object has a local SVG icon.
    *
    * @return whether this {@code Asset} object has a local SVG icon
+   * @since 1.0.0
    */
   public boolean hasLocalSvgIcon() {
-    return svgIcon != null;
+    return this.svgIcon != null;
   }
 
   /**
    * Returns the local SVG icon of this {@code Asset} object.
    *
    * @return the local SVG icon of this {@code Asset} object
-   * @throws UnsupportedOperationException if this {@code Asset} object does not have a local SVG
-   *     icon
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have a
+   *     local SVG icon
+   * @since 1.0.0
    */
   public byte[] getLocalSvgIcon() {
-    if (!hasLocalSvgIcon()) {
-      throw new UnsupportedOperationException(
-          String.format("Asset \"%s\" does not have a local SVG icon", name));
+    if (!this.hasLocalSvgIcon()) {
+      throw new UnsupportedOperationException("Local SVG icon not found");
     }
-    return svgIcon.clone();
+    return this.svgIcon.clone();
   }
 
   /**
    * Returns whether this {@code Asset} object has an SVG icon.
    *
    * @return whether this {@code Asset} object has an SVG icon
+   * @since 1.0.0
    */
   public boolean hasSvgIcon() {
-    return hasLocalSvgIcon() || hasSuperAsset() && getSuperAsset().hasSvgIcon();
+    return this.hasLocalSvgIcon() || this.hasSuperAsset() && this.getSuperAsset().hasSvgIcon();
   }
 
   /**
    * Returns the SVG icon of this {@code Asset} object.
    *
    * @return the SVG icon of this {@code Asset} object
-   * @throws UnsupportedOperationException if this {@code Asset} object does not have an SVG icon
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have an
+   *     SVG icon
+   * @since 1.0.0
    */
   public byte[] getSvgIcon() {
-    if (!hasSvgIcon()) {
-      throw new UnsupportedOperationException(
-          String.format("Asset \"%s\" does not have an SVG icon", name));
+    if (!this.hasSvgIcon()) {
+      throw new UnsupportedOperationException("SVG icon not found");
     }
-    return hasLocalSvgIcon() ? getLocalSvgIcon() : getSuperAsset().getSvgIcon();
+    return this.hasLocalSvgIcon() ? this.getLocalSvgIcon() : this.getSuperAsset().getSvgIcon();
   }
 
   /**
    * Returns whether this {@code Asset} object has a local PNG icon.
    *
    * @return whether this {@code Asset} object has a local PNG icon
+   * @since 1.0.0
    */
   public boolean hasLocalPngIcon() {
-    return pngIcon != null;
+    return this.pngIcon != null;
   }
 
   /**
    * Returns the local PNG icon of this {@code Asset} object.
    *
    * @return the local PNG icon of this {@code Asset} object
-   * @throws UnsupportedOperationException if this {@code Asset} object does not have a local PNG
-   *     icon
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have a
+   *     local PNG icon
+   * @since 1.0.0
    */
   public byte[] getLocalPngIcon() {
-    if (!hasLocalPngIcon()) {
-      throw new UnsupportedOperationException(
-          String.format("Asset \"%s\" does not have a local PNG icon", name));
+    if (!this.hasLocalPngIcon()) {
+      throw new UnsupportedOperationException("Local PNG icon not found");
     }
-    return pngIcon.clone();
+    return this.pngIcon.clone();
   }
 
   /**
-   * Returns whether this {@code Asset} object has a PNG icon.
+   * Returns whether this {@code Asset} object has an PNG icon.
    *
-   * @return whether this {@code Asset} object has a PNG icon
+   * @return whether this {@code Asset} object has an PNG icon
+   * @since 1.0.0
    */
   public boolean hasPngIcon() {
-    return hasLocalPngIcon() || hasSuperAsset() && getSuperAsset().hasPngIcon();
+    return this.hasLocalPngIcon() || this.hasSuperAsset() && this.getSuperAsset().hasPngIcon();
   }
 
   /**
    * Returns the PNG icon of this {@code Asset} object.
    *
    * @return the PNG icon of this {@code Asset} object
-   * @throws UnsupportedOperationException if this {@code Asset} object does not have a PNG icon
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have an
+   *     PNG icon
+   * @since 1.0.0
    */
   public byte[] getPngIcon() {
-    if (!hasPngIcon()) {
-      throw new UnsupportedOperationException(
-          String.format("Asset \"%s\" does not have an PNG icon", name));
+    if (!this.hasPngIcon()) {
+      throw new UnsupportedOperationException("PNG icon not found");
     }
-    return hasLocalPngIcon() ? getLocalPngIcon() : getSuperAsset().getPngIcon();
+    return this.hasLocalPngIcon() ? this.getLocalPngIcon() : this.getSuperAsset().getPngIcon();
   }
 
   /**
-   * Returns the JSON representation of this {@code Asset} object.
+   * Returns whether this {@code Asset} object is a sub type of {@code other}.
    *
-   * @return the JSON representation of this {@code Asset} object
+   * @param other another {@code Asset} object
+   * @return whether this {@code Asset} object is a sub type of {@code other}
+   * @throws java.lang.NullPointerException if {@code other} is {@code null}
+   * @since 1.0.0
    */
-  public JsonObject toJson() {
-    // Variables
+  public boolean isSubTypeOf(Asset other) {
+    requireNonNull(other);
+    if (this == other) {
+      return true;
+    }
+    if (!this.hasSuperAsset()) {
+      return false;
+    }
+    return this.getSuperAsset().isSubTypeOf(other);
+  }
+
+  /**
+   * Returns the least upper bound of {@code asset1} and {@code asset2}, or {@code null} if {@code
+   * asset1} and {@code asset2} have no upper bound.
+   *
+   * @param asset1 an {@code Asset} object
+   * @param asset2 an {@code Asset} object
+   * @return the least upper bound of {@code asset1} and {@code asset2}, or {@code null} if {@code
+   *     asset1} and {@code asset2} have no upper bound
+   * @throws java.lang.NullPointerException if {@code asset1} or {@code asset2} is {@code null}
+   * @since 1.0.0
+   */
+  public static Asset leastUpperBound(Asset asset1, Asset asset2) {
+    requireNonNull(asset1);
+    requireNonNull(asset2);
+    if (asset1.isSubTypeOf(asset2)) {
+      return asset2;
+    }
+    if (asset2.isSubTypeOf(asset1)) {
+      return asset1;
+    }
+    if (!asset1.hasSuperAsset() || !asset2.hasSuperAsset()) {
+      return null;
+    }
+    return Asset.leastUpperBound(asset1.getSuperAsset(), asset2.getSuperAsset());
+  }
+
+  JsonObject toJson() {
     var jsonVariables = Json.createArrayBuilder();
-    for (var variable : variables.values()) {
+    for (var variable : this.variables.values()) {
       jsonVariables.add(variable.toJson());
     }
 
-    // Attack steps
     var jsonAttackSteps = Json.createArrayBuilder();
-    for (var attackStep : attackSteps.values()) {
+    for (var attackStep : this.attackSteps.values()) {
       jsonAttackSteps.add(attackStep.toJson());
     }
 
     var jsonAsset =
         Json.createObjectBuilder()
-            .add("name", name)
-            .add("meta", meta.toJson())
-            .add("category", category.getName())
-            .add("isAbstract", isAbstract);
-    if (superAsset == null) {
+            .add("name", this.name)
+            .add("meta", this.meta.toJson())
+            .add("category", this.category.getName())
+            .add("isAbstract", this.isAbstract);
+    if (this.superAsset == null) {
       jsonAsset.addNull("superAsset");
     } else {
-      jsonAsset.add("superAsset", superAsset.getName());
+      jsonAsset.add("superAsset", this.superAsset.getName());
     }
     return jsonAsset.add("variables", jsonVariables).add("attackSteps", jsonAttackSteps).build();
   }
 
-  /**
-   * Creates a new {@link AssetBuilder} object.
-   *
-   * @param name the name of the asset
-   * @param category the category of the asset
-   * @return a new {@link AssetBuilder} object
-   * @throws NullPointerException if {@code name} or {@code category} is {@code null}
-   * @throws IllegalArgumentException if {@code name} or {@code category} is not a valid identifier
-   */
-  public static AssetBuilder builder(String name, String category) {
-    checkIdentifier(name, category);
-    return new AssetBuilder(name, category);
+  static Asset fromBuilder(AssetBuilder builder, Map<String, Category> categories) {
+    requireNonNull(builder);
+    requireNonNull(categories);
+    if (!categories.containsKey(builder.getCategory())) {
+      throw new IllegalArgumentException(
+          String.format("Category \"%s\" not found", builder.getCategory()));
+    }
+    var asset =
+        new Asset(
+            builder.getName(),
+            Meta.fromBuilder(builder.getMeta()),
+            categories.get(builder.getCategory()),
+            builder.isAbstract(),
+            builder.getSvgIcon(),
+            builder.getPngIcon());
+    for (var variableBuilder : builder.getVariables()) {
+      asset.addVariable(Variable.fromBuilder(variableBuilder, asset));
+    }
+    for (var attackStepBuilder : builder.getAttackSteps()) {
+      asset.addAttackStep(AttackStep.fromBuilder(attackStepBuilder, asset));
+    }
+    return asset;
   }
 }

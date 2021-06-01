@@ -16,568 +16,488 @@
 
 package org.mal_lang.langspec.ttc;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
-import static org.mal_lang.langspec.Utils.checkNotNullList;
+import static java.util.Objects.requireNonNull;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-/** Immutable class representing a TTC distribution. */
-public abstract class TtcDistribution {
+/**
+ * Enum representing a TTC distribution.
+ *
+ * @since 1.0.0
+ */
+public enum TtcDistribution {
+  /**
+   * Enum constant representing a bernoulli distribution.
+   *
+   * @since 1.0.0
+   */
+  BERNOULLI("Bernoulli") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 1));
+      double probability = arguments[0];
+      requireZeroToOne(probability);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double probability = arguments[0];
+      return probability < 0.5 ? 0.0 : Double.MAX_VALUE;
+    }
+
+    @Override
+    public double getMeanProbability(double... arguments) {
+      this.validateArguments(arguments);
+      double probability = arguments[0];
+      return probability < 0.5 ? 0.0 : 1.0;
+    }
+  },
+
+  /**
+   * Enum constant representing a binomial distribution.
+   *
+   * @since 1.0.0
+   */
+  BINOMIAL("Binomial") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
+      double numberOfTrials = arguments[0];
+      double probabilityOfSuccess = arguments[1];
+      requireInteger(requireNonNegative(numberOfTrials));
+      requireZeroToOne(probabilityOfSuccess);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double numberOfTrials = arguments[0];
+      double probabilityOfSuccess = arguments[1];
+      return numberOfTrials * probabilityOfSuccess;
+    }
+  },
+
+  /**
+   * Enum constant representing an exponential distribution.
+   *
+   * @since 1.0.0
+   */
+  EXPONENTIAL("Exponential") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 1));
+      double rate = arguments[0];
+      requirePositive(rate);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double rate = arguments[0];
+      return 1.0 / rate;
+    }
+  },
+
+  /**
+   * Enum constant representing a gamma distribution.
+   *
+   * @since 1.0.0
+   */
+  GAMMA("Gamma") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
+      double shape = arguments[0];
+      double scale = arguments[1];
+      requirePositive(shape);
+      requirePositive(scale);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double shape = arguments[0];
+      double scale = arguments[1];
+      return shape * scale;
+    }
+  },
+
+  /**
+   * Enum constant representing a log-normal distribution.
+   *
+   * @since 1.0.0
+   */
+  LOG_NORMAL("LogNormal") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
+      // double normalMean = arguments[0];
+      double normalStandardDeviation = arguments[1];
+      requirePositive(normalStandardDeviation);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double normalMean = arguments[0];
+      double normalStandardDeviation = arguments[1];
+      return Math.exp(normalMean + normalStandardDeviation * normalStandardDeviation / 2.0);
+    }
+  },
+
+  /**
+   * Enum constant representing a pareto distribution.
+   *
+   * @since 1.0.0
+   */
+  PARETO("Pareto") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
+      double minimumValue = arguments[0];
+      double shape = arguments[1];
+      requirePositive(minimumValue);
+      requirePositive(shape);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double minimumValue = arguments[0];
+      double shape = arguments[1];
+      return shape > 1.0 ? (shape * minimumValue) / (shape - 1.0) : Double.MAX_VALUE;
+    }
+  },
+
+  /**
+   * Enum constant representing a truncated normal distribution.
+   *
+   * @since 1.0.0
+   */
+  TRUNCATED_NORMAL("TruncatedNormal") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
+      // double mean = arguments[0];
+      double standardDeviation = arguments[1];
+      requirePositive(standardDeviation);
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double mean = arguments[0];
+      // double standardDeviation = arguments[1];
+      return mean;
+    }
+  },
+
+  /**
+   * Enum constant representing a uniform distribution.
+   *
+   * @since 1.0.0
+   */
+  UNIFORM("Uniform") {
+    @Override
+    public void validateArguments(double... arguments) {
+      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
+      double minimum = arguments[0];
+      double maximum = arguments[1];
+      if (minimum > maximum) {
+        throw new IllegalArgumentException("Invalid arguments for distribution");
+      }
+    }
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      double minimum = arguments[0];
+      double maximum = arguments[1];
+      return (maximum + minimum) / 2.0;
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code EasyAndCertain}.
+   *
+   * <p>Defined as {@code Exponential(1.0)}
+   *
+   * @since 1.0.0
+   */
+  EASY_AND_CERTAIN("EasyAndCertain") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return new TtcFunction(EXPONENTIAL, new double[] {1.0}).getMeanTtc();
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code EasyAndUncertain}.
+   *
+   * <p>Defined as {@code Bernoulli(0.5) + Exponential(1.0)}
+   *
+   * @since 1.0.0
+   */
+  EASY_AND_UNCERTAIN("EasyAndUncertain") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return new TtcAddition(
+              new TtcFunction(BERNOULLI, new double[] {0.5}),
+              new TtcFunction(EXPONENTIAL, new double[] {1.0}))
+          .getMeanTtc();
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code HardAndCertain}.
+   *
+   * <p>Defined as {@code Exponential(0.1)}
+   *
+   * @since 1.0.0
+   */
+  HARD_AND_CERTAIN("HardAndCertain") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return new TtcFunction(EXPONENTIAL, new double[] {0.1}).getMeanTtc();
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code HardAndUncertain}.
+   *
+   * <p>Defined as {@code Bernoulli(0.5) + Exponential(0.1)}
+   *
+   * @since 1.0.0
+   */
+  HARD_AND_UNCERTAIN("HardAndUncertain") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return new TtcAddition(
+              new TtcFunction(BERNOULLI, new double[] {0.5}),
+              new TtcFunction(EXPONENTIAL, new double[] {0.1}))
+          .getMeanTtc();
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code VeryHardAndCertain}.
+   *
+   * <p>Defined as {@code Exponential(0.01)}
+   *
+   * @since 1.0.0
+   */
+  VERY_HARD_AND_CERTAIN("VeryHardAndCertain") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return new TtcFunction(EXPONENTIAL, new double[] {0.01}).getMeanTtc();
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code VeryHardAndUncertain}.
+   *
+   * <p>Defined as {@code Bernoulli(0.5) + Exponential(0.01)}
+   *
+   * @since 1.0.0
+   */
+  VERY_HARD_AND_UNCERTAIN("VeryHardAndUncertain") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return new TtcAddition(
+              new TtcFunction(BERNOULLI, new double[] {0.5}),
+              new TtcFunction(EXPONENTIAL, new double[] {0.01}))
+          .getMeanTtc();
+    }
+  },
+
+  /**
+   * Enum constant representing infinite TTC.
+   *
+   * @since 1.0.0
+   */
+  INFINITY("Infinity") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return Double.MAX_VALUE;
+    }
+  },
+
+  /**
+   * Enum constant representing zero TTC.
+   *
+   * @since 1.0.0
+   */
+  ZERO("Zero") {
+    @Override
+    public double getMeanTtc(double... arguments) {
+      this.validateArguments(arguments);
+      return 1.0 / 86400.0;
+    }
+  },
+
+  /**
+   * Enum constant representing enabled defense.
+   *
+   * @since 1.0.0
+   */
+  ENABLED("Enabled") {
+    @Override
+    public double getMeanProbability(double... arguments) {
+      this.validateArguments(arguments);
+      return 1.0;
+    }
+  },
+
+  /**
+   * Enum constant representing disabled defense.
+   *
+   * @since 1.0.0
+   */
+  DISABLED("Disabled") {
+    @Override
+    public double getMeanProbability(double... arguments) {
+      this.validateArguments(arguments);
+      return 0.0;
+    }
+  };
+
   private static final Map<String, TtcDistribution> DISTRIBUTION_MAP = new LinkedHashMap<>();
 
-  /** Bernoulli distribution. */
-  public static final TtcDistribution BERNOULLI =
-      new TtcDistribution("Bernoulli") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 1);
-          double probability = arguments.get(0);
-          checkProbability(probability);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double probability = arguments.get(0);
-          return probability < 0.5 ? 0.0 : Double.MAX_VALUE;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          checkArguments(arguments);
-          double probability = arguments.get(0);
-          return probability;
-        }
-      };
-
-  /** Binomial distribution. */
-  public static final TtcDistribution BINOMIAL =
-      new TtcDistribution("Binomial") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 2);
-          double numberOfTrials = arguments.get(0);
-          double probabilityOfSuccess = arguments.get(1);
-          checkNonNegativeInteger(numberOfTrials);
-          checkProbability(probabilityOfSuccess);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double numberOfTrials = arguments.get(0);
-          double probabilityOfSuccess = arguments.get(1);
-          return numberOfTrials * probabilityOfSuccess;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Exponential distribution. */
-  public static final TtcDistribution EXPONENTIAL =
-      new TtcDistribution("Exponential") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 1);
-          double rate = arguments.get(0);
-          checkPositive(rate);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double rate = arguments.get(0);
-          return 1.0 / rate;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Gamma distribution. */
-  public static final TtcDistribution GAMMA =
-      new TtcDistribution("Gamma") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 2);
-          double shape = arguments.get(0);
-          double scale = arguments.get(1);
-          checkPositive(shape);
-          checkPositive(scale);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double shape = arguments.get(0);
-          double scale = arguments.get(1);
-          return shape * scale;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Log-normal distribution. */
-  public static final TtcDistribution LOG_NORMAL =
-      new TtcDistribution("LogNormal") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 2);
-          // double normalMean = arguments.get(0);
-          double normalStandardDeviation = arguments.get(1);
-          checkPositive(normalStandardDeviation);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double normalMean = arguments.get(0);
-          double normalStandardDeviation = arguments.get(1);
-          return Math.exp(normalMean + normalStandardDeviation * normalStandardDeviation / 2.0);
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Pareto distribution. */
-  public static final TtcDistribution PARETO =
-      new TtcDistribution("Pareto") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 2);
-          double minimumValue = arguments.get(0);
-          double shape = arguments.get(1);
-          checkPositive(minimumValue);
-          checkPositive(shape);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double minimumValue = arguments.get(0);
-          double shape = arguments.get(1);
-          return shape > 1 ? (shape * minimumValue) / (shape - 1.0) : Double.MAX_VALUE;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Truncated normal distribution. */
-  public static final TtcDistribution TRUNCATED_NORMAL =
-      new TtcDistribution("TruncatedNormal") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 2);
-          // double mean = arguments.get(0);
-          double standardDeviation = arguments.get(1);
-          checkPositive(standardDeviation);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double mean = arguments.get(0);
-          // double standardDeviation = arguments.get(1);
-          return mean;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Uniform distribution. */
-  public static final TtcDistribution UNIFORM =
-      new TtcDistribution("Uniform") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 2);
-          double minimum = arguments.get(0);
-          double maximum = arguments.get(1);
-          if (minimum > maximum) {
-            throw new IllegalArgumentException("Invalid arguments for distribution");
-          }
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          double minimum = arguments.get(0);
-          double maximum = arguments.get(1);
-          return (maximum + minimum) / 2.0;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Easy and certain - {@code Exponential(1.0)}. */
-  public static final TtcDistribution EASY_AND_CERTAIN =
-      new TtcDistribution("EasyAndCertain") {
-        private final TtcExpression ttcExpression = new TtcFunction(EXPONENTIAL, List.of(1.0));
-
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return ttcExpression.getMeanTtc();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Easy and uncertain - {@code Bernoulli(0.5) + Exponential(1.0)}. */
-  public static final TtcDistribution EASY_AND_UNCERTAIN =
-      new TtcDistribution("EasyAndUncertain") {
-        private final TtcExpression ttcExpression =
-            new TtcAddition(
-                new TtcFunction(BERNOULLI, List.of(0.5)),
-                new TtcFunction(EXPONENTIAL, List.of(1.0)));
-
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return ttcExpression.getMeanTtc();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Hard and certain - {@code Exponential(0.1)}. */
-  public static final TtcDistribution HARD_AND_CERTAIN =
-      new TtcDistribution("HardAndCertain") {
-        private final TtcExpression ttcExpression = new TtcFunction(EXPONENTIAL, List.of(0.1));
-
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return ttcExpression.getMeanTtc();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Hard and uncertain - {@code Bernoulli(0.5) + Exponential(0.1)}. */
-  public static final TtcDistribution HARD_AND_UNCERTAIN =
-      new TtcDistribution("HardAndUncertain") {
-        private final TtcExpression ttcExpression =
-            new TtcAddition(
-                new TtcFunction(BERNOULLI, List.of(0.5)),
-                new TtcFunction(EXPONENTIAL, List.of(0.1)));
-
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return ttcExpression.getMeanTtc();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Very hard and certain - {@code Exponential(0.01)}. */
-  public static final TtcDistribution VERY_HARD_AND_CERTAIN =
-      new TtcDistribution("VeryHardAndCertain") {
-        private final TtcExpression ttcExpression = new TtcFunction(EXPONENTIAL, List.of(0.01));
-
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return ttcExpression.getMeanTtc();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Very hard and uncertain - {@code Bernoulli(0.5) + Exponential(0.01)}. */
-  public static final TtcDistribution VERY_HARD_AND_UNCERTAIN =
-      new TtcDistribution("VeryHardAndUncertain") {
-        private final TtcExpression ttcExpression =
-            new TtcAddition(
-                new TtcFunction(BERNOULLI, List.of(0.5)),
-                new TtcFunction(EXPONENTIAL, List.of(0.01)));
-
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return ttcExpression.getMeanTtc();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Infinity constant. */
-  public static final TtcDistribution INFINITY =
-      new TtcDistribution("Infinity") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return Double.MAX_VALUE;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Zero constant. */
-  public static final TtcDistribution ZERO =
-      new TtcDistribution("Zero") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          checkArguments(arguments);
-          return 0.0;
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-      };
-
-  /** Enabled constant. */
-  public static final TtcDistribution ENABLED =
-      new TtcDistribution("Enabled") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          return 1.0;
-        }
-      };
-
-  /** Disabled constant. */
-  public static final TtcDistribution DISABLED =
-      new TtcDistribution("Disabled") {
-        @Override
-        public void checkArguments(List<Double> arguments) {
-          checkArgumentList(arguments, 0);
-        }
-
-        @Override
-        public double getMeanTtc(List<Double> arguments) {
-          throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public double getMeanProbability(List<Double> arguments) {
-          return 0.0;
-        }
-      };
-
   static {
-    var distributions =
-        List.of(
-            BERNOULLI,
-            BINOMIAL,
-            EXPONENTIAL,
-            GAMMA,
-            LOG_NORMAL,
-            PARETO,
-            TRUNCATED_NORMAL,
-            UNIFORM,
-            EASY_AND_CERTAIN,
-            EASY_AND_UNCERTAIN,
-            HARD_AND_CERTAIN,
-            HARD_AND_UNCERTAIN,
-            VERY_HARD_AND_CERTAIN,
-            VERY_HARD_AND_UNCERTAIN,
-            INFINITY,
-            ZERO,
-            ENABLED,
-            DISABLED);
-    for (var distribution : distributions) {
-      DISTRIBUTION_MAP.put(distribution.getName(), distribution);
+    for (var distribution : values()) {
+      DISTRIBUTION_MAP.put(distribution.name, distribution);
     }
   }
 
   private final String name;
 
-  private TtcDistribution(String name) {
+  TtcDistribution(String name) {
     this.name = name;
   }
 
-  private static void checkArgumentList(List<Double> arguments, int size) {
-    checkNotNullList(arguments);
-    if (arguments.size() != size) {
+  private static double[] requireArgumentsSize(double[] arguments, int size) {
+    if (arguments.length != size) {
       throw new IllegalArgumentException("Invalid arguments for distribution");
     }
-    for (double argument : arguments) {
+    return arguments;
+  }
+
+  private static double[] requireFinite(double[] arguments) {
+    for (var argument : arguments) {
       if (!Double.isFinite(argument)) {
         throw new IllegalArgumentException("Invalid arguments for distribution");
       }
     }
+    return arguments;
   }
 
-  private static void checkProbability(double probability) {
-    if (probability < 0.0 || probability > 1.0) {
+  private static double requireZeroToOne(double argument) {
+    if (argument < 0.0 || argument > 1.0) {
       throw new IllegalArgumentException("Invalid arguments for distribution");
     }
+    return argument;
   }
 
-  private static void checkPositive(double value) {
-    if (value <= 0.0) {
+  private static double requirePositive(double argument) {
+    if (argument <= 0.0) {
       throw new IllegalArgumentException("Invalid arguments for distribution");
     }
+    return argument;
   }
 
-  private static void checkNonNegativeInteger(double value) {
-    if (value < 0.0) {
+  private static double requireNonNegative(double argument) {
+    if (argument < 0.0) {
       throw new IllegalArgumentException("Invalid arguments for distribution");
     }
-    if (Math.floor(value) != value) {
+    return argument;
+  }
+
+  private static double requireInteger(double argument) {
+    if (Math.floor(argument) != argument) {
       throw new IllegalArgumentException("Invalid arguments for distribution");
     }
+    return argument;
+  }
+
+  /**
+   * Validates {@code arguments} against this {@code TtcDistribution}.
+   *
+   * @param arguments the arguments of the distribution
+   * @throws java.lang.NullPointerException if {@code arguments} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for this {@code
+   *     TtcDistribution}
+   * @since 1.0.0
+   */
+  public void validateArguments(double... arguments) {
+    requireArgumentsSize(requireNonNull(arguments), 0);
+  }
+
+  /**
+   * Returns the mean TTC of this {@code TtcDistribution} object given {@code arguments}.
+   *
+   * @param arguments the arguments of the distribution
+   * @return the mean TTC of this {@code TtcDistribution} object given {@code arguments}
+   * @throws java.lang.UnsupportedOperationException if this {@code TtcDistribution} does not
+   *     support mean TTC
+   * @throws java.lang.NullPointerException if {@code arguments} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for this {@code
+   *     TtcDistribution}
+   * @since 1.0.0
+   */
+  public double getMeanTtc(double... arguments) {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Returns the mean probability of this {@code TtcDistribution} object given {@code arguments}.
+   *
+   * @param arguments the arguments of the distribution
+   * @return the mean probability of this {@code TtcDistribution} object given {@code arguments}
+   * @throws java.lang.UnsupportedOperationException if this {@code TtcDistribution} does not
+   *     support mean probability
+   * @throws java.lang.NullPointerException if {@code arguments} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for this {@code
+   *     TtcDistribution}
+   * @since 1.0.0
+   */
+  public double getMeanProbability(double... arguments) {
+    throw new UnsupportedOperationException();
   }
 
   /**
    * Returns the name of this {@code TtcDistribution} object.
    *
    * @return the name of this {@code TtcDistribution} object
+   * @since 1.0.0
    */
-  public String getName() {
-    return name;
+  @Override
+  public String toString() {
+    return this.name;
   }
-
-  /**
-   * Checks the given arguments against this {@code TtcDistribution} object.
-   *
-   * @param arguments the arguments of the distribution
-   * @throws NullPointerException if {@code arguments} or any object in {@code arguments} is {@code
-   *     null}
-   * @throws IllegalArgumentException if {@code arguments} is not valid for this {@code
-   *     TtcDistribution} object
-   */
-  public abstract void checkArguments(List<Double> arguments);
-
-  /**
-   * Returns the mean TTC of this {@code TtcDistribution} object given the arguments in {@code
-   * arguments}.
-   *
-   * @param arguments the arguments of the distribution
-   * @return the mean TTC of this {@code TtcDistribution} object given the arguments in {@code
-   *     arguments}
-   * @throws UnsupportedOperationException if this {@code TtcDistribution} does not support mean TTC
-   * @throws NullPointerException if {@code arguments} or any object in {@code arguments} is {@code
-   *     null}
-   * @throws IllegalArgumentException if {@code arguments} is not valid for this {@code
-   *     TtcDistribution} object
-   */
-  public abstract double getMeanTtc(List<Double> arguments);
-
-  /**
-   * Returns the mean probability of this {@code TtcDistribution} given the arguments in {@code
-   * arguments}.
-   *
-   * @param arguments the arguments of the distribution
-   * @return the mean probability of this {@code TtcDistribution} object given the arguments in
-   *     {@code arguments}
-   * @throws UnsupportedOperationException if this {@code TtcDistribution} does not support mean
-   *     probability
-   * @throws NullPointerException if {@code arguments} or any object in {@code arguments} is {@code
-   *     null}
-   * @throws IllegalArgumentException if {@code arguments} is not valid for this {@code
-   *     TtcDistribution} object
-   */
-  public abstract double getMeanProbability(List<Double> arguments);
 
   /**
    * Returns the distribution with the name {@code name}.
    *
    * @param name the name of the distribution
    * @return the distribution with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a distribution
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a distribution
+   * @since 1.0.0
    */
-  public static TtcDistribution get(String name) {
-    checkNotNull(name);
-    if (!DISTRIBUTION_MAP.containsKey(name)) {
-      throw new IllegalArgumentException(String.format("Invalid distribution \"%s\"", name));
+  public static TtcDistribution fromString(String name) {
+    requireNonNull(name);
+    if (!TtcDistribution.DISTRIBUTION_MAP.containsKey(name)) {
+      throw new IllegalArgumentException(String.format("TTC distribution \"%s\" not found", name));
     }
-    return DISTRIBUTION_MAP.get(name);
+    return TtcDistribution.DISTRIBUTION_MAP.get(name);
   }
 }

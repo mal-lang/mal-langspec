@@ -16,128 +16,73 @@
 
 package org.mal_lang.langspec.ttc;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.util.ArrayList;
 
 /**
- * Immutable class representing a TTC expression of an attack step or a defense in a MAL language.
+ * Immutable class representing a TTC expression in a MAL language.
+ *
+ * @since 1.0.0
  */
 public abstract class TtcExpression {
-  static final String ADDITION = "addition";
-  static final String SUBTRACTION = "subtraction";
-  static final String MULTIPLICATION = "multiplication";
-  static final String DIVISION = "division";
-  static final String EXPONENTIATION = "exponentiation";
-  static final String FUNCTION = "function";
-  static final String NUMBER = "number";
-
-  private final String type;
-
-  /** Singleton object representing the empty TTC expression {@code "[]"}. */
-  public static final TtcExpression EMPTY =
-      new TtcExpression(null) {
-        @Override
-        public String getType() {
-          throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public double getMeanTtc() {
-          return 0.0;
-        }
-
-        @Override
-        public double getMeanProbability() {
-          throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public JsonValue toJson() {
-          return JsonValue.NULL;
-        }
-      };
-
-  TtcExpression(String type) {
-    this.type = type;
-  }
-
-  /**
-   * Returns the type of this {@code TtcExpression} object.
-   *
-   * @return the type of this {@code TtcExpression} object
-   * @throws UnsupportedOperationException if this {@code TtcExpression} object is {@link EMPTY}
-   */
-  public String getType() {
-    return type;
-  }
-
   /**
    * Returns the mean TTC of this {@code TtcExpression} object.
    *
    * @return the mean TTC of this {@code TtcExpression} object
-   * @throws UnsupportedOperationException if this {@code TtcExpression} does not support mean TTC
+   * @throws java.lang.UnsupportedOperationException if this {@code TtcExpression} does not support
+   *     mean TTC
+   * @since 1.0.0
    */
-  public abstract double getMeanTtc();
+  public double getMeanTtc() {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Returns the mean probability of this {@code TtcExpression} object.
    *
    * @return the mean probability of this {@code TtcExpression} object
-   * @throws UnsupportedOperationException if this {@code TtcExpression} does not support mean
-   *     probability
+   * @throws java.lang.UnsupportedOperationException if this {@code TtcExpression} does not support
+   *     mean probability
+   * @since 1.0.0
    */
-  public abstract double getMeanProbability();
+  public double getMeanProbability() {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Returns the JSON representation of this {@code TtcExpression} object.
    *
    * @return the JSON representation of this {@code TtcExpression} object
+   * @since 1.0.0
    */
-  public abstract JsonValue toJson();
+  public abstract JsonObject toJson();
 
   /**
-   * Creates a new {@code TtcExpression} object from the JSON representation of a {@code
-   * TtcExpression} object.
+   * Creates a new {@code TtcExpression} from a {@link jakarta.json.JsonObject}.
    *
-   * @param jsonTtc the JSON representation of a {@code TtcExpression} object
-   * @return a new {@code TtcExpression} object from the JSON representation of a {@code
-   *     TtcExpression} object
-   * @throws NullPointerException if {@code jsonTtc} is {@code null}
+   * @param jsonTtcExpression the {@link jakarta.json.JsonObject}
+   * @return a new {@code TtcExpression}
+   * @throws java.lang.NullPointerException if {@code jsonTtcExpression} is {@code null}
+   * @since 1.0.0
    */
-  public static TtcExpression fromJson(JsonObject jsonTtc) {
-    checkNotNull(jsonTtc);
-    var type = jsonTtc.getString("type");
-    switch (type) {
-      case TtcExpression.ADDITION:
-        return new TtcAddition(
-            fromJson(jsonTtc.getJsonObject("lhs")), fromJson(jsonTtc.getJsonObject("rhs")));
-      case TtcExpression.SUBTRACTION:
-        return new TtcSubtraction(
-            fromJson(jsonTtc.getJsonObject("lhs")), fromJson(jsonTtc.getJsonObject("rhs")));
-      case TtcExpression.MULTIPLICATION:
-        return new TtcMultiplication(
-            fromJson(jsonTtc.getJsonObject("lhs")), fromJson(jsonTtc.getJsonObject("rhs")));
-      case TtcExpression.DIVISION:
-        return new TtcDivision(
-            fromJson(jsonTtc.getJsonObject("lhs")), fromJson(jsonTtc.getJsonObject("rhs")));
-      case TtcExpression.EXPONENTIATION:
-        return new TtcExponentiation(
-            fromJson(jsonTtc.getJsonObject("lhs")), fromJson(jsonTtc.getJsonObject("rhs")));
-      case TtcExpression.FUNCTION:
-        var arguments = new ArrayList<Double>();
-        var jsonArguments = jsonTtc.getJsonArray("arguments");
-        for (int i = 0; i < jsonArguments.size(); i++) {
-          arguments.add(jsonArguments.getJsonNumber(i).doubleValue());
-        }
-        return new TtcFunction(TtcDistribution.get(jsonTtc.getString("name")), arguments);
-      case TtcExpression.NUMBER:
-        return new TtcNumber(jsonTtc.getJsonNumber("value").doubleValue());
+  public static TtcExpression fromJson(JsonObject jsonTtcExpression) {
+    requireNonNull(jsonTtcExpression);
+    switch (jsonTtcExpression.getString("type")) {
+      case "addition":
+      case "subtraction":
+      case "multiplication":
+      case "division":
+      case "exponentiation":
+        return TtcBinaryOperation.fromJson(jsonTtcExpression);
+      case "function":
+        return TtcFunction.fromJson(jsonTtcExpression);
+      case "number":
+        return TtcNumber.fromJson(jsonTtcExpression);
       default:
-        throw new IllegalArgumentException(
-            String.format("Invalid TtcExpression type \"%s\"", type));
+        throw new RuntimeException(
+            String.format(
+                "Invalid TTC expression type \"%s\"", jsonTtcExpression.getString("type")));
     }
   }
 }

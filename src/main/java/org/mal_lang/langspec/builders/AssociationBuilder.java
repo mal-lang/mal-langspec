@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package org.mal_lang.langspec;
+package org.mal_lang.langspec.builders;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
+import static org.mal_lang.langspec.Utils.requireIdentifier;
 
 import jakarta.json.JsonObject;
-import java.util.Map;
+import org.mal_lang.langspec.Multiplicity;
 
-/** A builder for creating {@link Association} objects. */
+/**
+ * A builder for creating {@link org.mal_lang.langspec.Association} objects.
+ *
+ * @since 1.0.0
+ */
 public final class AssociationBuilder {
   private final String name;
-  private MetaBuilder meta = Meta.builder();
+  private final MetaBuilder meta = new MetaBuilder();
   private final String leftAsset;
   private final String leftField;
   private final Multiplicity leftMultiplicity;
@@ -32,7 +37,24 @@ public final class AssociationBuilder {
   private final String rightField;
   private final Multiplicity rightMultiplicity;
 
-  AssociationBuilder(
+  /**
+   * Constructs a new {@code AssociationBuilder} object.
+   *
+   * @param name the name of the association
+   * @param leftAsset the left asset of the association
+   * @param leftField the left field of the association
+   * @param leftMultiplicity the left multiplicity of the association
+   * @param rightAsset the right asset of the association
+   * @param rightField the right field of the association
+   * @param rightMultiplicity the right multiplicity of the association
+   * @throws java.lang.NullPointerException if {@code name}, {@code leftAsset}, {@code leftField},
+   *     {@code leftMultiplicity}, {@code rightAsset}, {@code rightField}, or {@code
+   *     rightMultiplicity} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name}, {@code leftAsset}, {@code
+   *     leftField}, {@code rightAsset}, or {@code rightField} is not a valid identifier
+   * @since 1.0.0
+   */
+  public AssociationBuilder(
       String name,
       String leftAsset,
       String leftField,
@@ -40,131 +62,115 @@ public final class AssociationBuilder {
       String rightAsset,
       String rightField,
       Multiplicity rightMultiplicity) {
-    this.name = name;
-    this.leftAsset = leftAsset;
-    this.leftField = leftField;
-    this.leftMultiplicity = leftMultiplicity;
-    this.rightAsset = rightAsset;
-    this.rightField = rightField;
-    this.rightMultiplicity = rightMultiplicity;
+    this.name = requireIdentifier(name);
+    this.leftAsset = requireIdentifier(leftAsset);
+    this.leftField = requireIdentifier(leftField);
+    this.leftMultiplicity = requireNonNull(leftMultiplicity);
+    this.rightAsset = requireIdentifier(rightAsset);
+    this.rightField = requireIdentifier(rightField);
+    this.rightMultiplicity = requireNonNull(rightMultiplicity);
   }
 
   /**
    * Returns the name of this {@code AssociationBuilder} object.
    *
    * @return the name of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public String getName() {
-    return name;
+    return this.name;
   }
 
   /**
    * Returns the meta info of this {@code AssociationBuilder} object.
    *
    * @return the meta info of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public MetaBuilder getMeta() {
-    return meta;
-  }
-
-  /**
-   * Sets the meta info of this {@code AssociationBuilder} object.
-   *
-   * @param meta the meta info to set
-   * @return this {@code AssociationBuilder} object
-   * @throws NullPointerException if {@code meta} is {@code null}
-   */
-  public AssociationBuilder setMeta(MetaBuilder meta) {
-    checkNotNull(meta);
-    this.meta = meta;
-    return this;
+    return this.meta;
   }
 
   /**
    * Returns the left asset of this {@code AssociationBuilder} object.
    *
    * @return the left asset of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public String getLeftAsset() {
-    return leftAsset;
+    return this.leftAsset;
   }
 
   /**
    * Returns the left field of this {@code AssociationBuilder} object.
    *
    * @return the left field of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public String getLeftField() {
-    return leftField;
+    return this.leftField;
   }
 
   /**
    * Returns the left multiplicity of this {@code AssociationBuilder} object.
    *
    * @return the left multiplicity of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public Multiplicity getLeftMultiplicity() {
-    return leftMultiplicity;
+    return this.leftMultiplicity;
   }
 
   /**
    * Returns the right asset of this {@code AssociationBuilder} object.
    *
    * @return the right asset of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public String getRightAsset() {
-    return rightAsset;
+    return this.rightAsset;
   }
 
   /**
    * Returns the right field of this {@code AssociationBuilder} object.
    *
    * @return the right field of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public String getRightField() {
-    return rightField;
+    return this.rightField;
   }
 
   /**
    * Returns the right multiplicity of this {@code AssociationBuilder} object.
    *
    * @return the right multiplicity of this {@code AssociationBuilder} object
+   * @since 1.0.0
    */
   public Multiplicity getRightMultiplicity() {
-    return rightMultiplicity;
+    return this.rightMultiplicity;
   }
 
   /**
-   * Creates a new {@link Association} object.
+   * Creates a new {@code AssociationBuilder} from a {@link jakarta.json.JsonObject}.
    *
-   * @param assets a map of all assets in the language
-   * @return a new {@link Association} object
-   * @throws NullPointerException if {@code assets} is {@code null}
-   * @throws IllegalArgumentException if {@code assets} does not contain the left asset or the right
-   *     asset of this {@code AssociationBuilder} object
+   * @param jsonAssociation the {@link jakarta.json.JsonObject}
+   * @return a new {@code AssociationBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonAssociation} is {@code null}
+   * @since 1.0.0
    */
-  public Association build(Map<String, Asset> assets) {
-    checkNotNull(assets);
-    if (!assets.containsKey(leftAsset)) {
-      throw new IllegalArgumentException(String.format("Asset \"%s\" not found", leftAsset));
-    }
-    if (!assets.containsKey(rightAsset)) {
-      throw new IllegalArgumentException(String.format("Asset \"%s\" not found", rightAsset));
-    }
-    var leftFieldObject = new Field(leftField, assets.get(leftAsset), leftMultiplicity);
-    var rightFieldObject = new Field(rightField, assets.get(rightAsset), rightMultiplicity);
-    return new Association(name, meta.build(), leftFieldObject, rightFieldObject);
-  }
-
-  static AssociationBuilder fromJson(JsonObject jsonAssociation) {
-    return Association.builder(
+  public static AssociationBuilder fromJson(JsonObject jsonAssociation) {
+    requireNonNull(jsonAssociation);
+    var builder =
+        new AssociationBuilder(
             jsonAssociation.getString("name"),
             jsonAssociation.getString("leftAsset"),
             jsonAssociation.getString("leftField"),
             Multiplicity.fromJson(jsonAssociation.getJsonObject("leftMultiplicity")),
             jsonAssociation.getString("rightAsset"),
             jsonAssociation.getString("rightField"),
-            Multiplicity.fromJson(jsonAssociation.getJsonObject("rightMultiplicity")))
-        .setMeta(MetaBuilder.fromJson(jsonAssociation.getJsonObject("meta")));
+            Multiplicity.fromJson(jsonAssociation.getJsonObject("rightMultiplicity")));
+    builder.getMeta().fromJson(jsonAssociation.getJsonObject("meta"));
+    return builder;
   }
 }

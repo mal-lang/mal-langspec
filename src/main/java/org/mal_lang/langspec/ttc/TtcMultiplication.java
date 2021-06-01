@@ -16,20 +16,25 @@
 
 package org.mal_lang.langspec.ttc;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
 /**
- * Immutable class representing a TTC multiplication of an attack step or a defense in a MAL
- * language.
+ * Immutable class representing a TTC multiplication in a MAL language.
+ *
+ * @since 1.0.0
  */
 public final class TtcMultiplication extends TtcBinaryOperation {
   /**
    * Constructs a new {@code TtcMultiplication} object.
    *
-   * @param lhs the left-hand side of the new {@code TtcMultiplication} object
-   * @param rhs the right-hand side of the new {@code TtcMultiplication} object
-   * @throws NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @param lhs the left-hand side of the multiplication
+   * @param rhs the right-hand side of the multiplication
+   * @throws java.lang.NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @since 1.0.0
    */
   public TtcMultiplication(TtcExpression lhs, TtcExpression rhs) {
-    super(TtcExpression.MULTIPLICATION, lhs, rhs);
+    super(lhs, rhs);
   }
 
   @Override
@@ -37,5 +42,14 @@ public final class TtcMultiplication extends TtcBinaryOperation {
     double lhsMean = getLhs().getMeanTtc();
     double rhsMean = getRhs().getMeanTtc();
     return lhsMean * rhsMean;
+  }
+
+  @Override
+  public JsonObject toJson() {
+    return Json.createObjectBuilder()
+        .add("type", "multiplication")
+        .add("lhs", this.getLhs().toJson())
+        .add("rhs", this.getRhs().toJson())
+        .build();
   }
 }
