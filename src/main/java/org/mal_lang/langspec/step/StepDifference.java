@@ -18,7 +18,6 @@ package org.mal_lang.langspec.step;
 
 import static java.util.Objects.requireNonNull;
 
-import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import java.util.Map;
 import org.mal_lang.langspec.Asset;
@@ -38,11 +37,7 @@ public final class StepDifference extends StepBinaryOperation {
 
   @Override
   public JsonObject toJson() {
-    return Json.createObjectBuilder()
-        .add("type", "difference")
-        .add("lhs", this.getLhs().toJson())
-        .add("rhs", this.getRhs().toJson())
-        .build();
+    return this.toJson("difference");
   }
 
   static StepDifference fromBuilder(

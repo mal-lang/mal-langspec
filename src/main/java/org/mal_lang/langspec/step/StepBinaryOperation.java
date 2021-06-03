@@ -18,6 +18,8 @@ package org.mal_lang.langspec.step;
 
 import static java.util.Objects.requireNonNull;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import org.mal_lang.langspec.Asset;
 
 /**
@@ -54,5 +56,13 @@ public abstract class StepBinaryOperation extends StepExpression {
    */
   public StepExpression getRhs() {
     return this.rhs;
+  }
+
+  JsonObject toJson(String type) {
+    return Json.createObjectBuilder()
+        .add("type", type)
+        .add("lhs", this.lhs.toJson())
+        .add("rhs", this.rhs.toJson())
+        .build();
   }
 }

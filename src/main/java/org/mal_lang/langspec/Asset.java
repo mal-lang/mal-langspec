@@ -217,9 +217,7 @@ public final class Asset {
         this.hasSuperAsset()
             ? this.getSuperAsset().getFieldsMap()
             : new LinkedHashMap<String, Field>();
-    for (var entry : this.fields.entrySet()) {
-      fieldsMap.put(entry.getKey(), entry.getValue());
-    }
+    fieldsMap.putAll(this.fields);
     return fieldsMap;
   }
 
@@ -314,9 +312,7 @@ public final class Asset {
         this.hasSuperAsset()
             ? this.getSuperAsset().getVariablesMap()
             : new LinkedHashMap<String, Variable>();
-    for (var entry : this.variables.entrySet()) {
-      variablesMap.put(entry.getKey(), entry.getValue());
-    }
+    variablesMap.putAll(this.variables);
     return variablesMap;
   }
 
@@ -411,9 +407,7 @@ public final class Asset {
         this.hasSuperAsset()
             ? this.getSuperAsset().getAttackStepsMap()
             : new LinkedHashMap<String, AttackStep>();
-    for (var entry : this.attackSteps.entrySet()) {
-      attackStepsMap.put(entry.getKey(), entry.getValue());
-    }
+    attackStepsMap.putAll(this.attackSteps);
     return attackStepsMap;
   }
 

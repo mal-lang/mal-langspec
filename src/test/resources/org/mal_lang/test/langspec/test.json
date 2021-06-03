@@ -183,6 +183,51 @@
               "name": "var1"
             }
           }
+        },
+        {
+          "name": "var3",
+          "stepExpression": {
+            "type": "difference",
+            "lhs": {
+              "type": "intersection",
+              "lhs": {
+                "type": "union",
+                "lhs": {
+                  "type": "variable",
+                  "name": "var1"
+                },
+                "rhs": {
+                  "type": "variable",
+                  "name": "var2"
+                }
+              },
+              "rhs": {
+                "type": "collect",
+                "lhs": {
+                  "type": "variable",
+                  "name": "var1"
+                },
+                "rhs": {
+                  "type": "field",
+                  "name": "asset10s"
+                }
+              }
+            },
+            "rhs": {
+              "type": "collect",
+              "lhs": {
+                "type": "transitive",
+                "stepExpression": {
+                  "type": "field",
+                  "name": "subAssets"
+                }
+              },
+              "rhs": {
+                "type": "variable",
+                "name": "var1"
+              }
+            }
+          }
         }
       ],
       "attackSteps": [

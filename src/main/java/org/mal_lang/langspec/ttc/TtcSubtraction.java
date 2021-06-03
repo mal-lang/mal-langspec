@@ -16,7 +16,6 @@
 
 package org.mal_lang.langspec.ttc;
 
-import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
 /**
@@ -46,10 +45,6 @@ public final class TtcSubtraction extends TtcBinaryOperation {
 
   @Override
   public JsonObject toJson() {
-    return Json.createObjectBuilder()
-        .add("type", "subtraction")
-        .add("lhs", this.getLhs().toJson())
-        .add("rhs", this.getRhs().toJson())
-        .build();
+    return this.toJson("subtraction");
   }
 }

@@ -30,6 +30,8 @@ public enum TtcDistribution {
   /**
    * Enum constant representing a bernoulli distribution.
    *
+   * <p>Arguments: {@code [probability]}, where 0 ≤ {@code probability} ≤ 1
+   *
    * @since 1.0.0
    */
   BERNOULLI("Bernoulli") {
@@ -58,6 +60,9 @@ public enum TtcDistribution {
   /**
    * Enum constant representing a binomial distribution.
    *
+   * <p>Arguments: {@code [numberOfTrials, probabilityOfSuccess]}, where 0 ≤ {@code numberOfTrials},
+   * {@code numberOfTrials} ∈ ℤ, 0 ≤ {@code probabilityOfSuccess} ≤ 1
+   *
    * @since 1.0.0
    */
   BINOMIAL("Binomial") {
@@ -82,6 +87,8 @@ public enum TtcDistribution {
   /**
    * Enum constant representing an exponential distribution.
    *
+   * <p>Arguments: {@code [rate]}, where 0 {@literal <} {@code rate}
+   *
    * @since 1.0.0
    */
   EXPONENTIAL("Exponential") {
@@ -102,6 +109,9 @@ public enum TtcDistribution {
 
   /**
    * Enum constant representing a gamma distribution.
+   *
+   * <p>Arguments: {@code [shape, scale]}, where 0 {@literal <} {@code shape}, 0 {@literal <} {@code
+   * scale}
    *
    * @since 1.0.0
    */
@@ -127,13 +137,15 @@ public enum TtcDistribution {
   /**
    * Enum constant representing a log-normal distribution.
    *
+   * <p>Arguments: {@code [normalMean, normalStandardDeviation]}, where 0 {@literal <} {@code
+   * normalStandardDeviation}
+   *
    * @since 1.0.0
    */
   LOG_NORMAL("LogNormal") {
     @Override
     public void validateArguments(double... arguments) {
       requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
-      // double normalMean = arguments[0];
       double normalStandardDeviation = arguments[1];
       requirePositive(normalStandardDeviation);
     }
@@ -149,6 +161,9 @@ public enum TtcDistribution {
 
   /**
    * Enum constant representing a pareto distribution.
+   *
+   * <p>Arguments: {@code [minimumValue, shape]}, where 0 {@literal <} {@code minimumValue}, 0
+   * {@literal <} {@code shape}
    *
    * @since 1.0.0
    */
@@ -174,13 +189,14 @@ public enum TtcDistribution {
   /**
    * Enum constant representing a truncated normal distribution.
    *
+   * <p>Arguments: {@code [mean, standardDeviation]}, where 0 {@literal <} {@code standardDeviation}
+   *
    * @since 1.0.0
    */
   TRUNCATED_NORMAL("TruncatedNormal") {
     @Override
     public void validateArguments(double... arguments) {
       requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));
-      // double mean = arguments[0];
       double standardDeviation = arguments[1];
       requirePositive(standardDeviation);
     }
@@ -189,13 +205,14 @@ public enum TtcDistribution {
     public double getMeanTtc(double... arguments) {
       this.validateArguments(arguments);
       double mean = arguments[0];
-      // double standardDeviation = arguments[1];
       return mean;
     }
   },
 
   /**
    * Enum constant representing a uniform distribution.
+   *
+   * <p>Arguments: {@code [minimum, maximum]}, where {@code minimum} ≤ {@code maximum}
    *
    * @since 1.0.0
    */

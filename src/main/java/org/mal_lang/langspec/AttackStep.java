@@ -155,9 +155,7 @@ public final class AttackStep {
         this.hasSuperAttackStep()
             ? this.getSuperAttackStep().getTagsSet()
             : new LinkedHashSet<String>();
-    for (var tag : this.tags) {
-      tagsSet.add(tag);
-    }
+    tagsSet.addAll(this.tags);
     return tagsSet;
   }
 
@@ -303,9 +301,7 @@ public final class AttackStep {
             ? this.getSuperAttackStep().getRequiresList()
             : new ArrayList<StepExpression>();
     if (this.hasLocalRequires()) {
-      for (var stepExpression : this.requires.getStepExpressions()) {
-        requiresList.add(stepExpression);
-      }
+      requiresList.addAll(this.requires.getStepExpressions());
     }
     return requiresList;
   }
@@ -352,9 +348,7 @@ public final class AttackStep {
             ? this.getSuperAttackStep().getReachesList()
             : new ArrayList<StepExpression>();
     if (this.hasLocalReaches()) {
-      for (var stepExpression : this.reaches.getStepExpressions()) {
-        reachesList.add(stepExpression);
-      }
+      reachesList.addAll(this.reaches.getStepExpressions());
     }
     return reachesList;
   }

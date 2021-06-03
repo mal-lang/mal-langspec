@@ -18,6 +18,7 @@ package org.mal_lang.langspec.ttc;
 
 import static java.util.Objects.requireNonNull;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
 /**
@@ -52,6 +53,14 @@ public abstract class TtcBinaryOperation extends TtcExpression {
    */
   public TtcExpression getRhs() {
     return this.rhs;
+  }
+
+  JsonObject toJson(String type) {
+    return Json.createObjectBuilder()
+        .add("type", type)
+        .add("lhs", this.lhs.toJson())
+        .add("rhs", this.rhs.toJson())
+        .build();
   }
 
   /**
