@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AttackStep.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">AttackStep.java</span></div><h1>AttackStep.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import org.mal_lang.langspec.builders.AttackStepBuilder;
+import org.mal_lang.langspec.step.StepExpression;
+import org.mal_lang.langspec.ttc.TtcExpression;
+
+/**
+ * Immutable class representing an attack step of an asset in a MAL language.
+ *
+ * @since 1.0.0
+ */
+public final class AttackStep {
+  private final String name;
+  private final Meta meta;
+  private final Asset asset;
+  private final AttackStepType type;
+  private final Set&lt;String&gt; tags;
+  private final Risk risk;
+  private final TtcExpression ttc;
+  private final Steps requires;
+  private final Steps reaches;
+
+  private AttackStep(
+      String name,
+      Meta meta,
+      Asset asset,
+      AttackStepType type,
+      List&lt;String&gt; tags,
+      Risk risk,
+      TtcExpression ttc,
+      Steps requires,
+<span class="fc" id="L56">      Steps reaches) {</span>
+<span class="fc" id="L57">    this.name = requireNonNull(name);</span>
+<span class="fc" id="L58">    this.meta = requireNonNull(meta);</span>
+<span class="fc" id="L59">    this.asset = requireNonNull(asset);</span>
+<span class="fc" id="L60">    this.type = requireNonNull(type);</span>
+<span class="fc" id="L61">    this.tags = new LinkedHashSet&lt;&gt;(requireNonNull(tags));</span>
+<span class="fc" id="L62">    this.risk = risk;</span>
+<span class="fc" id="L63">    this.ttc = ttc;</span>
+<span class="fc" id="L64">    this.requires = requires;</span>
+<span class="fc" id="L65">    this.reaches = reaches;</span>
+<span class="fc" id="L66">  }</span>
+
+  /**
+   * Returns the name of this {@code AttackStep} object.
+   *
+   * @return the name of this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public String getName() {
+<span class="fc" id="L75">    return this.name;</span>
+  }
+
+  /**
+   * Returns the meta info of this {@code AttackStep} object.
+   *
+   * @return the meta info of this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public Meta getMeta() {
+<span class="nc" id="L85">    return this.meta;</span>
+  }
+
+  /**
+   * Returns the asset of this {@code AttackStep} object.
+   *
+   * @return the asset of this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public Asset getAsset() {
+<span class="fc" id="L95">    return this.asset;</span>
+  }
+
+  /**
+   * Returns the type of this {@code AttackStep} object.
+   *
+   * @return the type of this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public AttackStepType getType() {
+<span class="nc" id="L105">    return this.type;</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a local tag in this {@code AttackStep} object.
+   *
+   * @param name the name of the local tag
+   * @return whether {@code name} is the name of a local tag in this {@code AttackStep} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasLocalTag(String name) {
+<span class="nc" id="L117">    return this.tags.contains(requireNonNull(name));</span>
+  }
+
+  /**
+   * Returns a list of all local tags in this {@code AttackStep} object.
+   *
+   * @return a list of all local tags in this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public List&lt;String&gt; getLocalTags() {
+<span class="nc" id="L127">    return List.copyOf(this.tags);</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a tag in this {@code AttackStep} object.
+   *
+   * @param name the name of the tag
+   * @return whether {@code name} is the name of a tag in this {@code AttackStep} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasTag(String name) {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">    return this.hasLocalTag(name)</span>
+<span class="nc bnc" id="L140" title="All 4 branches missed.">        || this.hasSuperAttackStep() &amp;&amp; this.getSuperAttackStep().hasTag(name);</span>
+  }
+
+  /**
+   * Returns a list of all tags in this {@code AttackStep} object.
+   *
+   * @return a list of all tags in this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public List&lt;String&gt; getTags() {
+<span class="nc" id="L150">    return List.copyOf(this.getTagsSet());</span>
+  }
+
+  private Set&lt;String&gt; getTagsSet() {
+    var tagsSet =
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        this.hasSuperAttackStep()</span>
+<span class="nc" id="L156">            ? this.getSuperAttackStep().getTagsSet()</span>
+<span class="nc" id="L157">            : new LinkedHashSet&lt;String&gt;();</span>
+<span class="nc" id="L158">    tagsSet.addAll(this.tags);</span>
+<span class="nc" id="L159">    return tagsSet;</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has a local risk.
+   *
+   * @return whether this {@code AttackStep} object has a local risk
+   * @since 1.0.0
+   */
+  public boolean hasLocalRisk() {
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    return this.risk != null;</span>
+  }
+
+  /**
+   * Returns the local risk of this {@code AttackStep} object.
+   *
+   * @return the local risk of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     a local risk
+   * @since 1.0.0
+   */
+  public Risk getLocalRisk() {
+<span class="nc bnc" id="L181" title="All 2 branches missed.">    if (!this.hasLocalRisk()) {</span>
+<span class="nc" id="L182">      throw new UnsupportedOperationException(&quot;Local risk not found&quot;);</span>
+    }
+<span class="nc" id="L184">    return this.risk;</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has a risk.
+   *
+   * @return whether this {@code AttackStep} object has a risk
+   * @since 1.0.0
+   */
+  public boolean hasRisk() {
+<span class="nc bnc" id="L194" title="All 6 branches missed.">    return this.hasLocalRisk() || this.hasSuperAttackStep() &amp;&amp; this.getSuperAttackStep().hasRisk();</span>
+  }
+
+  /**
+   * Returns the risk of this {@code AttackStep} object.
+   *
+   * @return the risk of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     a risk
+   * @since 1.0.0
+   */
+  public Risk getRisk() {
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    if (!this.hasRisk()) {</span>
+<span class="nc" id="L207">      throw new UnsupportedOperationException(&quot;Risk not found&quot;);</span>
+    }
+<span class="nc bnc" id="L209" title="All 2 branches missed.">    return this.hasLocalRisk() ? this.getLocalRisk() : this.getSuperAttackStep().getRisk();</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has a local TTC.
+   *
+   * @return whether this {@code AttackStep} object has a local TTC
+   * @since 1.0.0
+   */
+  public boolean hasLocalTtc() {
+<span class="nc bnc" id="L219" title="All 2 branches missed.">    return this.ttc != null;</span>
+  }
+
+  /**
+   * Returns the local TTC of this {@code AttackStep} object.
+   *
+   * @return the local TTC of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     a local TTC
+   * @since 1.0.0
+   */
+  public TtcExpression getLocalTtc() {
+<span class="nc bnc" id="L231" title="All 2 branches missed.">    if (!this.hasLocalTtc()) {</span>
+<span class="nc" id="L232">      throw new UnsupportedOperationException(&quot;Local TTC not found&quot;);</span>
+    }
+<span class="nc" id="L234">    return this.ttc;</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has a TTC.
+   *
+   * @return whether this {@code AttackStep} object has a TTC
+   * @since 1.0.0
+   */
+  public boolean hasTtc() {
+<span class="nc bnc" id="L244" title="All 6 branches missed.">    return this.hasLocalTtc() || this.hasSuperAttackStep() &amp;&amp; this.getSuperAttackStep().hasTtc();</span>
+  }
+
+  /**
+   * Returns the TTC of this {@code AttackStep} object.
+   *
+   * @return the TTC of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     a TTC
+   * @since 1.0.0
+   */
+  public TtcExpression getTtc() {
+<span class="nc bnc" id="L256" title="All 2 branches missed.">    if (!this.hasTtc()) {</span>
+<span class="nc" id="L257">      throw new UnsupportedOperationException(&quot;TTC not found&quot;);</span>
+    }
+<span class="nc bnc" id="L259" title="All 2 branches missed.">    return this.hasLocalTtc() ? this.getLocalTtc() : this.getSuperAttackStep().getTtc();</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has local requires steps.
+   *
+   * @return whether this {@code AttackStep} object has local requires steps
+   * @since 1.0.0
+   */
+  public boolean hasLocalRequires() {
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">    return this.requires != null;</span>
+  }
+
+  /**
+   * Returns the local requires steps of this {@code AttackStep} object.
+   *
+   * @return the local requires steps of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     local requires steps
+   * @since 1.0.0
+   */
+  public Steps getLocalRequires() {
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">    if (!this.hasLocalRequires()) {</span>
+<span class="nc" id="L282">      throw new UnsupportedOperationException(&quot;Local requires not found&quot;);</span>
+    }
+<span class="fc" id="L284">    return this.requires;</span>
+  }
+
+  /**
+   * Returns the requires steps of this {@code AttackStep} object.
+   *
+   * @return the requires steps of this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public List&lt;StepExpression&gt; getRequires() {
+<span class="nc" id="L294">    return List.copyOf(this.getRequiresList());</span>
+  }
+
+  private List&lt;StepExpression&gt; getRequiresList() {
+<span class="nc bnc" id="L298" title="All 4 branches missed.">    var overrides = this.hasLocalRequires() &amp;&amp; this.requires.overrides();</span>
+    var requiresList =
+<span class="nc bnc" id="L300" title="All 4 branches missed.">        this.hasSuperAttackStep() &amp;&amp; !overrides</span>
+<span class="nc" id="L301">            ? this.getSuperAttackStep().getRequiresList()</span>
+<span class="nc" id="L302">            : new ArrayList&lt;StepExpression&gt;();</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">    if (this.hasLocalRequires()) {</span>
+<span class="nc" id="L304">      requiresList.addAll(this.requires.getStepExpressions());</span>
+    }
+<span class="nc" id="L306">    return requiresList;</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has local reaches steps.
+   *
+   * @return whether this {@code AttackStep} object has local reaches steps
+   * @since 1.0.0
+   */
+  public boolean hasLocalReaches() {
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">    return this.reaches != null;</span>
+  }
+
+  /**
+   * Returns the local reaches steps of this {@code AttackStep} object.
+   *
+   * @return the local reaches steps of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     local reaches steps
+   * @since 1.0.0
+   */
+  public Steps getLocalReaches() {
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">    if (!this.hasLocalReaches()) {</span>
+<span class="nc" id="L329">      throw new UnsupportedOperationException(&quot;Local reaches not found&quot;);</span>
+    }
+<span class="fc" id="L331">    return this.reaches;</span>
+  }
+
+  /**
+   * Returns the reaches steps of this {@code AttackStep} object.
+   *
+   * @return the reaches steps of this {@code AttackStep} object
+   * @since 1.0.0
+   */
+  public List&lt;StepExpression&gt; getReaches() {
+<span class="nc" id="L341">    return List.copyOf(this.getReachesList());</span>
+  }
+
+  private List&lt;StepExpression&gt; getReachesList() {
+<span class="nc bnc" id="L345" title="All 4 branches missed.">    var overrides = this.hasLocalReaches() &amp;&amp; this.reaches.overrides();</span>
+    var reachesList =
+<span class="nc bnc" id="L347" title="All 4 branches missed.">        this.hasSuperAttackStep() &amp;&amp; !overrides</span>
+<span class="nc" id="L348">            ? this.getSuperAttackStep().getReachesList()</span>
+<span class="nc" id="L349">            : new ArrayList&lt;StepExpression&gt;();</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">    if (this.hasLocalReaches()) {</span>
+<span class="nc" id="L351">      reachesList.addAll(this.reaches.getStepExpressions());</span>
+    }
+<span class="nc" id="L353">    return reachesList;</span>
+  }
+
+  /**
+   * Returns whether this {@code AttackStep} object has a super attack step.
+   *
+   * @return whether this {@code AttackStep} object has a super attack step
+   * @since 1.0.0
+   */
+  public boolean hasSuperAttackStep() {
+<span class="nc bnc" id="L363" title="All 4 branches missed.">    return this.asset.hasSuperAsset() &amp;&amp; this.asset.getSuperAsset().hasAttackStep(this.name);</span>
+  }
+
+  /**
+   * Returns the super attack step of this {@code AttackStep} object.
+   *
+   * @return the super attack step of this {@code AttackStep} object
+   * @throws java.lang.UnsupportedOperationException if this {@code AttackStep} object does not have
+   *     a super attack step
+   * @since 1.0.0
+   */
+  public AttackStep getSuperAttackStep() {
+<span class="nc bnc" id="L375" title="All 2 branches missed.">    if (!this.hasSuperAttackStep()) {</span>
+<span class="nc" id="L376">      throw new UnsupportedOperationException(&quot;Super attack step not found&quot;);</span>
+    }
+<span class="nc" id="L378">    return this.asset.getSuperAsset().getAttackStep(this.name);</span>
+  }
+
+  JsonObject toJson() {
+<span class="fc" id="L382">    var jsonTags = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">    for (var tag : this.tags) {</span>
+<span class="fc" id="L384">      jsonTags.add(tag);</span>
+<span class="fc" id="L385">    }</span>
+
+    var jsonAttackStep =
+<span class="fc" id="L388">        Json.createObjectBuilder()</span>
+<span class="fc" id="L389">            .add(&quot;name&quot;, this.name)</span>
+<span class="fc" id="L390">            .add(&quot;meta&quot;, this.meta.toJson())</span>
+<span class="fc" id="L391">            .add(&quot;type&quot;, this.type.toString())</span>
+<span class="fc" id="L392">            .add(&quot;tags&quot;, jsonTags);</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">    if (this.risk == null) {</span>
+<span class="fc" id="L394">      jsonAttackStep.addNull(&quot;risk&quot;);</span>
+    } else {
+<span class="fc" id="L396">      jsonAttackStep.add(&quot;risk&quot;, this.risk.toJson());</span>
+    }
+<span class="fc bfc" id="L398" title="All 2 branches covered.">    if (this.ttc == null) {</span>
+<span class="fc" id="L399">      jsonAttackStep.addNull(&quot;ttc&quot;);</span>
+    } else {
+<span class="fc" id="L401">      jsonAttackStep.add(&quot;ttc&quot;, this.ttc.toJson());</span>
+    }
+<span class="fc bfc" id="L403" title="All 2 branches covered.">    if (this.requires == null) {</span>
+<span class="fc" id="L404">      jsonAttackStep.addNull(&quot;requires&quot;);</span>
+    } else {
+<span class="fc" id="L406">      jsonAttackStep.add(&quot;requires&quot;, this.requires.toJson());</span>
+    }
+<span class="fc bfc" id="L408" title="All 2 branches covered.">    if (this.reaches == null) {</span>
+<span class="fc" id="L409">      jsonAttackStep.addNull(&quot;reaches&quot;);</span>
+    } else {
+<span class="fc" id="L411">      jsonAttackStep.add(&quot;reaches&quot;, this.reaches.toJson());</span>
+    }
+<span class="fc" id="L413">    return jsonAttackStep.build();</span>
+  }
+
+  static AttackStep fromBuilder(AttackStepBuilder builder, Asset asset) {
+<span class="fc" id="L417">    requireNonNull(builder);</span>
+<span class="fc" id="L418">    requireNonNull(asset);</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">    var requires = builder.getRequires() == null ? null : Steps.fromBuilder(builder.getRequires());</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">    var reaches = builder.getReaches() == null ? null : Steps.fromBuilder(builder.getReaches());</span>
+<span class="fc" id="L421">    return new AttackStep(</span>
+<span class="fc" id="L422">        builder.getName(),</span>
+<span class="fc" id="L423">        Meta.fromBuilder(builder.getMeta()),</span>
+        asset,
+<span class="fc" id="L425">        builder.getType(),</span>
+<span class="fc" id="L426">        builder.getTags(),</span>
+<span class="fc" id="L427">        builder.getRisk(),</span>
+<span class="fc" id="L428">        builder.getTtc(),</span>
+        requires,
+        reaches);
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

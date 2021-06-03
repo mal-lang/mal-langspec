@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Asset.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">Asset.java</span></div><h1>Asset.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.mal_lang.langspec.builders.AssetBuilder;
+
+/**
+ * Immutable class representing an asset in a MAL language.
+ *
+ * @since 1.0.0
+ */
+public final class Asset {
+  private final String name;
+  private final Meta meta;
+  private final Category category;
+  private final boolean isAbstract;
+  private Asset superAsset;
+<span class="fc" id="L39">  private final Map&lt;String, Field&gt; fields = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L40">  private final Map&lt;String, Variable&gt; variables = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L41">  private final Map&lt;String, AttackStep&gt; attackSteps = new LinkedHashMap&lt;&gt;();</span>
+  private final byte[] svgIcon;
+  private final byte[] pngIcon;
+
+  private Asset(
+      String name,
+      Meta meta,
+      Category category,
+      boolean isAbstract,
+      byte[] svgIcon,
+<span class="fc" id="L51">      byte[] pngIcon) {</span>
+<span class="fc" id="L52">    this.name = requireNonNull(name);</span>
+<span class="fc" id="L53">    this.meta = requireNonNull(meta);</span>
+<span class="fc" id="L54">    this.category = requireNonNull(category);</span>
+<span class="fc" id="L55">    this.isAbstract = isAbstract;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">    this.svgIcon = svgIcon == null ? null : svgIcon.clone();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    this.pngIcon = pngIcon == null ? null : pngIcon.clone();</span>
+<span class="fc" id="L58">    category.addAsset(this);</span>
+<span class="fc" id="L59">  }</span>
+
+  /**
+   * Returns the name of this {@code Asset} object.
+   *
+   * @return the name of this {@code Asset} object
+   * @since 1.0.0
+   */
+  public String getName() {
+<span class="fc" id="L68">    return this.name;</span>
+  }
+
+  /**
+   * Returns the meta info of this {@code Asset} object.
+   *
+   * @return the meta info of this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Meta getMeta() {
+<span class="nc" id="L78">    return this.meta;</span>
+  }
+
+  /**
+   * Returns the category of this {@code Asset} object.
+   *
+   * @return the category of this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Category getCategory() {
+<span class="nc" id="L88">    return this.category;</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object is abstract.
+   *
+   * @return whether this {@code Asset} object is abstract
+   * @since 1.0.0
+   */
+  public boolean isAbstract() {
+<span class="nc" id="L98">    return this.isAbstract;</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has a super asset.
+   *
+   * @return whether this {@code Asset} object has a super asset
+   * @since 1.0.0
+   */
+  public boolean hasSuperAsset() {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">    return this.superAsset != null;</span>
+  }
+
+  /**
+   * Returns the super asset of this {@code Asset} object.
+   *
+   * @return the super asset of this {@code Asset} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have a
+   *     super asset
+   * @since 1.0.0
+   */
+  public Asset getSuperAsset() {
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">    if (!this.hasSuperAsset()) {</span>
+<span class="nc" id="L121">      throw new UnsupportedOperationException(&quot;Super asset not found&quot;);</span>
+    }
+<span class="fc" id="L123">    return this.superAsset;</span>
+  }
+
+  void setSuperAsset(Asset superAsset) {
+<span class="fc" id="L127">    this.superAsset = requireNonNull(superAsset);</span>
+<span class="fc" id="L128">  }</span>
+
+  /**
+   * Returns whether {@code name} is the name of a local field in this {@code Asset} object.
+   *
+   * @param name the name of the local field
+   * @return whether {@code name} is the name of a local field in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasLocalField(String name) {
+<span class="fc" id="L139">    return this.fields.containsKey(requireNonNull(name));</span>
+  }
+
+  /**
+   * Returns the local field with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the local field
+   * @return the local field with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a local field in
+   *     this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Field getLocalField(String name) {
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">    if (!this.hasLocalField(name)) {</span>
+<span class="nc" id="L154">      throw new IllegalArgumentException(String.format(&quot;Local field \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc" id="L156">    return this.fields.get(name);</span>
+  }
+
+  /**
+   * Returns a list of all local fields in this {@code Asset} object.
+   *
+   * @return a list of all local fields in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List&lt;Field&gt; getLocalFields() {
+<span class="nc" id="L166">    return List.copyOf(this.fields.values());</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a field in this {@code Asset} object.
+   *
+   * @param name the name of the field
+   * @return whether {@code name} is the name of a field in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasField(String name) {
+<span class="pc bpc" id="L178" title="2 of 6 branches missed.">    return this.hasLocalField(name) || this.hasSuperAsset() &amp;&amp; this.getSuperAsset().hasField(name);</span>
+  }
+
+  /**
+   * Returns the field with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the field
+   * @return the field with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a field in this
+   *     {@code Asset} object
+   * @since 1.0.0
+   */
+  public Field getField(String name) {
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">    if (!this.hasField(name)) {</span>
+<span class="nc" id="L193">      throw new IllegalArgumentException(String.format(&quot;Field \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc bfc" id="L195" title="All 2 branches covered.">    return this.hasLocalField(name)</span>
+<span class="fc" id="L196">        ? this.getLocalField(name)</span>
+<span class="fc" id="L197">        : this.getSuperAsset().getField(name);</span>
+  }
+
+  /**
+   * Returns a list of all fields in this {@code Asset} object.
+   *
+   * @return a list of all fields in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List&lt;Field&gt; getFields() {
+<span class="nc" id="L207">    return List.copyOf(this.getFieldsMap().values());</span>
+  }
+
+  void addField(Field field) {
+<span class="fc" id="L211">    requireNonNull(field);</span>
+<span class="fc" id="L212">    this.fields.put(field.getName(), field);</span>
+<span class="fc" id="L213">  }</span>
+
+  private Map&lt;String, Field&gt; getFieldsMap() {
+    var fieldsMap =
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        this.hasSuperAsset()</span>
+<span class="nc" id="L218">            ? this.getSuperAsset().getFieldsMap()</span>
+<span class="nc" id="L219">            : new LinkedHashMap&lt;String, Field&gt;();</span>
+<span class="nc" id="L220">    fieldsMap.putAll(this.fields);</span>
+<span class="nc" id="L221">    return fieldsMap;</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a local variable in this {@code Asset} object.
+   *
+   * @param name the name of the local variable
+   * @return whether {@code name} is the name of a local variable in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasLocalVariable(String name) {
+<span class="fc" id="L233">    return this.variables.containsKey(requireNonNull(name));</span>
+  }
+
+  /**
+   * Returns the local variable with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the local variable
+   * @return the local variable with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a local variable
+   *     in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Variable getLocalVariable(String name) {
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">    if (!this.hasLocalVariable(name)) {</span>
+<span class="nc" id="L248">      throw new IllegalArgumentException(String.format(&quot;Local variable \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc" id="L250">    return this.variables.get(name);</span>
+  }
+
+  /**
+   * Returns a list of all local variables in this {@code Asset} object.
+   *
+   * @return a list of all local variables in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List&lt;Variable&gt; getLocalVariables() {
+<span class="nc" id="L260">    return List.copyOf(this.variables.values());</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a variable in this {@code Asset} object.
+   *
+   * @param name the name of the variable
+   * @return whether {@code name} is the name of a variable in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasVariable(String name) {
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">    return this.hasLocalVariable(name)</span>
+<span class="pc bnc" id="L273" title="All 4 branches missed.">        || this.hasSuperAsset() &amp;&amp; this.getSuperAsset().hasVariable(name);</span>
+  }
+
+  /**
+   * Returns the variable with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the variable
+   * @return the variable with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a variable in
+   *     this {@code Asset} object
+   * @since 1.0.0
+   */
+  public Variable getVariable(String name) {
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">    if (!this.hasVariable(name)) {</span>
+<span class="nc" id="L288">      throw new IllegalArgumentException(String.format(&quot;Variable \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">    return this.hasLocalVariable(name)</span>
+<span class="fc" id="L291">        ? this.getLocalVariable(name)</span>
+<span class="nc" id="L292">        : this.getSuperAsset().getVariable(name);</span>
+  }
+
+  /**
+   * Returns a list of all variables in this {@code Asset} object.
+   *
+   * @return a list of all variables in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List&lt;Variable&gt; getVariables() {
+<span class="nc" id="L302">    return List.copyOf(this.getVariablesMap().values());</span>
+  }
+
+  private void addVariable(Variable variable) {
+<span class="fc" id="L306">    requireNonNull(variable);</span>
+<span class="fc" id="L307">    this.variables.put(variable.getName(), variable);</span>
+<span class="fc" id="L308">  }</span>
+
+  private Map&lt;String, Variable&gt; getVariablesMap() {
+    var variablesMap =
+<span class="nc bnc" id="L312" title="All 2 branches missed.">        this.hasSuperAsset()</span>
+<span class="nc" id="L313">            ? this.getSuperAsset().getVariablesMap()</span>
+<span class="nc" id="L314">            : new LinkedHashMap&lt;String, Variable&gt;();</span>
+<span class="nc" id="L315">    variablesMap.putAll(this.variables);</span>
+<span class="nc" id="L316">    return variablesMap;</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a local attack step in this {@code Asset} object.
+   *
+   * @param name the name of the local attack step
+   * @return whether {@code name} is the name of a local attack step in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasLocalAttackStep(String name) {
+<span class="fc" id="L328">    return this.attackSteps.containsKey(requireNonNull(name));</span>
+  }
+
+  /**
+   * Returns the local attack step with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the local attack step
+   * @return the local attack step with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a local attack
+   *     step in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public AttackStep getLocalAttackStep(String name) {
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">    if (!this.hasLocalAttackStep(name)) {</span>
+<span class="nc" id="L343">      throw new IllegalArgumentException(String.format(&quot;Local attack step \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc" id="L345">    return this.attackSteps.get(name);</span>
+  }
+
+  /**
+   * Returns a list of all local attack steps in this {@code Asset} object.
+   *
+   * @return a list of all local attack steps in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List&lt;AttackStep&gt; getLocalAttackSteps() {
+<span class="nc" id="L355">    return List.copyOf(this.attackSteps.values());</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of an attack step in this {@code Asset} object.
+   *
+   * @param name the name of the attack step
+   * @return whether {@code name} is the name of an attack step in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasAttackStep(String name) {
+<span class="fc bfc" id="L367" title="All 2 branches covered.">    return this.hasLocalAttackStep(name)</span>
+<span class="pc bpc" id="L368" title="2 of 4 branches missed.">        || this.hasSuperAsset() &amp;&amp; this.getSuperAsset().hasAttackStep(name);</span>
+  }
+
+  /**
+   * Returns the attack step with the name {@code name} in this {@code Asset} object.
+   *
+   * @param name the name of the attack step
+   * @return the attack step with the name {@code name} in this {@code Asset} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of an attack step in
+   *     this {@code Asset} object
+   * @since 1.0.0
+   */
+  public AttackStep getAttackStep(String name) {
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">    if (!this.hasAttackStep(name)) {</span>
+<span class="nc" id="L383">      throw new IllegalArgumentException(String.format(&quot;Attack step \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc bfc" id="L385" title="All 2 branches covered.">    return this.hasLocalAttackStep(name)</span>
+<span class="fc" id="L386">        ? this.getLocalAttackStep(name)</span>
+<span class="fc" id="L387">        : this.getSuperAsset().getAttackStep(name);</span>
+  }
+
+  /**
+   * Returns a list of all attack steps in this {@code Asset} object.
+   *
+   * @return a list of all attack steps in this {@code Asset} object
+   * @since 1.0.0
+   */
+  public List&lt;AttackStep&gt; getAttackSteps() {
+<span class="nc" id="L397">    return List.copyOf(this.getAttackStepsMap().values());</span>
+  }
+
+  private void addAttackStep(AttackStep attackStep) {
+<span class="fc" id="L401">    requireNonNull(attackStep);</span>
+<span class="fc" id="L402">    this.attackSteps.put(attackStep.getName(), attackStep);</span>
+<span class="fc" id="L403">  }</span>
+
+  private Map&lt;String, AttackStep&gt; getAttackStepsMap() {
+    var attackStepsMap =
+<span class="nc bnc" id="L407" title="All 2 branches missed.">        this.hasSuperAsset()</span>
+<span class="nc" id="L408">            ? this.getSuperAsset().getAttackStepsMap()</span>
+<span class="nc" id="L409">            : new LinkedHashMap&lt;String, AttackStep&gt;();</span>
+<span class="nc" id="L410">    attackStepsMap.putAll(this.attackSteps);</span>
+<span class="nc" id="L411">    return attackStepsMap;</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has a local SVG icon.
+   *
+   * @return whether this {@code Asset} object has a local SVG icon
+   * @since 1.0.0
+   */
+  public boolean hasLocalSvgIcon() {
+<span class="fc bfc" id="L421" title="All 2 branches covered.">    return this.svgIcon != null;</span>
+  }
+
+  /**
+   * Returns the local SVG icon of this {@code Asset} object.
+   *
+   * @return the local SVG icon of this {@code Asset} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have a
+   *     local SVG icon
+   * @since 1.0.0
+   */
+  public byte[] getLocalSvgIcon() {
+<span class="pc bpc" id="L433" title="1 of 2 branches missed.">    if (!this.hasLocalSvgIcon()) {</span>
+<span class="nc" id="L434">      throw new UnsupportedOperationException(&quot;Local SVG icon not found&quot;);</span>
+    }
+<span class="fc" id="L436">    return this.svgIcon.clone();</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has an SVG icon.
+   *
+   * @return whether this {@code Asset} object has an SVG icon
+   * @since 1.0.0
+   */
+  public boolean hasSvgIcon() {
+<span class="nc bnc" id="L446" title="All 6 branches missed.">    return this.hasLocalSvgIcon() || this.hasSuperAsset() &amp;&amp; this.getSuperAsset().hasSvgIcon();</span>
+  }
+
+  /**
+   * Returns the SVG icon of this {@code Asset} object.
+   *
+   * @return the SVG icon of this {@code Asset} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have an
+   *     SVG icon
+   * @since 1.0.0
+   */
+  public byte[] getSvgIcon() {
+<span class="nc bnc" id="L458" title="All 2 branches missed.">    if (!this.hasSvgIcon()) {</span>
+<span class="nc" id="L459">      throw new UnsupportedOperationException(&quot;SVG icon not found&quot;);</span>
+    }
+<span class="nc bnc" id="L461" title="All 2 branches missed.">    return this.hasLocalSvgIcon() ? this.getLocalSvgIcon() : this.getSuperAsset().getSvgIcon();</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has a local PNG icon.
+   *
+   * @return whether this {@code Asset} object has a local PNG icon
+   * @since 1.0.0
+   */
+  public boolean hasLocalPngIcon() {
+<span class="fc bfc" id="L471" title="All 2 branches covered.">    return this.pngIcon != null;</span>
+  }
+
+  /**
+   * Returns the local PNG icon of this {@code Asset} object.
+   *
+   * @return the local PNG icon of this {@code Asset} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have a
+   *     local PNG icon
+   * @since 1.0.0
+   */
+  public byte[] getLocalPngIcon() {
+<span class="pc bpc" id="L483" title="1 of 2 branches missed.">    if (!this.hasLocalPngIcon()) {</span>
+<span class="nc" id="L484">      throw new UnsupportedOperationException(&quot;Local PNG icon not found&quot;);</span>
+    }
+<span class="fc" id="L486">    return this.pngIcon.clone();</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object has an PNG icon.
+   *
+   * @return whether this {@code Asset} object has an PNG icon
+   * @since 1.0.0
+   */
+  public boolean hasPngIcon() {
+<span class="nc bnc" id="L496" title="All 6 branches missed.">    return this.hasLocalPngIcon() || this.hasSuperAsset() &amp;&amp; this.getSuperAsset().hasPngIcon();</span>
+  }
+
+  /**
+   * Returns the PNG icon of this {@code Asset} object.
+   *
+   * @return the PNG icon of this {@code Asset} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Asset} object does not have an
+   *     PNG icon
+   * @since 1.0.0
+   */
+  public byte[] getPngIcon() {
+<span class="nc bnc" id="L508" title="All 2 branches missed.">    if (!this.hasPngIcon()) {</span>
+<span class="nc" id="L509">      throw new UnsupportedOperationException(&quot;PNG icon not found&quot;);</span>
+    }
+<span class="nc bnc" id="L511" title="All 2 branches missed.">    return this.hasLocalPngIcon() ? this.getLocalPngIcon() : this.getSuperAsset().getPngIcon();</span>
+  }
+
+  /**
+   * Returns whether this {@code Asset} object is a sub type of {@code other}.
+   *
+   * @param other another {@code Asset} object
+   * @return whether this {@code Asset} object is a sub type of {@code other}
+   * @throws java.lang.NullPointerException if {@code other} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean isSubTypeOf(Asset other) {
+<span class="fc" id="L523">    requireNonNull(other);</span>
+<span class="fc bfc" id="L524" title="All 2 branches covered.">    if (this == other) {</span>
+<span class="fc" id="L525">      return true;</span>
+    }
+<span class="fc bfc" id="L527" title="All 2 branches covered.">    if (!this.hasSuperAsset()) {</span>
+<span class="fc" id="L528">      return false;</span>
+    }
+<span class="fc" id="L530">    return this.getSuperAsset().isSubTypeOf(other);</span>
+  }
+
+  /**
+   * Returns the least upper bound of {@code asset1} and {@code asset2}, or {@code null} if {@code
+   * asset1} and {@code asset2} have no upper bound.
+   *
+   * @param asset1 an {@code Asset} object
+   * @param asset2 an {@code Asset} object
+   * @return the least upper bound of {@code asset1} and {@code asset2}, or {@code null} if {@code
+   *     asset1} and {@code asset2} have no upper bound
+   * @throws java.lang.NullPointerException if {@code asset1} or {@code asset2} is {@code null}
+   * @since 1.0.0
+   */
+  public static Asset leastUpperBound(Asset asset1, Asset asset2) {
+<span class="fc" id="L545">    requireNonNull(asset1);</span>
+<span class="fc" id="L546">    requireNonNull(asset2);</span>
+<span class="fc bfc" id="L547" title="All 2 branches covered.">    if (asset1.isSubTypeOf(asset2)) {</span>
+<span class="fc" id="L548">      return asset2;</span>
+    }
+<span class="pc bpc" id="L550" title="1 of 2 branches missed.">    if (asset2.isSubTypeOf(asset1)) {</span>
+<span class="fc" id="L551">      return asset1;</span>
+    }
+<span class="nc bnc" id="L553" title="All 4 branches missed.">    if (!asset1.hasSuperAsset() || !asset2.hasSuperAsset()) {</span>
+<span class="nc" id="L554">      return null;</span>
+    }
+<span class="nc" id="L556">    return Asset.leastUpperBound(asset1.getSuperAsset(), asset2.getSuperAsset());</span>
+  }
+
+  JsonObject toJson() {
+<span class="fc" id="L560">    var jsonVariables = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L561" title="All 2 branches covered.">    for (var variable : this.variables.values()) {</span>
+<span class="fc" id="L562">      jsonVariables.add(variable.toJson());</span>
+<span class="fc" id="L563">    }</span>
+
+<span class="fc" id="L565">    var jsonAttackSteps = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L566" title="All 2 branches covered.">    for (var attackStep : this.attackSteps.values()) {</span>
+<span class="fc" id="L567">      jsonAttackSteps.add(attackStep.toJson());</span>
+<span class="fc" id="L568">    }</span>
+
+    var jsonAsset =
+<span class="fc" id="L571">        Json.createObjectBuilder()</span>
+<span class="fc" id="L572">            .add(&quot;name&quot;, this.name)</span>
+<span class="fc" id="L573">            .add(&quot;meta&quot;, this.meta.toJson())</span>
+<span class="fc" id="L574">            .add(&quot;category&quot;, this.category.getName())</span>
+<span class="fc" id="L575">            .add(&quot;isAbstract&quot;, this.isAbstract);</span>
+<span class="fc bfc" id="L576" title="All 2 branches covered.">    if (this.superAsset == null) {</span>
+<span class="fc" id="L577">      jsonAsset.addNull(&quot;superAsset&quot;);</span>
+    } else {
+<span class="fc" id="L579">      jsonAsset.add(&quot;superAsset&quot;, this.superAsset.getName());</span>
+    }
+<span class="fc" id="L581">    return jsonAsset.add(&quot;variables&quot;, jsonVariables).add(&quot;attackSteps&quot;, jsonAttackSteps).build();</span>
+  }
+
+  static Asset fromBuilder(AssetBuilder builder, Map&lt;String, Category&gt; categories) {
+<span class="fc" id="L585">    requireNonNull(builder);</span>
+<span class="fc" id="L586">    requireNonNull(categories);</span>
+<span class="pc bpc" id="L587" title="1 of 2 branches missed.">    if (!categories.containsKey(builder.getCategory())) {</span>
+<span class="nc" id="L588">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L589">          String.format(&quot;Category \&quot;%s\&quot; not found&quot;, builder.getCategory()));</span>
+    }
+<span class="fc" id="L591">    var asset =</span>
+        new Asset(
+<span class="fc" id="L593">            builder.getName(),</span>
+<span class="fc" id="L594">            Meta.fromBuilder(builder.getMeta()),</span>
+<span class="fc" id="L595">            categories.get(builder.getCategory()),</span>
+<span class="fc" id="L596">            builder.isAbstract(),</span>
+<span class="fc" id="L597">            builder.getSvgIcon(),</span>
+<span class="fc" id="L598">            builder.getPngIcon());</span>
+<span class="fc bfc" id="L599" title="All 2 branches covered.">    for (var variableBuilder : builder.getVariables()) {</span>
+<span class="fc" id="L600">      asset.addVariable(Variable.fromBuilder(variableBuilder, asset));</span>
+<span class="fc" id="L601">    }</span>
+<span class="fc bfc" id="L602" title="All 2 branches covered.">    for (var attackStepBuilder : builder.getAttackSteps()) {</span>
+<span class="fc" id="L603">      asset.addAttackStep(AttackStep.fromBuilder(attackStepBuilder, asset));</span>
+<span class="fc" id="L604">    }</span>
+<span class="fc" id="L605">    return asset;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

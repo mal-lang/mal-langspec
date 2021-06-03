@@ -1,0 +1,78 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+MAL Langspec,org.mal_lang.langspec,Association,38,134,2,2,8,34,6,3,4,3
+MAL Langspec,org.mal_lang.langspec,Variable,36,47,6,0,6,14,7,5,4,5
+MAL Langspec,org.mal_lang.langspec,Category,36,56,2,0,6,15,5,5,4,5
+MAL Langspec,org.mal_lang.langspec,Meta,31,44,2,2,5,9,4,4,3,3
+MAL Langspec,org.mal_lang.langspec,Risk,9,43,0,0,3,15,3,3,3,3
+MAL Langspec,org.mal_lang.langspec,Steps,7,57,0,2,2,16,2,5,2,4
+MAL Langspec,org.mal_lang.langspec,Lang,91,473,8,44,13,103,10,33,4,13
+MAL Langspec,org.mal_lang.langspec,Utils,38,106,9,25,9,23,9,16,0,8
+MAL Langspec,org.mal_lang.langspec,AttackStep,274,217,66,18,50,52,56,16,21,9
+MAL Langspec,org.mal_lang.langspec,Field,3,45,0,0,1,14,1,7,1,7
+MAL Langspec,org.mal_lang.langspec,Asset,283,461,51,51,47,104,50,45,16,28
+MAL Langspec,org.mal_lang.langspec,AttackStepType,12,108,1,3,1,17,1,5,0,4
+MAL Langspec,org.mal_lang.langspec,Multiplicity,24,134,4,16,4,25,6,10,2,4
+MAL Langspec,org.mal_lang.langspec.io,LangReader.new FilterInputStream() {...},0,5,0,0,0,2,0,2,0,2
+MAL Langspec,org.mal_lang.langspec.io,LangWriter,11,189,5,11,3,47,5,7,0,4
+MAL Langspec,org.mal_lang.langspec.io,LangReader,11,225,9,25,3,51,9,13,0,5
+MAL Langspec,org.mal_lang.langspec.io,LangWriter.new FilterOutputStream() {...},0,5,0,0,0,2,0,2,0,2
+MAL Langspec,org.mal_lang.langspec.builders,AssetBuilder,0,229,0,14,0,50,0,22,0,15
+MAL Langspec,org.mal_lang.langspec.builders,StepsBuilder,0,58,0,2,0,14,0,6,0,5
+MAL Langspec,org.mal_lang.langspec.builders,CategoryBuilder,0,37,0,0,0,10,0,4,0,4
+MAL Langspec,org.mal_lang.langspec.builders,VariableBuilder,0,32,0,0,0,10,0,4,0,4
+MAL Langspec,org.mal_lang.langspec.builders,LangBuilder,21,220,0,12,3,49,3,20,3,14
+MAL Langspec,org.mal_lang.langspec.builders,AttackStepBuilder,0,161,0,10,0,39,0,16,0,11
+MAL Langspec,org.mal_lang.langspec.builders,MetaBuilder,0,47,0,2,0,10,0,5,0,4
+MAL Langspec,org.mal_lang.langspec.builders,AssociationBuilder,0,101,0,0,0,29,0,10,0,10
+MAL Langspec,org.mal_lang.langspec.builders.step,StepSubTypeBuilder,13,47,1,1,1,13,1,5,0,5
+MAL Langspec,org.mal_lang.langspec.builders.step,StepTransitiveBuilder,0,26,0,0,0,9,0,4,0,4
+MAL Langspec,org.mal_lang.langspec.builders.step,StepExpressionBuilder,14,28,1,4,3,7,1,5,0,2
+MAL Langspec,org.mal_lang.langspec.builders.step,StepReferenceBuilder,14,42,1,3,3,10,1,5,0,3
+MAL Langspec,org.mal_lang.langspec.builders.step,StepBinaryOperationBuilder,14,66,1,4,3,14,1,7,0,4
+MAL Langspec,org.mal_lang.langspec.builders.step,StepIntersectionBuilder,0,19,0,0,0,5,0,2,0,2
+MAL Langspec,org.mal_lang.langspec.builders.step,StepUnionBuilder,0,19,0,0,0,5,0,2,0,2
+MAL Langspec,org.mal_lang.langspec.builders.step,StepVariableBuilder,22,51,3,7,3,12,3,4,0,2
+MAL Langspec,org.mal_lang.langspec.builders.step,StepDifferenceBuilder,0,19,0,0,0,5,0,2,0,2
+MAL Langspec,org.mal_lang.langspec.builders.step,StepCollectBuilder,0,17,0,0,0,5,0,2,0,2
+MAL Langspec,org.mal_lang.langspec.builders.step,StepAttackStepBuilder,29,4,2,0,4,2,2,1,1,1
+MAL Langspec,org.mal_lang.langspec.builders.step,StepFieldBuilder,18,16,1,1,2,4,1,2,0,2
+MAL Langspec,org.mal_lang.langspec.step,StepReference,0,5,0,0,0,2,0,1,0,1
+MAL Langspec,org.mal_lang.langspec.step,StepVariable,16,55,1,1,3,15,2,3,1,3
+MAL Langspec,org.mal_lang.langspec.step,StepField,16,52,1,1,3,14,2,3,1,3
+MAL Langspec,org.mal_lang.langspec.step,StepAttackStep,16,51,1,1,3,14,2,3,1,3
+MAL Langspec,org.mal_lang.langspec.step,StepSubType,19,69,1,1,4,19,3,3,2,3
+MAL Langspec,org.mal_lang.langspec.step,StepTransitive,3,47,0,0,1,15,1,3,1,3
+MAL Langspec,org.mal_lang.langspec.step,StepCollect,0,47,0,0,0,11,0,3,0,3
+MAL Langspec,org.mal_lang.langspec.step,StepDifference,0,51,0,0,0,11,0,3,0,3
+MAL Langspec,org.mal_lang.langspec.step,StepIntersection,0,51,0,0,0,11,0,3,0,3
+MAL Langspec,org.mal_lang.langspec.step,StepBinaryOperation,6,31,0,0,2,9,2,2,2,2
+MAL Langspec,org.mal_lang.langspec.step,StepUnion,0,51,0,0,0,11,0,3,0,3
+MAL Langspec,org.mal_lang.langspec.step,StepExpression,22,118,1,17,4,27,2,11,1,3
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},28,6,0,0,3,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcBinaryOperation,20,82,1,5,5,18,3,7,2,3
+MAL Langspec,org.mal_lang.langspec.ttc,TtcNumber,6,27,0,0,2,6,2,3,2,3
+MAL Langspec,org.mal_lang.langspec.ttc,TtcExponentiation,12,9,0,0,3,3,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcMultiplication,12,9,0,0,3,3,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,6,0,0,2,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},22,26,1,1,5,6,2,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcFunction,20,94,0,4,4,22,4,5,4,3
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDivision,12,9,0,0,3,3,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},11,21,0,0,3,5,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,29,0,0,4,7,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},30,21,4,0,6,5,4,2,2,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcSubtraction,12,9,0,0,3,3,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},9,21,0,0,3,5,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcAddition,12,9,0,0,3,3,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcExpression,22,25,1,3,5,6,3,4,2,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},25,28,2,0,4,7,2,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},20,21,0,0,4,5,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,28,0,0,4,7,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,6,0,0,2,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},28,6,0,0,3,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,6,0,0,2,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},28,6,0,0,3,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},5,6,0,0,2,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},5,6,0,0,2,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution,50,314,8,12,9,45,10,13,2,11
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},5,6,0,0,2,1,1,1,1,1
+MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},5,6,0,0,2,1,1,1,1,1

@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TtcDistribution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.ttc</a> &gt; <span class="el_source">TtcDistribution.java</span></div><h1>TtcDistribution.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.ttc;
+
+import static java.util.Objects.requireNonNull;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Enum representing a TTC distribution.
+ *
+ * @since 1.0.0
+ */
+<span class="fc" id="L29">public enum TtcDistribution {</span>
+  /**
+   * Enum constant representing a bernoulli distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [probability]}, where 0 ≤ {@code probability} ≤ 1
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L37">  BERNOULLI(&quot;Bernoulli&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L40">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 1));</span>
+<span class="fc" id="L41">      double probability = arguments[0];</span>
+<span class="fc" id="L42">      requireZeroToOne(probability);</span>
+<span class="fc" id="L43">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L47">      this.validateArguments(arguments);</span>
+<span class="nc" id="L48">      double probability = arguments[0];</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">      return probability &lt; 0.5 ? 0.0 : Double.MAX_VALUE;</span>
+    }
+
+    @Override
+    public double getMeanProbability(double... arguments) {
+<span class="nc" id="L54">      this.validateArguments(arguments);</span>
+<span class="nc" id="L55">      double probability = arguments[0];</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">      return probability &lt; 0.5 ? 0.0 : 1.0;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing a binomial distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [numberOfTrials, probabilityOfSuccess]}, where 0 ≤ {@code numberOfTrials},
+   * {@code numberOfTrials} ∈ ℤ, 0 ≤ {@code probabilityOfSuccess} ≤ 1
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L68">  BINOMIAL(&quot;Binomial&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L71">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));</span>
+<span class="fc" id="L72">      double numberOfTrials = arguments[0];</span>
+<span class="fc" id="L73">      double probabilityOfSuccess = arguments[1];</span>
+<span class="fc" id="L74">      requireInteger(requireNonNegative(numberOfTrials));</span>
+<span class="fc" id="L75">      requireZeroToOne(probabilityOfSuccess);</span>
+<span class="fc" id="L76">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L80">      this.validateArguments(arguments);</span>
+<span class="nc" id="L81">      double numberOfTrials = arguments[0];</span>
+<span class="nc" id="L82">      double probabilityOfSuccess = arguments[1];</span>
+<span class="nc" id="L83">      return numberOfTrials * probabilityOfSuccess;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing an exponential distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [rate]}, where 0 {@literal &lt;} {@code rate}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L94">  EXPONENTIAL(&quot;Exponential&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L97">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 1));</span>
+<span class="fc" id="L98">      double rate = arguments[0];</span>
+<span class="fc" id="L99">      requirePositive(rate);</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L104">      this.validateArguments(arguments);</span>
+<span class="nc" id="L105">      double rate = arguments[0];</span>
+<span class="nc" id="L106">      return 1.0 / rate;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing a gamma distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [shape, scale]}, where 0 {@literal &lt;} {@code shape}, 0 {@literal &lt;} {@code
+   * scale}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L118">  GAMMA(&quot;Gamma&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L121">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));</span>
+<span class="fc" id="L122">      double shape = arguments[0];</span>
+<span class="fc" id="L123">      double scale = arguments[1];</span>
+<span class="fc" id="L124">      requirePositive(shape);</span>
+<span class="fc" id="L125">      requirePositive(scale);</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L130">      this.validateArguments(arguments);</span>
+<span class="nc" id="L131">      double shape = arguments[0];</span>
+<span class="nc" id="L132">      double scale = arguments[1];</span>
+<span class="nc" id="L133">      return shape * scale;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing a log-normal distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [normalMean, normalStandardDeviation]}, where 0 {@literal &lt;} {@code
+   * normalStandardDeviation}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L145">  LOG_NORMAL(&quot;LogNormal&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L148">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));</span>
+<span class="fc" id="L149">      double normalStandardDeviation = arguments[1];</span>
+<span class="fc" id="L150">      requirePositive(normalStandardDeviation);</span>
+<span class="fc" id="L151">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L155">      this.validateArguments(arguments);</span>
+<span class="nc" id="L156">      double normalMean = arguments[0];</span>
+<span class="nc" id="L157">      double normalStandardDeviation = arguments[1];</span>
+<span class="nc" id="L158">      return Math.exp(normalMean + normalStandardDeviation * normalStandardDeviation / 2.0);</span>
+    }
+  },
+
+  /**
+   * Enum constant representing a pareto distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [minimumValue, shape]}, where 0 {@literal &lt;} {@code minimumValue}, 0
+   * {@literal &lt;} {@code shape}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L170">  PARETO(&quot;Pareto&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L173">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));</span>
+<span class="fc" id="L174">      double minimumValue = arguments[0];</span>
+<span class="fc" id="L175">      double shape = arguments[1];</span>
+<span class="fc" id="L176">      requirePositive(minimumValue);</span>
+<span class="fc" id="L177">      requirePositive(shape);</span>
+<span class="fc" id="L178">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L182">      this.validateArguments(arguments);</span>
+<span class="nc" id="L183">      double minimumValue = arguments[0];</span>
+<span class="nc" id="L184">      double shape = arguments[1];</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">      return shape &gt; 1.0 ? (shape * minimumValue) / (shape - 1.0) : Double.MAX_VALUE;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing a truncated normal distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [mean, standardDeviation]}, where 0 {@literal &lt;} {@code standardDeviation}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L196">  TRUNCATED_NORMAL(&quot;TruncatedNormal&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L199">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));</span>
+<span class="fc" id="L200">      double standardDeviation = arguments[1];</span>
+<span class="fc" id="L201">      requirePositive(standardDeviation);</span>
+<span class="fc" id="L202">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L206">      this.validateArguments(arguments);</span>
+<span class="nc" id="L207">      double mean = arguments[0];</span>
+<span class="nc" id="L208">      return mean;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing a uniform distribution.
+   *
+   * &lt;p&gt;Arguments: {@code [minimum, maximum]}, where {@code minimum} ≤ {@code maximum}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L219">  UNIFORM(&quot;Uniform&quot;) {</span>
+    @Override
+    public void validateArguments(double... arguments) {
+<span class="fc" id="L222">      requireFinite(requireArgumentsSize(requireNonNull(arguments), 2));</span>
+<span class="fc" id="L223">      double minimum = arguments[0];</span>
+<span class="fc" id="L224">      double maximum = arguments[1];</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">      if (minimum &gt; maximum) {</span>
+<span class="nc" id="L226">        throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+      }
+<span class="fc" id="L228">    }</span>
+
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L232">      this.validateArguments(arguments);</span>
+<span class="nc" id="L233">      double minimum = arguments[0];</span>
+<span class="nc" id="L234">      double maximum = arguments[1];</span>
+<span class="nc" id="L235">      return (maximum + minimum) / 2.0;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code EasyAndCertain}.
+   *
+   * &lt;p&gt;Defined as {@code Exponential(1.0)}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L246">  EASY_AND_CERTAIN(&quot;EasyAndCertain&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L249">      this.validateArguments(arguments);</span>
+<span class="nc" id="L250">      return new TtcFunction(EXPONENTIAL, new double[] {1.0}).getMeanTtc();</span>
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code EasyAndUncertain}.
+   *
+   * &lt;p&gt;Defined as {@code Bernoulli(0.5) + Exponential(1.0)}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L261">  EASY_AND_UNCERTAIN(&quot;EasyAndUncertain&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L264">      this.validateArguments(arguments);</span>
+<span class="nc" id="L265">      return new TtcAddition(</span>
+              new TtcFunction(BERNOULLI, new double[] {0.5}),
+              new TtcFunction(EXPONENTIAL, new double[] {1.0}))
+<span class="nc" id="L268">          .getMeanTtc();</span>
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code HardAndCertain}.
+   *
+   * &lt;p&gt;Defined as {@code Exponential(0.1)}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L279">  HARD_AND_CERTAIN(&quot;HardAndCertain&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L282">      this.validateArguments(arguments);</span>
+<span class="nc" id="L283">      return new TtcFunction(EXPONENTIAL, new double[] {0.1}).getMeanTtc();</span>
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code HardAndUncertain}.
+   *
+   * &lt;p&gt;Defined as {@code Bernoulli(0.5) + Exponential(0.1)}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L294">  HARD_AND_UNCERTAIN(&quot;HardAndUncertain&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L297">      this.validateArguments(arguments);</span>
+<span class="nc" id="L298">      return new TtcAddition(</span>
+              new TtcFunction(BERNOULLI, new double[] {0.5}),
+              new TtcFunction(EXPONENTIAL, new double[] {0.1}))
+<span class="nc" id="L301">          .getMeanTtc();</span>
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code VeryHardAndCertain}.
+   *
+   * &lt;p&gt;Defined as {@code Exponential(0.01)}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L312">  VERY_HARD_AND_CERTAIN(&quot;VeryHardAndCertain&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L315">      this.validateArguments(arguments);</span>
+<span class="nc" id="L316">      return new TtcFunction(EXPONENTIAL, new double[] {0.01}).getMeanTtc();</span>
+    }
+  },
+
+  /**
+   * Enum constant representing the TTC distribution {@code VeryHardAndUncertain}.
+   *
+   * &lt;p&gt;Defined as {@code Bernoulli(0.5) + Exponential(0.01)}
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L327">  VERY_HARD_AND_UNCERTAIN(&quot;VeryHardAndUncertain&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L330">      this.validateArguments(arguments);</span>
+<span class="nc" id="L331">      return new TtcAddition(</span>
+              new TtcFunction(BERNOULLI, new double[] {0.5}),
+              new TtcFunction(EXPONENTIAL, new double[] {0.01}))
+<span class="nc" id="L334">          .getMeanTtc();</span>
+    }
+  },
+
+  /**
+   * Enum constant representing infinite TTC.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L343">  INFINITY(&quot;Infinity&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L346">      this.validateArguments(arguments);</span>
+<span class="nc" id="L347">      return Double.MAX_VALUE;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing zero TTC.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L356">  ZERO(&quot;Zero&quot;) {</span>
+    @Override
+    public double getMeanTtc(double... arguments) {
+<span class="nc" id="L359">      this.validateArguments(arguments);</span>
+<span class="nc" id="L360">      return 1.0 / 86400.0;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing enabled defense.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L369">  ENABLED(&quot;Enabled&quot;) {</span>
+    @Override
+    public double getMeanProbability(double... arguments) {
+<span class="nc" id="L372">      this.validateArguments(arguments);</span>
+<span class="nc" id="L373">      return 1.0;</span>
+    }
+  },
+
+  /**
+   * Enum constant representing disabled defense.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L382">  DISABLED(&quot;Disabled&quot;) {</span>
+    @Override
+    public double getMeanProbability(double... arguments) {
+<span class="nc" id="L385">      this.validateArguments(arguments);</span>
+<span class="nc" id="L386">      return 0.0;</span>
+    }
+  };
+
+<span class="fc" id="L390">  private static final Map&lt;String, TtcDistribution&gt; DISTRIBUTION_MAP = new LinkedHashMap&lt;&gt;();</span>
+
+  static {
+<span class="fc bfc" id="L393" title="All 2 branches covered.">    for (var distribution : values()) {</span>
+<span class="fc" id="L394">      DISTRIBUTION_MAP.put(distribution.name, distribution);</span>
+    }
+<span class="fc" id="L396">  }</span>
+
+  private final String name;
+
+<span class="fc" id="L400">  TtcDistribution(String name) {</span>
+<span class="fc" id="L401">    this.name = name;</span>
+<span class="fc" id="L402">  }</span>
+
+  private static double[] requireArgumentsSize(double[] arguments, int size) {
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">    if (arguments.length != size) {</span>
+<span class="nc" id="L406">      throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+    }
+<span class="fc" id="L408">    return arguments;</span>
+  }
+
+  private static double[] requireFinite(double[] arguments) {
+<span class="fc bfc" id="L412" title="All 2 branches covered.">    for (var argument : arguments) {</span>
+<span class="pc bpc" id="L413" title="1 of 2 branches missed.">      if (!Double.isFinite(argument)) {</span>
+<span class="nc" id="L414">        throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+      }
+    }
+<span class="fc" id="L417">    return arguments;</span>
+  }
+
+  private static double requireZeroToOne(double argument) {
+<span class="pc bpc" id="L421" title="2 of 4 branches missed.">    if (argument &lt; 0.0 || argument &gt; 1.0) {</span>
+<span class="nc" id="L422">      throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+    }
+<span class="fc" id="L424">    return argument;</span>
+  }
+
+  private static double requirePositive(double argument) {
+<span class="pc bpc" id="L428" title="1 of 2 branches missed.">    if (argument &lt;= 0.0) {</span>
+<span class="nc" id="L429">      throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+    }
+<span class="fc" id="L431">    return argument;</span>
+  }
+
+  private static double requireNonNegative(double argument) {
+<span class="pc bpc" id="L435" title="1 of 2 branches missed.">    if (argument &lt; 0.0) {</span>
+<span class="nc" id="L436">      throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+    }
+<span class="fc" id="L438">    return argument;</span>
+  }
+
+  private static double requireInteger(double argument) {
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">    if (Math.floor(argument) != argument) {</span>
+<span class="nc" id="L443">      throw new IllegalArgumentException(&quot;Invalid arguments for distribution&quot;);</span>
+    }
+<span class="fc" id="L445">    return argument;</span>
+  }
+
+  /**
+   * Validates {@code arguments} against this {@code TtcDistribution}.
+   *
+   * @param arguments the arguments of the distribution
+   * @throws java.lang.NullPointerException if {@code arguments} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for this {@code
+   *     TtcDistribution}
+   * @since 1.0.0
+   */
+  public void validateArguments(double... arguments) {
+<span class="fc" id="L458">    requireArgumentsSize(requireNonNull(arguments), 0);</span>
+<span class="fc" id="L459">  }</span>
+
+  /**
+   * Returns the mean TTC of this {@code TtcDistribution} object given {@code arguments}.
+   *
+   * @param arguments the arguments of the distribution
+   * @return the mean TTC of this {@code TtcDistribution} object given {@code arguments}
+   * @throws java.lang.UnsupportedOperationException if this {@code TtcDistribution} does not
+   *     support mean TTC
+   * @throws java.lang.NullPointerException if {@code arguments} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for this {@code
+   *     TtcDistribution}
+   * @since 1.0.0
+   */
+  public double getMeanTtc(double... arguments) {
+<span class="nc" id="L474">    throw new UnsupportedOperationException();</span>
+  }
+
+  /**
+   * Returns the mean probability of this {@code TtcDistribution} object given {@code arguments}.
+   *
+   * @param arguments the arguments of the distribution
+   * @return the mean probability of this {@code TtcDistribution} object given {@code arguments}
+   * @throws java.lang.UnsupportedOperationException if this {@code TtcDistribution} does not
+   *     support mean probability
+   * @throws java.lang.NullPointerException if {@code arguments} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code arguments} is not valid for this {@code
+   *     TtcDistribution}
+   * @since 1.0.0
+   */
+  public double getMeanProbability(double... arguments) {
+<span class="nc" id="L490">    throw new UnsupportedOperationException();</span>
+  }
+
+  /**
+   * Returns the name of this {@code TtcDistribution} object.
+   *
+   * @return the name of this {@code TtcDistribution} object
+   * @since 1.0.0
+   */
+  @Override
+  public String toString() {
+<span class="fc" id="L501">    return this.name;</span>
+  }
+
+  /**
+   * Returns the distribution with the name {@code name}.
+   *
+   * @param name the name of the distribution
+   * @return the distribution with the name {@code name}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a distribution
+   * @since 1.0.0
+   */
+  public static TtcDistribution fromString(String name) {
+<span class="fc" id="L514">    requireNonNull(name);</span>
+<span class="pc bpc" id="L515" title="1 of 2 branches missed.">    if (!TtcDistribution.DISTRIBUTION_MAP.containsKey(name)) {</span>
+<span class="nc" id="L516">      throw new IllegalArgumentException(String.format(&quot;TTC distribution \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc" id="L518">    return TtcDistribution.DISTRIBUTION_MAP.get(name);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

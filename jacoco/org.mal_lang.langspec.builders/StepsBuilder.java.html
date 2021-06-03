@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StepsBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.builders</a> &gt; <span class="el_source">StepsBuilder.java</span></div><h1>StepsBuilder.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.builders;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
+import org.mal_lang.langspec.builders.step.StepExpressionBuilder;
+
+/**
+ * A builder for creating {@link org.mal_lang.langspec.Steps} objects.
+ *
+ * @since 1.0.0
+ */
+public final class StepsBuilder {
+  private final boolean overrides;
+<span class="fc" id="L33">  private final ArrayList&lt;StepExpressionBuilder&gt; stepExpressions = new ArrayList&lt;&gt;();</span>
+
+  /**
+   * Constructs a new {@code StepsBuilder} object.
+   *
+   * @param overrides whether this {@code StepsBuilder} overrides
+   * @since 1.0.0
+   */
+<span class="fc" id="L41">  public StepsBuilder(boolean overrides) {</span>
+<span class="fc" id="L42">    this.overrides = overrides;</span>
+<span class="fc" id="L43">  }</span>
+
+  /**
+   * Returns whether this {@code StepsBuilder} object overrides.
+   *
+   * @return whether this {@code StepsBuilder} object overrides
+   * @since 1.0.0
+   */
+  public boolean overrides() {
+<span class="fc" id="L52">    return this.overrides;</span>
+  }
+
+  /**
+   * Returns a list of all step expressions in this {@code StepsBuilder} object.
+   *
+   * @return a list of all step expressions in this {@code StepsBuilder} object
+   * @since 1.0.0
+   */
+  public List&lt;StepExpressionBuilder&gt; getStepExpressions() {
+<span class="fc" id="L62">    return List.copyOf(this.stepExpressions);</span>
+  }
+
+  /**
+   * Adds a step expression to this {@code StepsBuilder} object.
+   *
+   * @param stepExpression the step expression to add
+   * @return this {@code StepsBuilder} object
+   * @throws java.lang.NullPointerException if {@code stepExpression} is {@code null}
+   * @since 1.0.0
+   */
+  public StepsBuilder addStepExpression(StepExpressionBuilder stepExpression) {
+<span class="fc" id="L74">    this.stepExpressions.add(requireNonNull(stepExpression));</span>
+<span class="fc" id="L75">    return this;</span>
+  }
+
+  /**
+   * Creates a new {@code StepsBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonSteps the {@link jakarta.json.JsonObject}
+   * @return a new {@code StepsBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonSteps} is {@code null}
+   * @since 1.0.0
+   */
+  public static StepsBuilder fromJson(JsonObject jsonSteps) {
+<span class="fc" id="L87">    requireNonNull(jsonSteps);</span>
+<span class="fc" id="L88">    var builder = new StepsBuilder(jsonSteps.getBoolean(&quot;overrides&quot;));</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">    for (var jsonStepExpression : jsonSteps.getJsonArray(&quot;stepExpressions&quot;)) {</span>
+<span class="fc" id="L90">      builder.addStepExpression(StepExpressionBuilder.fromJson(jsonStepExpression.asJsonObject()));</span>
+<span class="fc" id="L91">    }</span>
+<span class="fc" id="L92">    return builder;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

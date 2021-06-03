@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssociationBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.builders</a> &gt; <span class="el_source">AssociationBuilder.java</span></div><h1>AssociationBuilder.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.builders;
+
+import static java.util.Objects.requireNonNull;
+import static org.mal_lang.langspec.Utils.requireIdentifier;
+
+import jakarta.json.JsonObject;
+import org.mal_lang.langspec.Multiplicity;
+
+/**
+ * A builder for creating {@link org.mal_lang.langspec.Association} objects.
+ *
+ * @since 1.0.0
+ */
+public final class AssociationBuilder {
+  private final String name;
+<span class="fc" id="L32">  private final MetaBuilder meta = new MetaBuilder();</span>
+  private final String leftAsset;
+  private final String leftField;
+  private final Multiplicity leftMultiplicity;
+  private final String rightAsset;
+  private final String rightField;
+  private final Multiplicity rightMultiplicity;
+
+  /**
+   * Constructs a new {@code AssociationBuilder} object.
+   *
+   * @param name the name of the association
+   * @param leftAsset the left asset of the association
+   * @param leftField the left field of the association
+   * @param leftMultiplicity the left multiplicity of the association
+   * @param rightAsset the right asset of the association
+   * @param rightField the right field of the association
+   * @param rightMultiplicity the right multiplicity of the association
+   * @throws java.lang.NullPointerException if {@code name}, {@code leftAsset}, {@code leftField},
+   *     {@code leftMultiplicity}, {@code rightAsset}, {@code rightField}, or {@code
+   *     rightMultiplicity} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name}, {@code leftAsset}, {@code
+   *     leftField}, {@code rightAsset}, or {@code rightField} is not a valid identifier
+   * @since 1.0.0
+   */
+  public AssociationBuilder(
+      String name,
+      String leftAsset,
+      String leftField,
+      Multiplicity leftMultiplicity,
+      String rightAsset,
+      String rightField,
+<span class="fc" id="L64">      Multiplicity rightMultiplicity) {</span>
+<span class="fc" id="L65">    this.name = requireIdentifier(name);</span>
+<span class="fc" id="L66">    this.leftAsset = requireIdentifier(leftAsset);</span>
+<span class="fc" id="L67">    this.leftField = requireIdentifier(leftField);</span>
+<span class="fc" id="L68">    this.leftMultiplicity = requireNonNull(leftMultiplicity);</span>
+<span class="fc" id="L69">    this.rightAsset = requireIdentifier(rightAsset);</span>
+<span class="fc" id="L70">    this.rightField = requireIdentifier(rightField);</span>
+<span class="fc" id="L71">    this.rightMultiplicity = requireNonNull(rightMultiplicity);</span>
+<span class="fc" id="L72">  }</span>
+
+  /**
+   * Returns the name of this {@code AssociationBuilder} object.
+   *
+   * @return the name of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public String getName() {
+<span class="fc" id="L81">    return this.name;</span>
+  }
+
+  /**
+   * Returns the meta info of this {@code AssociationBuilder} object.
+   *
+   * @return the meta info of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public MetaBuilder getMeta() {
+<span class="fc" id="L91">    return this.meta;</span>
+  }
+
+  /**
+   * Returns the left asset of this {@code AssociationBuilder} object.
+   *
+   * @return the left asset of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public String getLeftAsset() {
+<span class="fc" id="L101">    return this.leftAsset;</span>
+  }
+
+  /**
+   * Returns the left field of this {@code AssociationBuilder} object.
+   *
+   * @return the left field of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public String getLeftField() {
+<span class="fc" id="L111">    return this.leftField;</span>
+  }
+
+  /**
+   * Returns the left multiplicity of this {@code AssociationBuilder} object.
+   *
+   * @return the left multiplicity of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public Multiplicity getLeftMultiplicity() {
+<span class="fc" id="L121">    return this.leftMultiplicity;</span>
+  }
+
+  /**
+   * Returns the right asset of this {@code AssociationBuilder} object.
+   *
+   * @return the right asset of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public String getRightAsset() {
+<span class="fc" id="L131">    return this.rightAsset;</span>
+  }
+
+  /**
+   * Returns the right field of this {@code AssociationBuilder} object.
+   *
+   * @return the right field of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public String getRightField() {
+<span class="fc" id="L141">    return this.rightField;</span>
+  }
+
+  /**
+   * Returns the right multiplicity of this {@code AssociationBuilder} object.
+   *
+   * @return the right multiplicity of this {@code AssociationBuilder} object
+   * @since 1.0.0
+   */
+  public Multiplicity getRightMultiplicity() {
+<span class="fc" id="L151">    return this.rightMultiplicity;</span>
+  }
+
+  /**
+   * Creates a new {@code AssociationBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonAssociation the {@link jakarta.json.JsonObject}
+   * @return a new {@code AssociationBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonAssociation} is {@code null}
+   * @since 1.0.0
+   */
+  public static AssociationBuilder fromJson(JsonObject jsonAssociation) {
+<span class="fc" id="L163">    requireNonNull(jsonAssociation);</span>
+<span class="fc" id="L164">    var builder =</span>
+        new AssociationBuilder(
+<span class="fc" id="L166">            jsonAssociation.getString(&quot;name&quot;),</span>
+<span class="fc" id="L167">            jsonAssociation.getString(&quot;leftAsset&quot;),</span>
+<span class="fc" id="L168">            jsonAssociation.getString(&quot;leftField&quot;),</span>
+<span class="fc" id="L169">            Multiplicity.fromJson(jsonAssociation.getJsonObject(&quot;leftMultiplicity&quot;)),</span>
+<span class="fc" id="L170">            jsonAssociation.getString(&quot;rightAsset&quot;),</span>
+<span class="fc" id="L171">            jsonAssociation.getString(&quot;rightField&quot;),</span>
+<span class="fc" id="L172">            Multiplicity.fromJson(jsonAssociation.getJsonObject(&quot;rightMultiplicity&quot;)));</span>
+<span class="fc" id="L173">    builder.getMeta().fromJson(jsonAssociation.getJsonObject(&quot;meta&quot;));</span>
+<span class="fc" id="L174">    return builder;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

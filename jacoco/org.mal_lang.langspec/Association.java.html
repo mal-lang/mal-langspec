@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Association.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">Association.java</span></div><h1>Association.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import java.util.Map;
+import org.mal_lang.langspec.builders.AssociationBuilder;
+
+/**
+ * Immutable class representing an association in a MAL language.
+ *
+ * @since 1.0.0
+ */
+public final class Association {
+  private final String name;
+  private final Meta meta;
+  private final Field leftField;
+  private final Field rightField;
+
+<span class="fc" id="L37">  private Association(String name, Meta meta, Field leftField, Field rightField) {</span>
+<span class="fc" id="L38">    this.name = requireNonNull(name);</span>
+<span class="fc" id="L39">    this.meta = requireNonNull(meta);</span>
+<span class="fc" id="L40">    this.leftField = requireNonNull(leftField);</span>
+<span class="fc" id="L41">    this.rightField = requireNonNull(rightField);</span>
+<span class="fc" id="L42">    leftField.setAssociation(this);</span>
+<span class="fc" id="L43">    rightField.setAssociation(this);</span>
+<span class="fc" id="L44">  }</span>
+
+  /**
+   * Returns the name of this {@code Association} object.
+   *
+   * @return the name of this {@code Association} object
+   * @since 1.0.0
+   */
+  public String getName() {
+<span class="nc" id="L53">    return this.name;</span>
+  }
+
+  /**
+   * Returns the meta info of this {@code Association} object.
+   *
+   * @return the meta info of this {@code Association} object
+   * @since 1.0.0
+   */
+  public Meta getMeta() {
+<span class="nc" id="L63">    return this.meta;</span>
+  }
+
+  /**
+   * Returns the left field of this {@code Association} object.
+   *
+   * @return the left field of this {@code Association} object
+   * @since 1.0.0
+   */
+  public Field getLeftField() {
+<span class="nc" id="L73">    return this.leftField;</span>
+  }
+
+  /**
+   * Returns the right field of this {@code Association} object.
+   *
+   * @return the right field of this {@code Association} object
+   * @since 1.0.0
+   */
+  public Field getRightField() {
+<span class="nc" id="L83">    return this.rightField;</span>
+  }
+
+  JsonObject toJson() {
+<span class="fc" id="L87">    return Json.createObjectBuilder()</span>
+<span class="fc" id="L88">        .add(&quot;name&quot;, this.name)</span>
+<span class="fc" id="L89">        .add(&quot;meta&quot;, this.meta.toJson())</span>
+<span class="fc" id="L90">        .add(&quot;leftAsset&quot;, this.rightField.getAsset().getName())</span>
+<span class="fc" id="L91">        .add(&quot;leftField&quot;, this.leftField.getName())</span>
+<span class="fc" id="L92">        .add(&quot;leftMultiplicity&quot;, this.leftField.getMultiplicity().toJson())</span>
+<span class="fc" id="L93">        .add(&quot;rightAsset&quot;, this.leftField.getAsset().getName())</span>
+<span class="fc" id="L94">        .add(&quot;rightField&quot;, this.rightField.getName())</span>
+<span class="fc" id="L95">        .add(&quot;rightMultiplicity&quot;, this.rightField.getMultiplicity().toJson())</span>
+<span class="fc" id="L96">        .build();</span>
+  }
+
+  static Association fromBuilder(AssociationBuilder builder, Map&lt;String, Asset&gt; assets) {
+<span class="fc" id="L100">    requireNonNull(builder);</span>
+<span class="fc" id="L101">    requireNonNull(assets);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    if (!assets.containsKey(builder.getLeftAsset())) {</span>
+<span class="nc" id="L103">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L104">          String.format(&quot;Asset \&quot;%s\&quot; not found&quot;, builder.getLeftAsset()));</span>
+    }
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">    if (!assets.containsKey(builder.getRightAsset())) {</span>
+<span class="nc" id="L107">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L108">          String.format(&quot;Asset \&quot;%s\&quot; not found&quot;, builder.getRightAsset()));</span>
+    }
+<span class="fc" id="L110">    var leftField =</span>
+        new Field(
+<span class="fc" id="L112">            builder.getLeftField(),</span>
+<span class="fc" id="L113">            assets.get(builder.getRightAsset()),</span>
+<span class="fc" id="L114">            builder.getLeftMultiplicity());</span>
+<span class="fc" id="L115">    var rightField =</span>
+        new Field(
+<span class="fc" id="L117">            builder.getRightField(),</span>
+<span class="fc" id="L118">            assets.get(builder.getLeftAsset()),</span>
+<span class="fc" id="L119">            builder.getRightMultiplicity());</span>
+<span class="fc" id="L120">    leftField.setTarget(rightField);</span>
+<span class="fc" id="L121">    rightField.setTarget(leftField);</span>
+<span class="fc" id="L122">    return new Association(</span>
+<span class="fc" id="L123">        builder.getName(), Meta.fromBuilder(builder.getMeta()), leftField, rightField);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

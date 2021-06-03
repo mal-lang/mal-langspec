@@ -1,3 +1,7 @@
 module:org.mal_lang.langspec
 org.mal_lang.langspec
+org.mal_lang.langspec.builders
+org.mal_lang.langspec.builders.step
+org.mal_lang.langspec.io
+org.mal_lang.langspec.step
 org.mal_lang.langspec.ttc

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Steps.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">Steps.java</span></div><h1>Steps.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
+import org.mal_lang.langspec.builders.StepsBuilder;
+import org.mal_lang.langspec.step.StepExpression;
+
+/**
+ * Immutable class representing steps of an attack step in a MAL language.
+ *
+ * @since 1.0.0
+ */
+public final class Steps {
+  private final boolean overrides;
+<span class="fc" id="L35">  private final List&lt;StepExpression&gt; stepExpressions = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L37">  private Steps(boolean overrides) {</span>
+<span class="fc" id="L38">    this.overrides = overrides;</span>
+<span class="fc" id="L39">  }</span>
+
+  /**
+   * Returns whether this {@code Steps} object overrides.
+   *
+   * @return whether this {@code Steps} object overrides
+   * @since 1.0.0
+   */
+  public boolean overrides() {
+<span class="nc" id="L48">    return this.overrides;</span>
+  }
+
+  /**
+   * Returns a list of all step expressions in this {@code Steps} object.
+   *
+   * @return a list of all step expressions in this {@code Steps} object
+   * @since 1.0.0
+   */
+  public List&lt;StepExpression&gt; getStepExpressions() {
+<span class="nc" id="L58">    return List.copyOf(this.stepExpressions);</span>
+  }
+
+  void addStepExpression(StepExpression stepExpression) {
+<span class="fc" id="L62">    this.stepExpressions.add(requireNonNull(stepExpression));</span>
+<span class="fc" id="L63">  }</span>
+
+  JsonObject toJson() {
+<span class="fc" id="L66">    var jsonStepExpressions = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    for (var stepExpression : this.stepExpressions) {</span>
+<span class="fc" id="L68">      jsonStepExpressions.add(stepExpression.toJson());</span>
+<span class="fc" id="L69">    }</span>
+<span class="fc" id="L70">    return Json.createObjectBuilder()</span>
+<span class="fc" id="L71">        .add(&quot;overrides&quot;, this.overrides)</span>
+<span class="fc" id="L72">        .add(&quot;stepExpressions&quot;, jsonStepExpressions)</span>
+<span class="fc" id="L73">        .build();</span>
+  }
+
+  static Steps fromBuilder(StepsBuilder builder) {
+<span class="fc" id="L77">    requireNonNull(builder);</span>
+<span class="fc" id="L78">    return new Steps(builder.overrides());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssetBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.builders</a> &gt; <span class="el_source">AssetBuilder.java</span></div><h1>AssetBuilder.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.builders;
+
+import static java.util.Objects.requireNonNull;
+import static org.mal_lang.langspec.Utils.requireIdentifier;
+
+import jakarta.json.JsonObject;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * A builder for creating {@link org.mal_lang.langspec.Asset} objects.
+ *
+ * @since 1.0.0
+ */
+public final class AssetBuilder {
+  private final String name;
+<span class="fc" id="L34">  private final MetaBuilder meta = new MetaBuilder();</span>
+  private final String category;
+  private final boolean isAbstract;
+  private final String superAsset;
+<span class="fc" id="L38">  private final Map&lt;String, VariableBuilder&gt; variables = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L39">  private final Map&lt;String, AttackStepBuilder&gt; attackSteps = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L40">  private byte[] svgIcon = null;</span>
+<span class="fc" id="L41">  private byte[] pngIcon = null;</span>
+
+  /**
+   * Constructs a new {@code AssetBuilder} object.
+   *
+   * @param name the name of the asset
+   * @param category the category of the asset
+   * @param isAbstract whether the asset is abstract
+   * @param superAsset the super asset of the asset, or {@code null}
+   * @throws java.lang.NullPointerException if {@code name} or {@code category} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} or {@code category} is not a valid
+   *     identifier
+   * @since 1.0.0
+   */
+<span class="fc" id="L55">  public AssetBuilder(String name, String category, boolean isAbstract, String superAsset) {</span>
+<span class="fc" id="L56">    this.name = requireIdentifier(name);</span>
+<span class="fc" id="L57">    this.category = requireIdentifier(category);</span>
+<span class="fc" id="L58">    this.isAbstract = isAbstract;</span>
+<span class="fc" id="L59">    this.superAsset = superAsset;</span>
+<span class="fc" id="L60">  }</span>
+
+  /**
+   * Returns the name of this {@code AssetBuilder} object.
+   *
+   * @return the name of this {@code AssetBuilder} object
+   * @since 1.0.0
+   */
+  public String getName() {
+<span class="fc" id="L69">    return this.name;</span>
+  }
+
+  /**
+   * Returns the meta info of this {@code AssetBuilder} object.
+   *
+   * @return the meta info of this {@code AssetBuilder} object
+   * @since 1.0.0
+   */
+  public MetaBuilder getMeta() {
+<span class="fc" id="L79">    return this.meta;</span>
+  }
+
+  /**
+   * Returns the category of this {@code AssetBuilder} object.
+   *
+   * @return the category of this {@code AssetBuilder} object
+   * @since 1.0.0
+   */
+  public String getCategory() {
+<span class="fc" id="L89">    return this.category;</span>
+  }
+
+  /**
+   * Returns whether this {@code AssetBuilder} object is abstract.
+   *
+   * @return whether this {@code AssetBuilder} object is abstract
+   * @since 1.0.0
+   */
+  public boolean isAbstract() {
+<span class="fc" id="L99">    return this.isAbstract;</span>
+  }
+
+  /**
+   * Returns the super asset of this {@code AssetBuilder} object, or {@code null} if no super asset
+   * has been set.
+   *
+   * @return the super asset of this {@code AssetBuilder} object, or {@code null} if no super asset
+   *     has been set
+   * @since 1.0.0
+   */
+  public String getSuperAsset() {
+<span class="fc" id="L111">    return this.superAsset;</span>
+  }
+
+  /**
+   * Returns a list of all variables in this {@code AssetBuilder} object.
+   *
+   * @return a list of all variables in this {@code AssetBuilder} object
+   * @since 1.0.0
+   */
+  public List&lt;VariableBuilder&gt; getVariables() {
+<span class="fc" id="L121">    return List.copyOf(this.variables.values());</span>
+  }
+
+  /**
+   * Adds a variable to this {@code AssetBuilder} object.
+   *
+   * @param variable the variable to add
+   * @return this {@code AssetBuilder} object
+   * @throws java.lang.NullPointerException if {@code variable} is {@code null}
+   * @since 1.0.0
+   */
+  public AssetBuilder addVariable(VariableBuilder variable) {
+<span class="fc" id="L133">    requireNonNull(variable);</span>
+<span class="fc" id="L134">    this.variables.put(variable.getName(), variable);</span>
+<span class="fc" id="L135">    return this;</span>
+  }
+
+  /**
+   * Returns a list of all attack steps in this {@code AssetBuilder} object.
+   *
+   * @return a list of all attack steps in this {@code AssetBuilder} object
+   * @since 1.0.0
+   */
+  public List&lt;AttackStepBuilder&gt; getAttackSteps() {
+<span class="fc" id="L145">    return List.copyOf(this.attackSteps.values());</span>
+  }
+
+  /**
+   * Adds an attack step to this {@code AssetBuilder} object.
+   *
+   * @param attackStep the attack step to add
+   * @return this {@code AssetBuilder} object
+   * @throws java.lang.NullPointerException if {@code attackStep} is {@code null}
+   * @since 1.0.0
+   */
+  public AssetBuilder addAttackStep(AttackStepBuilder attackStep) {
+<span class="fc" id="L157">    requireNonNull(attackStep);</span>
+<span class="fc" id="L158">    this.attackSteps.put(attackStep.getName(), attackStep);</span>
+<span class="fc" id="L159">    return this;</span>
+  }
+
+  /**
+   * Returns the SVG icon of this {@code AssetBuilder} object, or {@code null} if no SVG icon has
+   * been set.
+   *
+   * @return the SVG icon of this {@code AssetBuilder} object, or {@code null} if no SVG icon has
+   *     been set
+   * @since 1.0.0
+   */
+  public byte[] getSvgIcon() {
+<span class="fc bfc" id="L171" title="All 2 branches covered.">    return this.svgIcon == null ? null : this.svgIcon.clone();</span>
+  }
+
+  /**
+   * Sets the SVG icon of this {@code AssetBuilder} object.
+   *
+   * @param svgIcon the SVG icon to set
+   * @return this {@code AssetBuilder} object
+   * @throws java.lang.NullPointerException if {@code svgIcon} is {@code null}
+   * @since 1.0.0
+   */
+  public AssetBuilder setSvgIcon(byte[] svgIcon) {
+<span class="fc" id="L183">    this.svgIcon = requireNonNull(svgIcon).clone();</span>
+<span class="fc" id="L184">    return this;</span>
+  }
+
+  /**
+   * Returns the PNG icon of this {@code AssetBuilder} object, or {@code null} if no PNG icon has
+   * been set.
+   *
+   * @return the PNG icon of this {@code AssetBuilder} object, or {@code null} if no PNG icon has
+   *     been set
+   * @since 1.0.0
+   */
+  public byte[] getPngIcon() {
+<span class="fc bfc" id="L196" title="All 2 branches covered.">    return this.pngIcon == null ? null : this.pngIcon.clone();</span>
+  }
+
+  /**
+   * Sets the PNG icon of this {@code AssetBuilder} object.
+   *
+   * @param pngIcon the PNG icon to set
+   * @return this {@code AssetBuilder} object
+   * @throws java.lang.NullPointerException if {@code pngIcon} is {@code null}
+   * @since 1.0.0
+   */
+  public AssetBuilder setPngIcon(byte[] pngIcon) {
+<span class="fc" id="L208">    this.pngIcon = requireNonNull(pngIcon).clone();</span>
+<span class="fc" id="L209">    return this;</span>
+  }
+
+  /**
+   * Creates a new {@code AssetBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonAsset the {@link jakarta.json.JsonObject}
+   * @param svgIcons the SVG icons of the language
+   * @param pngIcons the PNG icons of the language
+   * @return a new {@code AssetBuilder} from a {@link jakarta.json.JsonObject}
+   * @throws java.lang.NullPointerException if {@code jsonAsset}, {@code svgIcons}, or {@code
+   *     pngIcons} is {@code null}
+   * @since 1.0.0
+   */
+  public static AssetBuilder fromJson(
+      JsonObject jsonAsset, Map&lt;String, byte[]&gt; svgIcons, Map&lt;String, byte[]&gt; pngIcons) {
+<span class="fc" id="L225">    requireNonNull(jsonAsset);</span>
+<span class="fc" id="L226">    requireNonNull(svgIcons);</span>
+<span class="fc" id="L227">    requireNonNull(pngIcons);</span>
+<span class="fc" id="L228">    var builder =</span>
+        new AssetBuilder(
+<span class="fc" id="L230">            jsonAsset.getString(&quot;name&quot;),</span>
+<span class="fc" id="L231">            jsonAsset.getString(&quot;category&quot;),</span>
+<span class="fc" id="L232">            jsonAsset.getBoolean(&quot;isAbstract&quot;),</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">            jsonAsset.isNull(&quot;superAsset&quot;) ? null : jsonAsset.getString(&quot;superAsset&quot;));</span>
+<span class="fc" id="L234">    builder.getMeta().fromJson(jsonAsset.getJsonObject(&quot;meta&quot;));</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">    for (var jsonVariable : jsonAsset.getJsonArray(&quot;variables&quot;)) {</span>
+<span class="fc" id="L236">      builder.addVariable(VariableBuilder.fromJson(jsonVariable.asJsonObject()));</span>
+<span class="fc" id="L237">    }</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">    for (var jsonAttackStep : jsonAsset.getJsonArray(&quot;attackSteps&quot;)) {</span>
+<span class="fc" id="L239">      builder.addAttackStep(AttackStepBuilder.fromJson(jsonAttackStep.asJsonObject()));</span>
+<span class="fc" id="L240">    }</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">    if (svgIcons.containsKey(builder.getName())) {</span>
+<span class="fc" id="L242">      builder.setSvgIcon(svgIcons.get(builder.getName()));</span>
+    }
+<span class="fc bfc" id="L244" title="All 2 branches covered.">    if (pngIcons.containsKey(builder.getName())) {</span>
+<span class="fc" id="L245">      builder.setPngIcon(pngIcons.get(builder.getName()));</span>
+    }
+<span class="fc" id="L247">    return builder;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

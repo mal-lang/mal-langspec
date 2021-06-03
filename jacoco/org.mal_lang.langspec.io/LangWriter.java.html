@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LangWriter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.io</a> &gt; <span class="el_source">LangWriter.java</span></div><h1>LangWriter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.io;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import java.io.Closeable;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import org.leadpony.joy.api.JsonGenerator;
+import org.mal_lang.langspec.Lang;
+
+/**
+ * Writes {@link org.mal_lang.langspec.Lang} objects into {@code .mar} files.
+ *
+ * @since 1.0.0
+ */
+public final class LangWriter implements Closeable {
+  private final OutputStream out;
+<span class="fc" id="L40">  private boolean isWritten = false;</span>
+<span class="fc" id="L41">  private boolean isClosed = false;</span>
+
+  /**
+   * Constructs a new {@code LangWriter} object.
+   *
+   * @param out an output stream to which a {@code .mar} file is to be written
+   * @throws java.lang.NullPointerException if {@code out} is {@code null}
+   * @since 1.0.0
+   */
+<span class="fc" id="L50">  public LangWriter(OutputStream out) {</span>
+<span class="fc" id="L51">    this.out = requireNonNull(out);</span>
+<span class="fc" id="L52">  }</span>
+
+  private static void writeLangSpec(ZipOutputStream zipOut, Lang lang) throws IOException {
+<span class="fc" id="L55">    var jsonWriterFactory =</span>
+<span class="fc" id="L56">        Json.createWriterFactory(</span>
+<span class="fc" id="L57">            Map.ofEntries(</span>
+<span class="fc" id="L58">                Map.entry(JsonGenerator.PRETTY_PRINTING, true),</span>
+<span class="fc" id="L59">                Map.entry(JsonGenerator.INDENTATION_SIZE, 2)));</span>
+<span class="fc" id="L60">    var wrappedOut =</span>
+<span class="fc" id="L61">        new FilterOutputStream(zipOut) {</span>
+          @Override
+<span class="fc" id="L63">          public void close() throws IOException {}</span>
+        };
+
+<span class="fc" id="L66">    zipOut.putNextEntry(new ZipEntry(&quot;langspec.json&quot;));</span>
+<span class="fc" id="L67">    try (var jsonWriter = jsonWriterFactory.createWriter(wrappedOut, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L68">      jsonWriter.writeObject(lang.toJson());</span>
+    }
+<span class="fc" id="L70">    zipOut.closeEntry();</span>
+<span class="fc" id="L71">  }</span>
+
+  /**
+   * Writes the specified {@link org.mal_lang.langspec.Lang} object to the output source. This
+   * method needs to be called only once for a writer instance.
+   *
+   * @param lang {@link org.mal_lang.langspec.Lang} object that is to be written to the output
+   *     source
+   * @throws java.lang.NullPointerException if {@code lang} is {@code null}
+   * @throws java.io.IOException if an I/O error occurs
+   * @throws java.lang.IllegalStateException if {@code write} or {@code close} method is already
+   *     called
+   * @since 1.0.0
+   */
+  public void write(Lang lang) throws IOException {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">    if (this.isWritten) {</span>
+<span class="nc" id="L87">      throw new IllegalStateException(&quot;write method is already called&quot;);</span>
+    }
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (this.isClosed) {</span>
+<span class="nc" id="L90">      throw new IllegalStateException(&quot;close method is already called&quot;);</span>
+    }
+<span class="fc" id="L92">    requireNonNull(lang);</span>
+<span class="fc" id="L93">    try (var zipOut = new ZipOutputStream(this.out, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L94">      LangWriter.writeLangSpec(zipOut, lang);</span>
+<span class="fc" id="L95">      zipOut.putNextEntry(new ZipEntry(&quot;icons/&quot;));</span>
+<span class="fc" id="L96">      zipOut.closeEntry();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">      for (var asset : lang.getAssets()) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (asset.hasLocalSvgIcon()) {</span>
+<span class="fc" id="L99">          zipOut.putNextEntry(new ZipEntry(String.format(&quot;icons/%s.svg&quot;, asset.getName())));</span>
+<span class="fc" id="L100">          zipOut.write(asset.getLocalSvgIcon());</span>
+<span class="fc" id="L101">          zipOut.closeEntry();</span>
+        }
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (asset.hasLocalPngIcon()) {</span>
+<span class="fc" id="L104">          zipOut.putNextEntry(new ZipEntry(String.format(&quot;icons/%s.png&quot;, asset.getName())));</span>
+<span class="fc" id="L105">          zipOut.write(asset.getLocalPngIcon());</span>
+<span class="fc" id="L106">          zipOut.closeEntry();</span>
+        }
+<span class="fc" id="L108">      }</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">      if (lang.hasLicense()) {</span>
+<span class="fc" id="L110">        zipOut.putNextEntry(new ZipEntry(&quot;LICENSE&quot;));</span>
+<span class="fc" id="L111">        zipOut.write(lang.getLicense().getBytes(StandardCharsets.UTF_8));</span>
+<span class="fc" id="L112">        zipOut.closeEntry();</span>
+      }
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">      if (lang.hasNotice()) {</span>
+<span class="fc" id="L115">        zipOut.putNextEntry(new ZipEntry(&quot;NOTICE&quot;));</span>
+<span class="fc" id="L116">        zipOut.write(lang.getNotice().getBytes(StandardCharsets.UTF_8));</span>
+<span class="fc" id="L117">        zipOut.closeEntry();</span>
+      }
+    } finally {
+<span class="fc" id="L120">      this.isWritten = true;</span>
+    }
+<span class="fc" id="L122">  }</span>
+
+  /**
+   * Closes this stream and releases any system resources associated with it. If the stream is
+   * already closed then invoking this method has no effect.
+   *
+   * @throws java.io.IOException if an I/O error occurs
+   * @since 1.0.0
+   */
+  @Override
+  public void close() throws IOException {
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">    if (this.isClosed) {</span>
+<span class="nc" id="L134">      return;</span>
+    }
+    try {
+<span class="fc" id="L137">      this.out.close();</span>
+    } finally {
+<span class="fc" id="L139">      this.isClosed = true;</span>
+    }
+<span class="fc" id="L141">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

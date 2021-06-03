@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StepVariableBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.builders.step</a> &gt; <span class="el_source">StepVariableBuilder.java</span></div><h1>StepVariableBuilder.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.builders.step;
+
+import java.util.List;
+import java.util.Map;
+import org.mal_lang.langspec.Asset;
+import org.mal_lang.langspec.builders.AssetBuilder;
+
+/**
+ * A builder for creating {@link org.mal_lang.langspec.step.StepVariable} objects.
+ *
+ * @since 1.0.0
+ */
+public final class StepVariableBuilder extends StepReferenceBuilder {
+  /**
+   * Constructs a new {@code StepVariableBuilder} object.
+   *
+   * @param name the name of the variable
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not a valid identifier
+   * @since 1.0.0
+   */
+  public StepVariableBuilder(String name) {
+<span class="fc" id="L39">    super(name);</span>
+<span class="fc" id="L40">  }</span>
+
+  @Override
+  public Asset getTarget(
+      Asset sourceAsset, Map&lt;String, Asset&gt; assets, List&lt;AssetBuilder&gt; assetBuilders) {
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    if (!sourceAsset.hasVariable(this.getName())) {</span>
+<span class="nc" id="L46">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L47">          String.format(&quot;Variable %s.%s not found&quot;, sourceAsset.getName(), this.getName()));</span>
+    }
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">    for (var assetBuilder : assetBuilders) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">      if (assetBuilder.getName().equals(sourceAsset.getName())) {</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        for (var variableBuilder : assetBuilder.getVariables()) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">          if (variableBuilder.getName().equals(this.getName())) {</span>
+<span class="fc" id="L53">            return variableBuilder</span>
+<span class="fc" id="L54">                .getStepExpression()</span>
+<span class="fc" id="L55">                .getTarget(sourceAsset, assets, assetBuilders);</span>
+          }
+<span class="fc" id="L57">        }</span>
+      }
+<span class="fc" id="L59">    }</span>
+<span class="nc" id="L60">    throw new IllegalStateException();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

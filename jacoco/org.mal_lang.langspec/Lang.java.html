@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Lang.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">Lang.java</span></div><h1>Lang.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.mal_lang.langspec.builders.LangBuilder;
+import org.mal_lang.langspec.step.StepExpression;
+
+/**
+ * Immutable class representing a MAL language.
+ *
+ * @since 1.0.0
+ */
+public final class Lang {
+  private final Map&lt;String, String&gt; defines;
+  private final Map&lt;String, Category&gt; categories;
+  private final Map&lt;String, Asset&gt; assets;
+  private final List&lt;Association&gt; associations;
+  private final String license;
+  private final String notice;
+
+  private Lang(
+      Map&lt;String, String&gt; defines,
+      Map&lt;String, Category&gt; categories,
+      Map&lt;String, Asset&gt; assets,
+      List&lt;Association&gt; associations,
+      String license,
+<span class="fc" id="L49">      String notice) {</span>
+<span class="fc" id="L50">    this.defines = Map.copyOf(requireNonNull(defines));</span>
+<span class="fc" id="L51">    this.categories = new LinkedHashMap&lt;&gt;(requireNonNull(categories));</span>
+<span class="fc" id="L52">    this.assets = new LinkedHashMap&lt;&gt;(requireNonNull(assets));</span>
+<span class="fc" id="L53">    this.associations = List.copyOf(requireNonNull(associations));</span>
+<span class="fc" id="L54">    this.license = license;</span>
+<span class="fc" id="L55">    this.notice = notice;</span>
+<span class="fc" id="L56">  }</span>
+
+  /**
+   * Returns whether {@code key} is the key of a define in this {@code Lang} object.
+   *
+   * @param key the key of the define
+   * @return whether {@code key} is the key of a define in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code key} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasDefine(String key) {
+<span class="fc" id="L67">    return this.defines.containsKey(requireNonNull(key));</span>
+  }
+
+  /**
+   * Returns the value of the define with the key {@code key} in this {@code Lang} object.
+   *
+   * @param key the key of the define
+   * @return the value of the define with the key {@code key} in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code key} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code key} is not the key of a define in this
+   *     {@code Lang} object
+   * @since 1.0.0
+   */
+  public String getDefine(String key) {
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">    if (!this.hasDefine(key)) {</span>
+<span class="nc" id="L82">      throw new IllegalArgumentException(String.format(&quot;Define \&quot;%s\&quot; not found&quot;, key));</span>
+    }
+<span class="fc" id="L84">    return this.defines.get(key);</span>
+  }
+
+  /**
+   * Returns all defines in this {@code Lang} object.
+   *
+   * @return all defines in this {@code Lang} object
+   * @since 1.0.0
+   */
+  public Map&lt;String, String&gt; getDefines() {
+<span class="fc" id="L94">    return this.defines;</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of a category in this {@code Lang} object.
+   *
+   * @param name the name of the category
+   * @return whether {@code name} is the name of a category in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasCategory(String name) {
+<span class="nc" id="L106">    return this.categories.containsKey(requireNonNull(name));</span>
+  }
+
+  /**
+   * Returns the category with the name {@code name} in this {@code Lang} object.
+   *
+   * @param name the name of the category
+   * @return the category with the name {@code name} in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a category in
+   *     this {@code Lang} object
+   * @since 1.0.0
+   */
+  public Category getCategory(String name) {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">    if (!this.hasCategory(name)) {</span>
+<span class="nc" id="L121">      throw new IllegalArgumentException(String.format(&quot;Category \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="nc" id="L123">    return this.categories.get(name);</span>
+  }
+
+  /**
+   * Returns a list of all categories in this {@code Lang} object.
+   *
+   * @return a list of all categories in this {@code Lang} object
+   * @since 1.0.0
+   */
+  public List&lt;Category&gt; getCategories() {
+<span class="fc" id="L133">    return List.copyOf(this.categories.values());</span>
+  }
+
+  /**
+   * Returns whether {@code name} is the name of an asset in this {@code Lang} object.
+   *
+   * @param name the name of the asset
+   * @return whether {@code name} is the name of an asset in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public boolean hasAsset(String name) {
+<span class="nc" id="L145">    return this.assets.containsKey(requireNonNull(name));</span>
+  }
+
+  /**
+   * Returns the asset with the name {@code name} in this {@code Lang} object.
+   *
+   * @param name the name of the asset
+   * @return the asset with the name {@code name} in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of an asset in this
+   *     {@code Lang} object
+   * @since 1.0.0
+   */
+  public Asset getAsset(String name) {
+<span class="nc bnc" id="L159" title="All 2 branches missed.">    if (!this.hasAsset(name)) {</span>
+<span class="nc" id="L160">      throw new IllegalArgumentException(String.format(&quot;Asset \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="nc" id="L162">    return this.assets.get(name);</span>
+  }
+
+  /**
+   * Returns a list of all assets in this {@code Lang} object.
+   *
+   * @return a list of all assets in this {@code Lang} object
+   * @since 1.0.0
+   */
+  public List&lt;Asset&gt; getAssets() {
+<span class="fc" id="L172">    return List.copyOf(this.assets.values());</span>
+  }
+
+  /**
+   * Returns a list of all associations in this {@code Lang} object.
+   *
+   * @return a list of all associations in this {@code Lang} object
+   * @since 1.0.0
+   */
+  public List&lt;Association&gt; getAssociations() {
+<span class="fc" id="L182">    return this.associations;</span>
+  }
+
+  /**
+   * Returns whether this {@code Lang} object has a license.
+   *
+   * @return whether this {@code Lang} object has a license
+   * @since 1.0.0
+   */
+  public boolean hasLicense() {
+<span class="fc bfc" id="L192" title="All 2 branches covered.">    return this.license != null;</span>
+  }
+
+  /**
+   * Returns the license of this {@code Lang} object.
+   *
+   * @return the license of this {@code Lang} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Lang} object does not have a
+   *     license
+   * @since 1.0.0
+   */
+  public String getLicense() {
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">    if (!this.hasLicense()) {</span>
+<span class="nc" id="L205">      throw new UnsupportedOperationException(&quot;License not found&quot;);</span>
+    }
+<span class="fc" id="L207">    return this.license;</span>
+  }
+
+  /**
+   * Returns whether this {@code Lang} object has a notice.
+   *
+   * @return whether this {@code Lang} object has a notice
+   * @since 1.0.0
+   */
+  public boolean hasNotice() {
+<span class="fc bfc" id="L217" title="All 2 branches covered.">    return this.notice != null;</span>
+  }
+
+  /**
+   * Returns the notice of this {@code Lang} object.
+   *
+   * @return the notice of this {@code Lang} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Lang} object does not have a
+   *     notice
+   * @since 1.0.0
+   */
+  public String getNotice() {
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">    if (!this.hasNotice()) {</span>
+<span class="nc" id="L230">      throw new UnsupportedOperationException(&quot;Notice not found&quot;);</span>
+    }
+<span class="fc" id="L232">    return this.notice;</span>
+  }
+
+  /**
+   * Returns the JSON representation of this {@code Lang} object.
+   *
+   * @return the JSON representation of this {@code Lang} object
+   * @since 1.0.0
+   */
+  public JsonObject toJson() {
+    // Defines
+<span class="fc" id="L243">    var jsonDefines = Json.createObjectBuilder();</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">    for (var define : this.defines.entrySet()) {</span>
+<span class="fc" id="L245">      jsonDefines.add(define.getKey(), define.getValue());</span>
+<span class="fc" id="L246">    }</span>
+
+    // Categories
+<span class="fc" id="L249">    var jsonCategories = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">    for (var category : this.categories.values()) {</span>
+<span class="fc" id="L251">      jsonCategories.add(category.toJson());</span>
+<span class="fc" id="L252">    }</span>
+
+    // Assets
+<span class="fc" id="L255">    var jsonAssets = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">    for (var asset : this.assets.values()) {</span>
+<span class="fc" id="L257">      jsonAssets.add(asset.toJson());</span>
+<span class="fc" id="L258">    }</span>
+
+    // Associations
+<span class="fc" id="L261">    var jsonAssociations = Json.createArrayBuilder();</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">    for (var association : this.associations) {</span>
+<span class="fc" id="L263">      jsonAssociations.add(association.toJson());</span>
+<span class="fc" id="L264">    }</span>
+
+<span class="fc" id="L266">    return Json.createObjectBuilder()</span>
+<span class="fc" id="L267">        .add(&quot;formatVersion&quot;, Utils.getFormatVersion())</span>
+<span class="fc" id="L268">        .add(&quot;defines&quot;, jsonDefines)</span>
+<span class="fc" id="L269">        .add(&quot;categories&quot;, jsonCategories)</span>
+<span class="fc" id="L270">        .add(&quot;assets&quot;, jsonAssets)</span>
+<span class="fc" id="L271">        .add(&quot;associations&quot;, jsonAssociations)</span>
+<span class="fc" id="L272">        .build();</span>
+  }
+
+  /**
+   * Creates a new {@code Lang} object from a {@link org.mal_lang.langspec.builders.LangBuilder}.
+   *
+   * @param builder the {@link org.mal_lang.langspec.builders.LangBuilder}
+   * @return a new {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code builder} is {@code null}
+   * @since 1.0.0
+   */
+  public static Lang fromBuilder(LangBuilder builder) {
+<span class="fc" id="L284">    requireNonNull(builder);</span>
+
+    // Categories
+<span class="fc" id="L287">    Map&lt;String, Category&gt; categories = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">    for (var categoryBuilder : builder.getCategories()) {</span>
+<span class="fc" id="L289">      categories.put(categoryBuilder.getName(), Category.fromBuilder(categoryBuilder));</span>
+<span class="fc" id="L290">    }</span>
+
+    // Assets
+<span class="fc" id="L293">    Map&lt;String, Asset&gt; assets = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">    for (var assetBuilder : builder.getAssets()) {</span>
+<span class="fc" id="L295">      assets.put(assetBuilder.getName(), Asset.fromBuilder(assetBuilder, categories));</span>
+<span class="fc" id="L296">    }</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">    for (var assetBuilder : builder.getAssets()) {</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">      if (assetBuilder.getSuperAsset() == null) {</span>
+<span class="fc" id="L299">        continue;</span>
+      }
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">      if (!assets.containsKey(assetBuilder.getSuperAsset())) {</span>
+<span class="nc" id="L302">        throw new IllegalArgumentException(</span>
+<span class="nc" id="L303">            String.format(&quot;Asset \&quot;%s\&quot; not found&quot;, assetBuilder.getSuperAsset()));</span>
+      }
+<span class="fc" id="L305">      assets.get(assetBuilder.getName()).setSuperAsset(assets.get(assetBuilder.getSuperAsset()));</span>
+<span class="fc" id="L306">    }</span>
+
+    // Associations
+<span class="fc" id="L309">    List&lt;Association&gt; associations = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">    for (var associationBuilder : builder.getAssociations()) {</span>
+<span class="fc" id="L311">      associations.add(Association.fromBuilder(associationBuilder, assets));</span>
+<span class="fc" id="L312">    }</span>
+
+    // Variable targets
+<span class="fc" id="L315">    var variableTargets = new LinkedHashMap&lt;Variable, Asset&gt;();</span>
+<span class="fc bfc" id="L316" title="All 2 branches covered.">    for (var assetBuilder : builder.getAssets()) {</span>
+<span class="fc" id="L317">      var asset = assets.get(assetBuilder.getName());</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">      for (var variableBuilder : assetBuilder.getVariables()) {</span>
+<span class="fc" id="L319">        var variable = asset.getLocalVariable(variableBuilder.getName());</span>
+<span class="fc" id="L320">        var targetAsset =</span>
+<span class="fc" id="L321">            variableBuilder.getStepExpression().getTarget(asset, assets, builder.getAssets());</span>
+<span class="fc" id="L322">        variableTargets.put(variable, targetAsset);</span>
+<span class="fc" id="L323">      }</span>
+<span class="fc" id="L324">    }</span>
+
+    // Variables and attack steps
+<span class="fc bfc" id="L327" title="All 2 branches covered.">    for (var assetBuilder : builder.getAssets()) {</span>
+<span class="fc" id="L328">      var asset = assets.get(assetBuilder.getName());</span>
+<span class="fc bfc" id="L329" title="All 2 branches covered.">      for (var variableBuilder : assetBuilder.getVariables()) {</span>
+<span class="fc" id="L330">        var variable = asset.getLocalVariable(variableBuilder.getName());</span>
+<span class="fc" id="L331">        variable.setStepExpression(</span>
+<span class="fc" id="L332">            StepExpression.fromBuilder(</span>
+<span class="fc" id="L333">                variableBuilder.getStepExpression(), asset, assets, variableTargets));</span>
+<span class="fc" id="L334">      }</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">      for (var attackStepBuilder : assetBuilder.getAttackSteps()) {</span>
+<span class="fc" id="L336">        var attackStep = asset.getLocalAttackStep(attackStepBuilder.getName());</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">        if (attackStepBuilder.getRequires() != null) {</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">          for (var stepExpressionBuilder : attackStepBuilder.getRequires().getStepExpressions()) {</span>
+<span class="fc" id="L339">            attackStep</span>
+<span class="fc" id="L340">                .getLocalRequires()</span>
+<span class="fc" id="L341">                .addStepExpression(</span>
+<span class="fc" id="L342">                    StepExpression.fromBuilder(</span>
+                        stepExpressionBuilder, asset, assets, variableTargets));
+<span class="fc" id="L344">          }</span>
+        }
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        if (attackStepBuilder.getReaches() != null) {</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">          for (var stepExpressionBuilder : attackStepBuilder.getReaches().getStepExpressions()) {</span>
+<span class="fc" id="L348">            attackStep</span>
+<span class="fc" id="L349">                .getLocalReaches()</span>
+<span class="fc" id="L350">                .addStepExpression(</span>
+<span class="fc" id="L351">                    StepExpression.fromBuilder(</span>
+                        stepExpressionBuilder, asset, assets, variableTargets));
+<span class="fc" id="L353">          }</span>
+        }
+<span class="fc" id="L355">      }</span>
+<span class="fc" id="L356">    }</span>
+
+<span class="fc" id="L358">    return new Lang(</span>
+<span class="fc" id="L359">        builder.getDefines(),</span>
+        categories,
+        assets,
+        associations,
+<span class="fc" id="L363">        builder.getLicense(),</span>
+<span class="fc" id="L364">        builder.getNotice());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

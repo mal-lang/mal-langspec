@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StepSubType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.step</a> &gt; <span class="el_source">StepSubType.java</span></div><h1>StepSubType.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.step;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import java.util.Map;
+import org.mal_lang.langspec.Asset;
+import org.mal_lang.langspec.Variable;
+import org.mal_lang.langspec.builders.step.StepSubTypeBuilder;
+
+/**
+ * Immutable class representing a sub-type step in a MAL language.
+ *
+ * @since 1.0.0
+ */
+public final class StepSubType extends StepExpression {
+  private final Asset subType;
+  private final StepExpression stepExpression;
+
+  private StepSubType(
+      Asset sourceType, Asset targetType, Asset subType, StepExpression stepExpression) {
+<span class="fc" id="L39">    super(sourceType, targetType);</span>
+<span class="fc" id="L40">    this.subType = requireNonNull(subType);</span>
+<span class="fc" id="L41">    this.stepExpression = requireNonNull(stepExpression);</span>
+<span class="fc" id="L42">  }</span>
+
+  /**
+   * Returns the sub-type of this {@code StepSubType} object.
+   *
+   * @return the sub-type of this {@code StepSubType} object
+   * @since 1.0.0
+   */
+  public Asset getSubType() {
+<span class="nc" id="L51">    return this.subType;</span>
+  }
+
+  /**
+   * Returns the step expression of this {@code StepSubType} object.
+   *
+   * @return the step expression of this {@code StepSubType} object
+   * @since 1.0.0
+   */
+  public StepExpression getStepExpression() {
+<span class="nc" id="L61">    return this.stepExpression;</span>
+  }
+
+  @Override
+  public JsonObject toJson() {
+<span class="fc" id="L66">    return Json.createObjectBuilder()</span>
+<span class="fc" id="L67">        .add(&quot;type&quot;, &quot;subType&quot;)</span>
+<span class="fc" id="L68">        .add(&quot;subType&quot;, this.subType.getName())</span>
+<span class="fc" id="L69">        .add(&quot;stepExpression&quot;, this.stepExpression.toJson())</span>
+<span class="fc" id="L70">        .build();</span>
+  }
+
+  static StepSubType fromBuilder(
+      StepSubTypeBuilder builder,
+      Asset sourceAsset,
+      Map&lt;String, Asset&gt; assets,
+      Map&lt;Variable, Asset&gt; variableTargets) {
+<span class="fc" id="L78">    requireNonNull(builder);</span>
+<span class="fc" id="L79">    requireNonNull(sourceAsset);</span>
+<span class="fc" id="L80">    requireNonNull(assets);</span>
+<span class="fc" id="L81">    requireNonNull(variableTargets);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">    if (!assets.containsKey(builder.getSubType())) {</span>
+<span class="nc" id="L83">      throw new IllegalArgumentException(</span>
+<span class="nc" id="L84">          String.format(&quot;Asset \&quot;%s\&quot; not found&quot;, builder.getSubType()));</span>
+    }
+<span class="fc" id="L86">    var subType = assets.get(builder.getSubType());</span>
+<span class="fc" id="L87">    var stepExpression =</span>
+<span class="fc" id="L88">        StepExpression.fromBuilder(</span>
+<span class="fc" id="L89">            builder.getStepExpression(), sourceAsset, assets, variableTargets);</span>
+<span class="fc" id="L90">    return new StepSubType(sourceAsset, subType, subType, stepExpression);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

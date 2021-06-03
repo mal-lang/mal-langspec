@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Utils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">Utils.java</span></div><h1>Utils.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import jakarta.json.Json;
+import jakarta.json.stream.JsonParsingException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Utility class containing static helper functions.
+ *
+ * @since 1.0.0
+ */
+public final class Utils {
+  private Utils() {}
+
+  private static boolean isLetter(char ch) {
+<span class="pc bpc" id="L36" title="1 of 8 branches missed.">    return ch &gt;= 'A' &amp;&amp; ch &lt;= 'Z' || ch &gt;= 'a' &amp;&amp; ch &lt;= 'z';</span>
+  }
+
+  private static boolean isDigit(char ch) {
+<span class="pc bpc" id="L40" title="1 of 4 branches missed.">    return ch &gt;= '0' &amp;&amp; ch &lt;= '9';</span>
+  }
+
+  private static boolean isIdentifierStart(char ch) {
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">    return isLetter(ch) || ch == '_';</span>
+  }
+
+  private static boolean isIdentifierPart(char ch) {
+<span class="pc bpc" id="L48" title="1 of 6 branches missed.">    return isLetter(ch) || isDigit(ch) || ch == '_';</span>
+  }
+
+  /**
+   * Returns whether {@code name} is a valid identifier.
+   *
+   * @param name the {@link java.lang.CharSequence} to check
+   * @return whether {@code name} is a valid identifier
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
+   */
+  public static boolean isIdentifier(CharSequence name) {
+<span class="fc" id="L60">    requireNonNull(name);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">    if (name.length() == 0) {</span>
+<span class="nc" id="L62">      return false;</span>
+    }
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">    if (!isIdentifierStart(name.charAt(0))) {</span>
+<span class="nc" id="L65">      return false;</span>
+    }
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    for (int i = 1; i &lt; name.length(); i++) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">      if (!isIdentifierPart(name.charAt(i))) {</span>
+<span class="nc" id="L69">        return false;</span>
+      }
+    }
+<span class="fc" id="L72">    return true;</span>
+  }
+
+  /**
+   * Checks that {@code name} is a valid identifier.
+   *
+   * @param name the {@link java.lang.CharSequence} to check
+   * @return {@code name} as a {@link java.lang.String}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not a valid identifier
+   * @since 1.0.0
+   */
+  public static String requireIdentifier(CharSequence name) {
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">    if (!Utils.isIdentifier(name)) {</span>
+<span class="nc" id="L86">      throw new IllegalArgumentException(String.format(&quot;\&quot;%s\&quot; is not a valid identifier&quot;, name));</span>
+    }
+<span class="fc" id="L88">    return name.toString();</span>
+  }
+
+  /**
+   * Returns an input stream from which the langspec schema can be read.
+   *
+   * @return an input stream from which the langspec schema can be read
+   * @since 1.0.0
+   */
+  public static InputStream getLangSpecSchema() {
+<span class="fc" id="L98">    var in = Lang.class.getResourceAsStream(&quot;lang.schema.json&quot;);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">    if (in == null) {</span>
+<span class="nc" id="L100">      throw new RuntimeException(&quot;Failed to get resource \&quot;lang.schema.json\&quot;&quot;);</span>
+    }
+<span class="fc" id="L102">    return in;</span>
+  }
+
+  /**
+   * Returns the format version as a {@link java.lang.String}.
+   *
+   * @return the format version as a {@link java.lang.String}
+   * @since 1.0.0
+   */
+  public static String getFormatVersion() {
+<span class="fc" id="L112">    try (var schemaIn = Utils.getLangSpecSchema();</span>
+<span class="fc" id="L113">        var reader =</span>
+<span class="fc" id="L114">            Json.createReaderFactory(null).createReader(schemaIn, StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L115">      return reader</span>
+<span class="fc" id="L116">          .readObject()</span>
+<span class="fc" id="L117">          .getJsonObject(&quot;properties&quot;)</span>
+<span class="fc" id="L118">          .getJsonObject(&quot;formatVersion&quot;)</span>
+<span class="fc" id="L119">          .getString(&quot;const&quot;);</span>
+<span class="nc" id="L120">    } catch (JsonParsingException e) {</span>
+<span class="nc" id="L121">      throw new RuntimeException(&quot;Failed to parse \&quot;lang.schema.json\&quot;&quot;, e);</span>
+<span class="nc" id="L122">    } catch (IOException e) {</span>
+<span class="nc" id="L123">      throw new RuntimeException(e);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

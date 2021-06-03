@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AttackStepType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec</a> &gt; <span class="el_source">AttackStepType.java</span></div><h1>AttackStepType.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec;
+
+import static java.util.Objects.requireNonNull;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Enum representing the type of an attack step in a MAL language.
+ *
+ * @since 1.0.0
+ */
+<span class="fc" id="L29">public enum AttackStepType {</span>
+  /**
+   * Enum constant representing AND-attack steps, {@code &quot;&amp;&quot;}.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L35">  AND(&quot;and&quot;),</span>
+
+  /**
+   * Enum constant representing OR-attack steps, {@code &quot;|&quot;}.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L42">  OR(&quot;or&quot;),</span>
+
+  /**
+   * Enum constant representing defenses, {@code &quot;#&quot;}.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L49">  DEFENSE(&quot;defense&quot;),</span>
+
+  /**
+   * Enum constant representing exist steps, {@code &quot;E&quot;}.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L56">  EXIST(&quot;exist&quot;),</span>
+
+  /**
+   * Enum constant representing not-exist steps, {@code &quot;!E&quot;}.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L63">  NOT_EXIST(&quot;notExist&quot;);</span>
+
+<span class="fc" id="L65">  private static final Map&lt;String, AttackStepType&gt; TYPE_MAP = new LinkedHashMap&lt;&gt;();</span>
+
+  static {
+<span class="fc bfc" id="L68" title="All 2 branches covered.">    for (var type : values()) {</span>
+<span class="fc" id="L69">      TYPE_MAP.put(type.name, type);</span>
+    }
+<span class="fc" id="L71">  }</span>
+
+  private final String name;
+
+<span class="fc" id="L75">  AttackStepType(String name) {</span>
+<span class="fc" id="L76">    this.name = name;</span>
+<span class="fc" id="L77">  }</span>
+
+  /**
+   * Returns the name of this {@code AttackStepType} object.
+   *
+   * @return the name of this {@code AttackStepType} object
+   * @since 1.0.0
+   */
+  @Override
+  public String toString() {
+<span class="fc" id="L87">    return this.name;</span>
+  }
+
+  /**
+   * Returns the attack step type with the name {@code name}.
+   *
+   * @param name the name of the attack step type
+   * @return the attack step type with the name {@code name}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of an attack step
+   *     type
+   * @since 1.0.0
+   */
+  public static AttackStepType fromString(String name) {
+<span class="fc" id="L101">    requireNonNull(name);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    if (!AttackStepType.TYPE_MAP.containsKey(name)) {</span>
+<span class="nc" id="L103">      throw new IllegalArgumentException(String.format(&quot;Attack step type \&quot;%s\&quot; not found&quot;, name));</span>
+    }
+<span class="fc" id="L105">    return AttackStepType.TYPE_MAP.get(name);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

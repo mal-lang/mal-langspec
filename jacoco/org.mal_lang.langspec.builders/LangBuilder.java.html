@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LangBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MAL Langspec</a> &gt; <a href="index.source.html" class="el_package">org.mal_lang.langspec.builders</a> &gt; <span class="el_source">LangBuilder.java</span></div><h1>LangBuilder.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2020-2021 Foreseeti AB &lt;https://foreseeti.com&gt;
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.mal_lang.langspec.builders;
+
+import static java.util.Objects.requireNonNull;
+import static org.mal_lang.langspec.Utils.requireIdentifier;
+
+import jakarta.json.JsonObject;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * A builder for creating {@link org.mal_lang.langspec.Lang} objects.
+ *
+ * @since 1.0.0
+ */
+public final class LangBuilder {
+<span class="fc" id="L34">  private final Map&lt;String, String&gt; defines = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L35">  private final Map&lt;String, CategoryBuilder&gt; categories = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L36">  private final Map&lt;String, AssetBuilder&gt; assets = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L37">  private final List&lt;AssociationBuilder&gt; associations = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L38">  private String license = null;</span>
+<span class="fc" id="L39">  private String notice = null;</span>
+
+  /**
+   * Constructs a new {@code LangBuilder} object.
+   *
+   * @since 1.0.0
+   */
+<span class="fc" id="L46">  public LangBuilder() {}</span>
+
+  /**
+   * Returns all defines in this {@code LangBuilder} object.
+   *
+   * @return all defines in this {@code LangBuilder} object
+   * @since 1.0.0
+   */
+  public Map&lt;String, String&gt; getDefines() {
+<span class="fc" id="L55">    return Map.copyOf(this.defines);</span>
+  }
+
+  /**
+   * Adds a define to this {@code LangBuilder} object.
+   *
+   * @param key the key of the define
+   * @param value the value of the define
+   * @return this {@code LangBuilder} object
+   * @throws java.lang.NullPointerException if {@code key} or {@code value} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code key} is not a valid identifier
+   * @since 1.0.0
+   */
+  public LangBuilder addDefine(String key, String value) {
+<span class="fc" id="L69">    this.defines.put(requireIdentifier(key), requireNonNull(value));</span>
+<span class="fc" id="L70">    return this;</span>
+  }
+
+  /**
+   * Returns a list of all categories in this {@code LangBuilder} object.
+   *
+   * @return a list of all categories in this {@code LangBuilder} object
+   * @since 1.0.0
+   */
+  public List&lt;CategoryBuilder&gt; getCategories() {
+<span class="fc" id="L80">    return List.copyOf(this.categories.values());</span>
+  }
+
+  /**
+   * Adds a category to this {@code LangBuilder} object.
+   *
+   * @param category the category to add
+   * @return this {@code LangBuilder} object
+   * @throws java.lang.NullPointerException if {@code category} is {@code null}
+   * @since 1.0.0
+   */
+  public LangBuilder addCategory(CategoryBuilder category) {
+<span class="fc" id="L92">    requireNonNull(category);</span>
+<span class="fc" id="L93">    this.categories.put(category.getName(), category);</span>
+<span class="fc" id="L94">    return this;</span>
+  }
+
+  /**
+   * Returns a list of all assets in this {@code LangBuilder} object.
+   *
+   * @return a list of all assets in this {@code LangBuilder} object
+   * @since 1.0.0
+   */
+  public List&lt;AssetBuilder&gt; getAssets() {
+<span class="fc" id="L104">    return List.copyOf(this.assets.values());</span>
+  }
+
+  /**
+   * Adds an asset to this {@code LangBuilder} object.
+   *
+   * @param asset the asset to add
+   * @return this {@code LangBuilder} object
+   * @throws java.lang.NullPointerException if {@code asset} is {@code null}
+   * @since 1.0.0
+   */
+  public LangBuilder addAsset(AssetBuilder asset) {
+<span class="fc" id="L116">    requireNonNull(asset);</span>
+<span class="fc" id="L117">    this.assets.put(asset.getName(), asset);</span>
+<span class="fc" id="L118">    return this;</span>
+  }
+
+  /**
+   * Returns a list of all associations in this {@code LangBuilder} object.
+   *
+   * @return a list of all associations in this {@code LangBuilder} object
+   * @since 1.0.0
+   */
+  public List&lt;AssociationBuilder&gt; getAssociations() {
+<span class="fc" id="L128">    return List.copyOf(this.associations);</span>
+  }
+
+  /**
+   * Adds an association to this {@code LangBuilder} object.
+   *
+   * @param association the association to add
+   * @return this {@code LangBuilder} object
+   * @throws java.lang.NullPointerException if {@code association} is {@code null}
+   * @since 1.0.0
+   */
+  public LangBuilder addAssociation(AssociationBuilder association) {
+<span class="fc" id="L140">    this.associations.add(requireNonNull(association));</span>
+<span class="fc" id="L141">    return this;</span>
+  }
+
+  /**
+   * Returns the license of this {@code LangBuilder} object, or {@code null} if no license has been
+   * set.
+   *
+   * @return the license of this {@code LangBuilder} object, or {@code null} if no license has been
+   *     set
+   * @since 1.0.0
+   */
+  public String getLicense() {
+<span class="fc" id="L153">    return this.license;</span>
+  }
+
+  /**
+   * Sets the license of this {@code LangBuilder} object.
+   *
+   * @param license the license to set
+   * @return this {@code LangBuilder} object
+   * @throws java.lang.NullPointerException if {@code license} is {@code null}
+   * @since 1.0.0
+   */
+  public LangBuilder setLicense(String license) {
+<span class="fc" id="L165">    this.license = requireNonNull(license);</span>
+<span class="fc" id="L166">    return this;</span>
+  }
+
+  /**
+   * Returns the notice of this {@code LangBuilder} object, or {@code null} if no notice has been
+   * set.
+   *
+   * @return the notice of this {@code LangBuilder} object, or {@code null} if no notice has been
+   *     set
+   * @since 1.0.0
+   */
+  public String getNotice() {
+<span class="fc" id="L178">    return this.notice;</span>
+  }
+
+  /**
+   * Sets the notice of this {@code LangBuilder} object.
+   *
+   * @param notice the notice to set
+   * @return this {@code LangBuilder} object
+   * @throws java.lang.NullPointerException if {@code notice} is {@code null}
+   * @since 1.0.0
+   */
+  public LangBuilder setNotice(String notice) {
+<span class="fc" id="L190">    this.notice = requireNonNull(notice);</span>
+<span class="fc" id="L191">    return this;</span>
+  }
+
+  /**
+   * Creates a new {@code LangBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonLang the {@link jakarta.json.JsonObject}
+   * @return a new {@code LangBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonLang} is {@code null}
+   * @since 1.0.0
+   */
+  public static LangBuilder fromJson(JsonObject jsonLang) {
+<span class="nc" id="L203">    return LangBuilder.fromJson(jsonLang, Map.of(), Map.of(), null, null);</span>
+  }
+
+  /**
+   * Creates a new {@code LangBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonLang the {@link jakarta.json.JsonObject}
+   * @param svgIcons the SVG icons of the language
+   * @param pngIcons the PNG icons of the language
+   * @return a new {@code LangBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonLang}, {@code svgIcons}, or {@code
+   *     pngIcons} is {@code null}
+   * @since 1.0.0
+   */
+  public static LangBuilder fromJson(
+      JsonObject jsonLang, Map&lt;String, byte[]&gt; svgIcons, Map&lt;String, byte[]&gt; pngIcons) {
+<span class="nc" id="L219">    return LangBuilder.fromJson(jsonLang, svgIcons, pngIcons, null, null);</span>
+  }
+
+  /**
+   * Creates a new {@code LangBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonLang the {@link jakarta.json.JsonObject}
+   * @param license the license of the language, or {@code null}
+   * @param notice the notice of the language, or {@code null}
+   * @return a new {@code LangBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonLang} is {@code null}
+   * @since 1.0.0
+   */
+  public static LangBuilder fromJson(JsonObject jsonLang, String license, String notice) {
+<span class="nc" id="L233">    return LangBuilder.fromJson(jsonLang, Map.of(), Map.of(), license, notice);</span>
+  }
+
+  /**
+   * Creates a new {@code LangBuilder} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonLang the {@link jakarta.json.JsonObject}
+   * @param svgIcons the SVG icons of the language
+   * @param pngIcons the PNG icons of the language
+   * @param license the license of the language, or {@code null}
+   * @param notice the notice of the language, or {@code null}
+   * @return a new {@code LangBuilder}
+   * @throws java.lang.NullPointerException if {@code jsonLang}, {@code svgIcons}, or {@code
+   *     pngIcons} is {@code null}
+   * @since 1.0.0
+   */
+  public static LangBuilder fromJson(
+      JsonObject jsonLang,
+      Map&lt;String, byte[]&gt; svgIcons,
+      Map&lt;String, byte[]&gt; pngIcons,
+      String license,
+      String notice) {
+<span class="fc" id="L255">    requireNonNull(jsonLang);</span>
+<span class="fc" id="L256">    requireNonNull(svgIcons);</span>
+<span class="fc" id="L257">    requireNonNull(pngIcons);</span>
+<span class="fc" id="L258">    var builder = new LangBuilder();</span>
+<span class="fc" id="L259">    var jsonDefines = jsonLang.getJsonObject(&quot;defines&quot;);</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">    for (var key : jsonDefines.keySet()) {</span>
+<span class="fc" id="L261">      builder.addDefine(key, jsonDefines.getString(key));</span>
+<span class="fc" id="L262">    }</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">    for (var jsonCategory : jsonLang.getJsonArray(&quot;categories&quot;)) {</span>
+<span class="fc" id="L264">      builder.addCategory(CategoryBuilder.fromJson(jsonCategory.asJsonObject()));</span>
+<span class="fc" id="L265">    }</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">    for (var jsonAsset : jsonLang.getJsonArray(&quot;assets&quot;)) {</span>
+<span class="fc" id="L267">      builder.addAsset(AssetBuilder.fromJson(jsonAsset.asJsonObject(), svgIcons, pngIcons));</span>
+<span class="fc" id="L268">    }</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">    for (var jsonAssociation : jsonLang.getJsonArray(&quot;associations&quot;)) {</span>
+<span class="fc" id="L270">      builder.addAssociation(AssociationBuilder.fromJson(jsonAssociation.asJsonObject()));</span>
+<span class="fc" id="L271">    }</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">    if (license != null) {</span>
+<span class="fc" id="L273">      builder.setLicense(license);</span>
+    }
+<span class="fc bfc" id="L275" title="All 2 branches covered.">    if (notice != null) {</span>
+<span class="fc" id="L276">      builder.setNotice(notice);</span>
+    }
+<span class="fc" id="L278">    return builder;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
