@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-/** Defines APIs for creating and using MAL languages. */
+/**
+ * Defines APIs for creating and using MAL languages.
+ *
+ * @since 1.0.0
+ */
 module org.mal_lang.langspec {
   exports org.mal_lang.langspec;
+  exports org.mal_lang.langspec.builders;
+  exports org.mal_lang.langspec.builders.step;
+  exports org.mal_lang.langspec.io;
+  exports org.mal_lang.langspec.step;
   exports org.mal_lang.langspec.ttc;
 
   requires transitive jakarta.json;

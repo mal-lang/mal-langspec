@@ -14,5 +14,9 @@
  * limitations under the License.
  */
 
-/** Provides classes for creating and using MAL languages. */
+/**
+ * Provides classes for creating and using MAL languages.
+ *
+ * @since 1.0.0
+ */
 package org.mal_lang.langspec;

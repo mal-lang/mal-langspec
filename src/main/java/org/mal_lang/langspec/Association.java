@@ -16,112 +16,110 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkIdentifier;
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import java.util.Map;
+import org.mal_lang.langspec.builders.AssociationBuilder;
 
-/** Immutable class representing an association in a MAL language. */
+/**
+ * Immutable class representing an association in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class Association {
   private final String name;
   private final Meta meta;
   private final Field leftField;
   private final Field rightField;
 
-  Association(String name, Meta meta, Field leftField, Field rightField) {
-    this.name = name;
-    this.meta = meta;
-    this.leftField = leftField;
-    this.rightField = rightField;
+  private Association(String name, Meta meta, Field leftField, Field rightField) {
+    this.name = requireNonNull(name);
+    this.meta = requireNonNull(meta);
+    this.leftField = requireNonNull(leftField);
+    this.rightField = requireNonNull(rightField);
     leftField.setAssociation(this);
     rightField.setAssociation(this);
-    leftField.setTarget(rightField);
-    rightField.setTarget(leftField);
   }
 
   /**
    * Returns the name of this {@code Association} object.
    *
    * @return the name of this {@code Association} object
+   * @since 1.0.0
    */
   public String getName() {
-    return name;
+    return this.name;
   }
 
   /**
    * Returns the meta info of this {@code Association} object.
    *
    * @return the meta info of this {@code Association} object
+   * @since 1.0.0
    */
   public Meta getMeta() {
-    return meta;
+    return this.meta;
   }
 
   /**
    * Returns the left field of this {@code Association} object.
    *
    * @return the left field of this {@code Association} object
+   * @since 1.0.0
    */
   public Field getLeftField() {
-    return leftField;
+    return this.leftField;
   }
 
   /**
    * Returns the right field of this {@code Association} object.
    *
    * @return the right field of this {@code Association} object
+   * @since 1.0.0
    */
   public Field getRightField() {
-    return rightField;
+    return this.rightField;
   }
 
-  /**
-   * Returns the JSON representation of this {@code Association} object.
-   *
-   * @return the JSON representation of this {@code Association} object
-   */
-  public JsonObject toJson() {
+  JsonObject toJson() {
     return Json.createObjectBuilder()
-        .add("name", name)
-        .add("meta", meta.toJson())
-        .add("leftAsset", leftField.getAsset().getName())
-        .add("leftField", leftField.getName())
-        .add("leftMultiplicity", leftField.getMultiplicity().toJson())
-        .add("rightAsset", rightField.getAsset().getName())
-        .add("rightField", rightField.getName())
-        .add("rightMultiplicity", rightField.getMultiplicity().toJson())
+        .add("name", this.name)
+        .add("meta", this.meta.toJson())
+        .add("leftAsset", this.rightField.getAsset().getName())
+        .add("leftField", this.leftField.getName())
+        .add("leftMultiplicity", this.leftField.getMultiplicity().toJson())
+        .add("rightAsset", this.leftField.getAsset().getName())
+        .add("rightField", this.rightField.getName())
+        .add("rightMultiplicity", this.rightField.getMultiplicity().toJson())
         .build();
   }
 
-  /**
-   * Creates a new {@link AssociationBuilder} object.
-   *
-   * @param name the name of the category
-   * @param leftAsset the left asset
-   * @param leftField the left field
-   * @param leftMultiplicity the left multiplicity
-   * @param rightAsset the right asset
-   * @param rightField the right field
-   * @param rightMultiplicity the right multiplicity
-   * @return a new {@link AssociationBuilder} object
-   * @throws NullPointerException if {@code name}, {@code leftAsset}, {@code leftField}, {@code
-   *     leftMultiplicity}, {@code rightAsset}, {@code rightField}, or {@code rightMultiplicity} is
-   *     {@code null}
-   * @throws IllegalArgumentException if {@code name}, {@code leftAsset}, {@code leftField}, {@code
-   *     rightAsset}, or {@code rightField} is not a valid identifier
-   */
-  public static AssociationBuilder builder(
-      String name,
-      String leftAsset,
-      String leftField,
-      Multiplicity leftMultiplicity,
-      String rightAsset,
-      String rightField,
-      Multiplicity rightMultiplicity) {
-    checkNotNull(leftMultiplicity, rightMultiplicity);
-    checkIdentifier(name, leftAsset, leftField, rightAsset, rightField);
-    return new AssociationBuilder(
-        name, leftAsset, leftField, leftMultiplicity, rightAsset, rightField, rightMultiplicity);
+  static Association fromBuilder(AssociationBuilder builder, Map<String, Asset> assets) {
+    requireNonNull(builder);
+    requireNonNull(assets);
+    if (!assets.containsKey(builder.getLeftAsset())) {
+      throw new IllegalArgumentException(
+          String.format("Asset \"%s\" not found", builder.getLeftAsset()));
+    }
+    if (!assets.containsKey(builder.getRightAsset())) {
+      throw new IllegalArgumentException(
+          String.format("Asset \"%s\" not found", builder.getRightAsset()));
+    }
+    var leftField =
+        new Field(
+            builder.getLeftField(),
+            assets.get(builder.getRightAsset()),
+            builder.getLeftMultiplicity());
+    var rightField =
+        new Field(
+            builder.getRightField(),
+            assets.get(builder.getLeftAsset()),
+            builder.getRightMultiplicity());
+    leftField.setTarget(rightField);
+    rightField.setTarget(leftField);
+    return new Association(
+        builder.getName(), Meta.fromBuilder(builder.getMeta()), leftField, rightField);
   }
 }

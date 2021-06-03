@@ -16,55 +16,80 @@
 
 package org.mal_lang.langspec.ttc;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
-import jakarta.json.JsonValue;
+import jakarta.json.JsonObject;
 
 /**
- * Immutable class representing a TTC binary operation of an attack step or a defense in a MAL
- * language.
+ * Immutable class representing a binary TTC operation in a MAL language.
+ *
+ * @since 1.0.0
  */
 public abstract class TtcBinaryOperation extends TtcExpression {
   private final TtcExpression lhs;
   private final TtcExpression rhs;
 
-  TtcBinaryOperation(String type, TtcExpression lhs, TtcExpression rhs) {
-    super(type);
-    checkNotNull(lhs, rhs);
-    this.lhs = lhs;
-    this.rhs = rhs;
+  TtcBinaryOperation(TtcExpression lhs, TtcExpression rhs) {
+    this.lhs = requireNonNull(lhs);
+    this.rhs = requireNonNull(rhs);
   }
 
   /**
    * Returns the left-hand side of this {@code TtcBinaryOperation} object.
    *
    * @return the left-hand side of this {@code TtcBinaryOperation} object
+   * @since 1.0.0
    */
   public TtcExpression getLhs() {
-    return lhs;
+    return this.lhs;
   }
 
   /**
    * Returns the right-hand side of this {@code TtcBinaryOperation} object.
    *
    * @return the right-hand side of this {@code TtcBinaryOperation} object
+   * @since 1.0.0
    */
   public TtcExpression getRhs() {
-    return rhs;
+    return this.rhs;
   }
 
-  @Override
-  public double getMeanProbability() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public JsonValue toJson() {
+  JsonObject toJson(String type) {
     return Json.createObjectBuilder()
-        .add("type", getType())
-        .add("lhs", lhs.toJson())
-        .add("rhs", rhs.toJson())
+        .add("type", type)
+        .add("lhs", this.lhs.toJson())
+        .add("rhs", this.rhs.toJson())
         .build();
+  }
+
+  /**
+   * Creates a new {@code TtcBinaryOperation} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonTtcBinaryOperation the {@link jakarta.json.JsonObject}
+   * @return a new {@code TtcBinaryOperation}
+   * @throws java.lang.NullPointerException if {@code jsonTtcBinaryOperation} is {@code null}
+   * @since 1.0.0
+   */
+  public static TtcBinaryOperation fromJson(JsonObject jsonTtcBinaryOperation) {
+    requireNonNull(jsonTtcBinaryOperation);
+    var lhs = TtcExpression.fromJson(jsonTtcBinaryOperation.getJsonObject("lhs"));
+    var rhs = TtcExpression.fromJson(jsonTtcBinaryOperation.getJsonObject("rhs"));
+    switch (jsonTtcBinaryOperation.getString("type")) {
+      case "addition":
+        return new TtcAddition(lhs, rhs);
+      case "subtraction":
+        return new TtcSubtraction(lhs, rhs);
+      case "multiplication":
+        return new TtcMultiplication(lhs, rhs);
+      case "division":
+        return new TtcDivision(lhs, rhs);
+      case "exponentiation":
+        return new TtcExponentiation(lhs, rhs);
+      default:
+        throw new RuntimeException(
+            String.format(
+                "Invalid TTC expression type \"%s\"", jsonTtcBinaryOperation.getString("type")));
+    }
   }
 }

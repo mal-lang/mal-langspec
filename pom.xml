@@ -20,7 +20,7 @@ limitations under the License.
   <parent>
     <groupId>org.mal-lang</groupId>
     <artifactId>mal-parent</artifactId>
-    <version>3</version>
+    <version>4</version>
     <relativePath/>
   </parent>
 
@@ -74,6 +74,11 @@ limitations under the License.
       <groupId>org.leadpony.justify</groupId>
       <artifactId>justify</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -110,25 +115,23 @@ limitations under the License.
         </reportSets>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <reportSets>
           <reportSet>
             <reports>
-              <report>third-party-report</report>
+              <report>analyze-report</report>
             </reports>
           </reportSet>
         </reportSets>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
+        <artifactId>license-maven-plugin</artifactId>
         <reportSets>
           <reportSet>
             <reports>
-              <report>property-updates-report</report>
-              <report>plugin-updates-report</report>
-              <report>dependency-updates-report</report>
+              <report>third-party-report</report>
             </reports>
           </reportSet>
         </reportSets>
@@ -190,6 +193,17 @@ limitations under the License.
         </reportSets>
       </plugin>
       <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <reportSets>
@@ -223,28 +237,6 @@ limitations under the License.
           </reportSet>
         </reportSets>
       </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <!--plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>check</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin-->
     </plugins>
   </reporting>
 </project>

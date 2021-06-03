@@ -16,10 +16,16 @@
 
 package org.mal_lang.langspec.ttc;
 
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
+import static java.util.Objects.requireNonNull;
 
-/** Immutable class representing a TTC number of an attack step or a defense in a MAL language. */
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
+/**
+ * Immutable class representing a TTC number in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class TtcNumber extends TtcExpression {
   private final double value;
 
@@ -27,9 +33,9 @@ public final class TtcNumber extends TtcExpression {
    * Constructs a new {@code TtcNumber} object.
    *
    * @param value the value of the new {@code TtcNumber} object
+   * @since 1.0.0
    */
   public TtcNumber(double value) {
-    super(TtcExpression.NUMBER);
     this.value = value;
   }
 
@@ -37,23 +43,32 @@ public final class TtcNumber extends TtcExpression {
    * Returns the value of this {@code TtcNumber} object.
    *
    * @return the value of this {@code TtcNumber} object
+   * @since 1.0.0
    */
   public double getValue() {
-    return value;
+    return this.value;
   }
 
   @Override
   public double getMeanTtc() {
-    return value;
+    return this.value;
   }
 
   @Override
-  public double getMeanProbability() {
-    throw new UnsupportedOperationException();
+  public JsonObject toJson() {
+    return Json.createObjectBuilder().add("type", "number").add("value", this.value).build();
   }
 
-  @Override
-  public JsonValue toJson() {
-    return Json.createObjectBuilder().add("type", getType()).add("value", value).build();
+  /**
+   * Creates a new {@code TtcNumber} from a {@link jakarta.json.JsonObject}.
+   *
+   * @param jsonTtcNumber the {@link jakarta.json.JsonObject}
+   * @return a new {@code TtcNumber}
+   * @throws java.lang.NullPointerException if {@code jsonTtcNumber} is {@code null}
+   * @since 1.0.0
+   */
+  public static TtcNumber fromJson(JsonObject jsonTtcNumber) {
+    requireNonNull(jsonTtcNumber);
+    return new TtcNumber(jsonTtcNumber.getJsonNumber("value").doubleValue());
   }
 }

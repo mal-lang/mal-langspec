@@ -16,26 +16,50 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Enum representing the type of an attack step in a MAL language. */
+/**
+ * Enum representing the type of an attack step in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public enum AttackStepType {
-  /** Enum constant representing AND-attack steps, {@code "&"}. */
+  /**
+   * Enum constant representing AND-attack steps, {@code "&"}.
+   *
+   * @since 1.0.0
+   */
   AND("and"),
 
-  /** Enum constant representing OR-attack steps, {@code "|"}. */
+  /**
+   * Enum constant representing OR-attack steps, {@code "|"}.
+   *
+   * @since 1.0.0
+   */
   OR("or"),
 
-  /** Enum constant representing defenses, {@code "#"}. */
+  /**
+   * Enum constant representing defenses, {@code "#"}.
+   *
+   * @since 1.0.0
+   */
   DEFENSE("defense"),
 
-  /** Enum constant representing exist steps, {@code "E"}. */
+  /**
+   * Enum constant representing exist steps, {@code "E"}.
+   *
+   * @since 1.0.0
+   */
   EXIST("exist"),
 
-  /** Enum constant representing not-exist steps, {@code "!E"}. */
+  /**
+   * Enum constant representing not-exist steps, {@code "!E"}.
+   *
+   * @since 1.0.0
+   */
   NOT_EXIST("notExist");
 
   private static final Map<String, AttackStepType> TYPE_MAP = new LinkedHashMap<>();
@@ -56,10 +80,11 @@ public enum AttackStepType {
    * Returns the name of this {@code AttackStepType} object.
    *
    * @return the name of this {@code AttackStepType} object
+   * @since 1.0.0
    */
   @Override
   public String toString() {
-    return name;
+    return this.name;
   }
 
   /**
@@ -67,14 +92,16 @@ public enum AttackStepType {
    *
    * @param name the name of the attack step type
    * @return the attack step type with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of an attack step type
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of an attack step
+   *     type
+   * @since 1.0.0
    */
   public static AttackStepType fromString(String name) {
-    checkNotNull(name);
-    if (!TYPE_MAP.containsKey(name)) {
-      throw new IllegalArgumentException(String.format("Invalid attack step type \"%s\"", name));
+    requireNonNull(name);
+    if (!AttackStepType.TYPE_MAP.containsKey(name)) {
+      throw new IllegalArgumentException(String.format("Attack step type \"%s\" not found", name));
     }
-    return TYPE_MAP.get(name);
+    return AttackStepType.TYPE_MAP.get(name);
   }
 }

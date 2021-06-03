@@ -16,14 +16,22 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.mal_lang.langspec.builders.LangBuilder;
+import org.mal_lang.langspec.step.StepExpression;
 
-/** Immutable class representing a MAL language. */
+/**
+ * Immutable class representing a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class Lang {
   private final Map<String, String> defines;
   private final Map<String, Category> categories;
@@ -32,17 +40,17 @@ public final class Lang {
   private final String license;
   private final String notice;
 
-  Lang(
+  private Lang(
       Map<String, String> defines,
       Map<String, Category> categories,
       Map<String, Asset> assets,
       List<Association> associations,
       String license,
       String notice) {
-    this.defines = Map.copyOf(defines);
-    this.categories = Map.copyOf(categories);
-    this.assets = Map.copyOf(assets);
-    this.associations = List.copyOf(associations);
+    this.defines = Map.copyOf(requireNonNull(defines));
+    this.categories = new LinkedHashMap<>(requireNonNull(categories));
+    this.assets = new LinkedHashMap<>(requireNonNull(assets));
+    this.associations = List.copyOf(requireNonNull(associations));
     this.license = license;
     this.notice = notice;
   }
@@ -52,36 +60,38 @@ public final class Lang {
    *
    * @param key the key of the define
    * @return whether {@code key} is the key of a define in this {@code Lang} object
-   * @throws NullPointerException if {@code key} is {@code null}
+   * @throws java.lang.NullPointerException if {@code key} is {@code null}
+   * @since 1.0.0
    */
   public boolean hasDefine(String key) {
-    checkNotNull(key);
-    return defines.containsKey(key);
+    return this.defines.containsKey(requireNonNull(key));
   }
 
   /**
-   * Returns the value of the define in this {@code Lang} object with the key {@code key}.
+   * Returns the value of the define with the key {@code key} in this {@code Lang} object.
    *
    * @param key the key of the define
-   * @return the value of the define in this {@code Lang} object with the key {@code key}
-   * @throws NullPointerException if {@code key} is {@code null}
-   * @throws IllegalArgumentException if {@code key} is not the key of a define in this {@code Lang}
-   *     object
+   * @return the value of the define with the key {@code key} in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code key} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code key} is not the key of a define in this
+   *     {@code Lang} object
+   * @since 1.0.0
    */
   public String getDefine(String key) {
-    if (!hasDefine(key)) {
+    if (!this.hasDefine(key)) {
       throw new IllegalArgumentException(String.format("Define \"%s\" not found", key));
     }
-    return defines.get(key);
+    return this.defines.get(key);
   }
 
   /**
    * Returns all defines in this {@code Lang} object.
    *
    * @return all defines in this {@code Lang} object
+   * @since 1.0.0
    */
   public Map<String, String> getDefines() {
-    return defines;
+    return this.defines;
   }
 
   /**
@@ -89,36 +99,38 @@ public final class Lang {
    *
    * @param name the name of the category
    * @return whether {@code name} is the name of a category in this {@code Lang} object
-   * @throws NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
    */
   public boolean hasCategory(String name) {
-    checkNotNull(name);
-    return categories.containsKey(name);
+    return this.categories.containsKey(requireNonNull(name));
   }
 
   /**
-   * Returns the category in this {@code Lang} object with the name {@code name}.
+   * Returns the category with the name {@code name} in this {@code Lang} object.
    *
    * @param name the name of the category
-   * @return the category in this {@code Lang} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of a category in this {@code
-   *     Lang} object
+   * @return the category with the name {@code name} in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of a category in
+   *     this {@code Lang} object
+   * @since 1.0.0
    */
   public Category getCategory(String name) {
-    if (!hasCategory(name)) {
+    if (!this.hasCategory(name)) {
       throw new IllegalArgumentException(String.format("Category \"%s\" not found", name));
     }
-    return categories.get(name);
+    return this.categories.get(name);
   }
 
   /**
    * Returns a list of all categories in this {@code Lang} object.
    *
    * @return a list of all categories in this {@code Lang} object
+   * @since 1.0.0
    */
   public List<Category> getCategories() {
-    return List.copyOf(categories.values());
+    return List.copyOf(this.categories.values());
   }
 
   /**
@@ -126,118 +138,128 @@ public final class Lang {
    *
    * @param name the name of the asset
    * @return whether {@code name} is the name of an asset in this {@code Lang} object
-   * @throws NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @since 1.0.0
    */
   public boolean hasAsset(String name) {
-    checkNotNull(name);
-    return assets.containsKey(name);
+    return this.assets.containsKey(requireNonNull(name));
   }
 
   /**
-   * Returns the asset in this {@code Lang} object with the name {@code name}.
+   * Returns the asset with the name {@code name} in this {@code Lang} object.
    *
    * @param name the name of the asset
-   * @return the asset in this {@code Lang} object with the name {@code name}
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not the name of an asset in this {@code
-   *     Lang} object
+   * @return the asset with the name {@code name} in this {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code name} is {@code null}
+   * @throws java.lang.IllegalArgumentException if {@code name} is not the name of an asset in this
+   *     {@code Lang} object
+   * @since 1.0.0
    */
   public Asset getAsset(String name) {
-    if (!hasAsset(name)) {
+    if (!this.hasAsset(name)) {
       throw new IllegalArgumentException(String.format("Asset \"%s\" not found", name));
     }
-    return assets.get(name);
+    return this.assets.get(name);
   }
 
   /**
    * Returns a list of all assets in this {@code Lang} object.
    *
    * @return a list of all assets in this {@code Lang} object
+   * @since 1.0.0
    */
   public List<Asset> getAssets() {
-    return List.copyOf(assets.values());
+    return List.copyOf(this.assets.values());
   }
 
   /**
    * Returns a list of all associations in this {@code Lang} object.
    *
    * @return a list of all associations in this {@code Lang} object
+   * @since 1.0.0
    */
   public List<Association> getAssociations() {
-    return associations;
+    return this.associations;
   }
 
   /**
    * Returns whether this {@code Lang} object has a license.
    *
-   * @return whether this {@code Lang} object has a license.
+   * @return whether this {@code Lang} object has a license
+   * @since 1.0.0
    */
   public boolean hasLicense() {
-    return license != null;
+    return this.license != null;
   }
 
   /**
    * Returns the license of this {@code Lang} object.
    *
    * @return the license of this {@code Lang} object
-   * @throws UnsupportedOperationException if this {@code Lang} object does not have a license
+   * @throws java.lang.UnsupportedOperationException if this {@code Lang} object does not have a
+   *     license
+   * @since 1.0.0
    */
   public String getLicense() {
-    if (!hasLicense()) {
-      throw new UnsupportedOperationException("Lang object does not have a license");
+    if (!this.hasLicense()) {
+      throw new UnsupportedOperationException("License not found");
     }
-    return license;
+    return this.license;
   }
 
   /**
    * Returns whether this {@code Lang} object has a notice.
    *
-   * @return whether this {@code Lang} object has a notice.
+   * @return whether this {@code Lang} object has a notice
+   * @since 1.0.0
    */
   public boolean hasNotice() {
-    return notice != null;
+    return this.notice != null;
   }
 
   /**
    * Returns the notice of this {@code Lang} object.
    *
    * @return the notice of this {@code Lang} object
-   * @throws UnsupportedOperationException if this {@code Lang} object does not have a notice
+   * @throws java.lang.UnsupportedOperationException if this {@code Lang} object does not have a
+   *     notice
+   * @since 1.0.0
    */
   public String getNotice() {
-    if (!hasNotice()) {
-      throw new UnsupportedOperationException("Lang object does not have a notice");
+    if (!this.hasNotice()) {
+      throw new UnsupportedOperationException("Notice not found");
     }
-    return notice;
+    return this.notice;
   }
 
   /**
    * Returns the JSON representation of this {@code Lang} object.
    *
    * @return the JSON representation of this {@code Lang} object
+   * @since 1.0.0
    */
   public JsonObject toJson() {
     // Defines
     var jsonDefines = Json.createObjectBuilder();
-    for (var define : defines.entrySet()) {
+    for (var define : this.defines.entrySet()) {
       jsonDefines.add(define.getKey(), define.getValue());
     }
 
     // Categories
     var jsonCategories = Json.createArrayBuilder();
-    for (var category : categories.values()) {
+    for (var category : this.categories.values()) {
       jsonCategories.add(category.toJson());
     }
 
     // Assets
     var jsonAssets = Json.createArrayBuilder();
-    for (var asset : assets.values()) {
+    for (var asset : this.assets.values()) {
       jsonAssets.add(asset.toJson());
     }
 
     // Associations
     var jsonAssociations = Json.createArrayBuilder();
-    for (var association : associations) {
+    for (var association : this.associations) {
       jsonAssociations.add(association.toJson());
     }
 
@@ -251,72 +273,94 @@ public final class Lang {
   }
 
   /**
-   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
+   * Creates a new {@code Lang} object from a {@link org.mal_lang.langspec.builders.LangBuilder}.
    *
-   * @param jsonLang the JSON representation of a {@code Lang} object
-   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
-   * @throws NullPointerException if {@code jsonLang} is {@code null}
-   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
+   * @param builder the {@link org.mal_lang.langspec.builders.LangBuilder}
+   * @return a new {@code Lang} object
+   * @throws java.lang.NullPointerException if {@code builder} is {@code null}
+   * @since 1.0.0
    */
-  public static Lang fromJson(JsonObject jsonLang) {
-    return fromJson(jsonLang, null, null, null);
-  }
+  public static Lang fromBuilder(LangBuilder builder) {
+    requireNonNull(builder);
 
-  /**
-   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
-   *
-   * @param jsonLang the JSON representation of a {@code Lang} object
-   * @param icons a mapping from icon file name to icon file content, or {@code null}
-   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
-   * @throws NullPointerException if {@code jsonLang} is {@code null}
-   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
-   */
-  public static Lang fromJson(JsonObject jsonLang, Map<String, byte[]> icons) {
-    return fromJson(jsonLang, icons, null, null);
-  }
-
-  /**
-   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
-   *
-   * @param jsonLang the JSON representation of a {@code Lang} object
-   * @param license the license of the language, or {@code null}
-   * @param notice the notice of the language, or {@code null}
-   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
-   * @throws NullPointerException if {@code jsonLang} is {@code null}
-   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
-   */
-  public static Lang fromJson(JsonObject jsonLang, String license, String notice) {
-    return fromJson(jsonLang, null, license, notice);
-  }
-
-  /**
-   * Creates a new {@code Lang} object from the JSON representation of a {@code Lang} object.
-   *
-   * @param jsonLang the JSON representation of a {@code Lang} object
-   * @param icons a mapping from icon file name to icon file content, or {@code null}
-   * @param license the license of the language, or {@code null}
-   * @param notice the notice of the language, or {@code null}
-   * @return a new {@code Lang} object from the JSON representation of a {@code Lang} object
-   * @throws NullPointerException if {@code jsonLang} is {@code null}
-   * @throws IllegalArgumentException if {@code jsonLang} does not conform to the schema
-   */
-  public static Lang fromJson(
-      JsonObject jsonLang, Map<String, byte[]> icons, String license, String notice) {
-    if (!Utils.isValidJsonLang(jsonLang)) {
-      throw new IllegalArgumentException("Invalid JSON langspec");
+    // Categories
+    Map<String, Category> categories = new LinkedHashMap<>();
+    for (var categoryBuilder : builder.getCategories()) {
+      categories.put(categoryBuilder.getName(), Category.fromBuilder(categoryBuilder));
     }
-    return LangBuilder.fromJson(jsonLang, icons == null ? Map.of() : icons)
-        .setLicense(license)
-        .setNotice(notice)
-        .build();
-  }
 
-  /**
-   * Creates a new {@link LangBuilder} object.
-   *
-   * @return a new {@link LangBuilder} object
-   */
-  public static LangBuilder builder() {
-    return new LangBuilder();
+    // Assets
+    Map<String, Asset> assets = new LinkedHashMap<>();
+    for (var assetBuilder : builder.getAssets()) {
+      assets.put(assetBuilder.getName(), Asset.fromBuilder(assetBuilder, categories));
+    }
+    for (var assetBuilder : builder.getAssets()) {
+      if (assetBuilder.getSuperAsset() == null) {
+        continue;
+      }
+      if (!assets.containsKey(assetBuilder.getSuperAsset())) {
+        throw new IllegalArgumentException(
+            String.format("Asset \"%s\" not found", assetBuilder.getSuperAsset()));
+      }
+      assets.get(assetBuilder.getName()).setSuperAsset(assets.get(assetBuilder.getSuperAsset()));
+    }
+
+    // Associations
+    List<Association> associations = new ArrayList<>();
+    for (var associationBuilder : builder.getAssociations()) {
+      associations.add(Association.fromBuilder(associationBuilder, assets));
+    }
+
+    // Variable targets
+    var variableTargets = new LinkedHashMap<Variable, Asset>();
+    for (var assetBuilder : builder.getAssets()) {
+      var asset = assets.get(assetBuilder.getName());
+      for (var variableBuilder : assetBuilder.getVariables()) {
+        var variable = asset.getLocalVariable(variableBuilder.getName());
+        var targetAsset =
+            variableBuilder.getStepExpression().getTarget(asset, assets, builder.getAssets());
+        variableTargets.put(variable, targetAsset);
+      }
+    }
+
+    // Variables and attack steps
+    for (var assetBuilder : builder.getAssets()) {
+      var asset = assets.get(assetBuilder.getName());
+      for (var variableBuilder : assetBuilder.getVariables()) {
+        var variable = asset.getLocalVariable(variableBuilder.getName());
+        variable.setStepExpression(
+            StepExpression.fromBuilder(
+                variableBuilder.getStepExpression(), asset, assets, variableTargets));
+      }
+      for (var attackStepBuilder : assetBuilder.getAttackSteps()) {
+        var attackStep = asset.getLocalAttackStep(attackStepBuilder.getName());
+        if (attackStepBuilder.getRequires() != null) {
+          for (var stepExpressionBuilder : attackStepBuilder.getRequires().getStepExpressions()) {
+            attackStep
+                .getLocalRequires()
+                .addStepExpression(
+                    StepExpression.fromBuilder(
+                        stepExpressionBuilder, asset, assets, variableTargets));
+          }
+        }
+        if (attackStepBuilder.getReaches() != null) {
+          for (var stepExpressionBuilder : attackStepBuilder.getReaches().getStepExpressions()) {
+            attackStep
+                .getLocalReaches()
+                .addStepExpression(
+                    StepExpression.fromBuilder(
+                        stepExpressionBuilder, asset, assets, variableTargets));
+          }
+        }
+      }
+    }
+
+    return new Lang(
+        builder.getDefines(),
+        categories,
+        assets,
+        associations,
+        builder.getLicense(),
+        builder.getNotice());
   }
 }

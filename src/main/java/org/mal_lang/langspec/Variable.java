@@ -16,59 +16,97 @@
 
 package org.mal_lang.langspec;
 
-import static org.mal_lang.langspec.Utils.checkIdentifier;
+import static java.util.Objects.requireNonNull;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import org.mal_lang.langspec.builders.VariableBuilder;
+import org.mal_lang.langspec.step.StepExpression;
 
-/** Immutable class representing a variable of an asset in a MAL language. */
+/**
+ * Immutable class representing a variable of an asset in a MAL language.
+ *
+ * @since 1.0.0
+ */
 public final class Variable {
   private final String name;
   private final Asset asset;
+  private StepExpression stepExpression;
 
-  Variable(String name, Asset asset) {
-    this.name = name;
-    this.asset = asset;
-    asset.addVariable(this);
+  private Variable(String name, Asset asset) {
+    this.name = requireNonNull(name);
+    this.asset = requireNonNull(asset);
   }
 
   /**
    * Returns the name of this {@code Variable} object.
    *
    * @return the name of this {@code Variable} object
+   * @since 1.0.0
    */
   public String getName() {
-    return name;
+    return this.name;
   }
 
   /**
    * Returns the asset of this {@code Variable} object.
    *
    * @return the asset of this {@code Variable} object
+   * @since 1.0.0
    */
   public Asset getAsset() {
-    return asset;
+    return this.asset;
   }
 
   /**
-   * Returns the JSON representation of this {@code Variable} object.
+   * Returns the step expression of this {@code Variable} object.
    *
-   * @return the JSON representation of this {@code Variable} object
+   * @return the step expression of this {@code Variable} object.
+   * @since 1.0.0
    */
-  public JsonObject toJson() {
-    return Json.createObjectBuilder().add("name", name).build();
+  public StepExpression getStepExpression() {
+    return this.stepExpression;
+  }
+
+  void setStepExpression(StepExpression stepExpression) {
+    this.stepExpression = requireNonNull(stepExpression);
   }
 
   /**
-   * Creates a new {@link VariableBuilder} object.
+   * Returns whether this {@code Variable} object has a super variable.
    *
-   * @param name the name of the variable
-   * @return a new {@link VariableBuilder} object
-   * @throws NullPointerException if {@code name} is {@code null}
-   * @throws IllegalArgumentException if {@code name} is not a valid identifier
+   * @return whether this {@code Variable} object has a super variable
+   * @since 1.*.0
    */
-  public static VariableBuilder builder(String name) {
-    checkIdentifier(name);
-    return new VariableBuilder(name);
+  public boolean hasSuperVariable() {
+    return this.asset.hasSuperAsset() && this.asset.getSuperAsset().hasVariable(this.name);
+  }
+
+  /**
+   * Returns the super variable of this {@code Variable} object.
+   *
+   * @return the super variable of this {@code Variable} object
+   * @throws java.lang.UnsupportedOperationException if this {@code Variable} object does not have a
+   *     super variable
+   * @since 1.0.0
+   */
+  public Variable getSuperVariable() {
+    if (!this.hasSuperVariable()) {
+      throw new UnsupportedOperationException("Super variable not found");
+    }
+    return this.asset.getSuperAsset().getVariable(this.name);
+  }
+
+  JsonObject toJson() {
+    return Json.createObjectBuilder()
+        .add("name", this.name)
+        .add("stepExpression", this.stepExpression.toJson())
+        .build();
+  }
+
+  static Variable fromBuilder(VariableBuilder builder, Asset asset) {
+    requireNonNull(builder);
+    requireNonNull(asset);
+    return new Variable(builder.getName(), asset);
   }
 }

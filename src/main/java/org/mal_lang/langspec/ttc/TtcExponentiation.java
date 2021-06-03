@@ -16,20 +16,23 @@
 
 package org.mal_lang.langspec.ttc;
 
+import jakarta.json.JsonObject;
+
 /**
- * Immutable class representing a TTC exponentiation of an attack step or a defense in a MAL
- * language.
+ * Immutable class representing a TTC exponentiation in a MAL language.
+ *
+ * @since 1.0.0
  */
 public final class TtcExponentiation extends TtcBinaryOperation {
   /**
    * Constructs a new {@code TtcExponentiation} object.
    *
-   * @param lhs the left-hand side of the new {@code TtcExponentiation} object
-   * @param rhs the right-hand side of the new {@code TtcExponentiation} object
-   * @throws NullPointerException if {@code lhs} or {@code rhs} is {@code null}
+   * @param lhs the left-hand side of the exponentiation
+   * @param rhs the right-hand side of the exponentiation
+   * @throws java.lang.NullPointerException if {@code lhs} or {@code rhs} is {@code null}
    */
   public TtcExponentiation(TtcExpression lhs, TtcExpression rhs) {
-    super(TtcExpression.EXPONENTIATION, lhs, rhs);
+    super(lhs, rhs);
   }
 
   @Override
@@ -37,5 +40,10 @@ public final class TtcExponentiation extends TtcBinaryOperation {
     double lhsMean = getLhs().getMeanTtc();
     double rhsMean = getRhs().getMeanTtc();
     return Math.pow(lhsMean, rhsMean);
+  }
+
+  @Override
+  public JsonObject toJson() {
+    return this.toJson("exponentiation");
   }
 }
