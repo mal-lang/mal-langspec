@@ -20,7 +20,7 @@ limitations under the License.
   <parent>
     <groupId>org.mal-lang</groupId>
     <artifactId>mal-parent</artifactId>
-    <version>4</version>
+    <version>5</version>
     <relativePath/>
   </parent>
 

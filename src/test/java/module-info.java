@@ -15,8 +15,7 @@
  */
 
 module org.mal_lang.test.langspec {
-  requires org.junit.jupiter.api;
-  requires org.junit.jupiter.engine;
+  requires org.junit.jupiter;
   requires org.mal_lang.langspec;
 
   opens org.mal_lang.test.langspec to
