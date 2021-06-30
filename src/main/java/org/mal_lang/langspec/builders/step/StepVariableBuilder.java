@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import org.mal_lang.langspec.Asset;
 import org.mal_lang.langspec.builders.AssetBuilder;
+import org.mal_lang.langspec.builders.VariableBuilder;
 
 /**
  * A builder for creating {@link org.mal_lang.langspec.step.StepVariable} objects.
@@ -39,6 +40,30 @@ public final class StepVariableBuilder extends StepReferenceBuilder {
     super(name);
   }
 
+  private static AssetBuilder getAssetBuilder(String assetName, List<AssetBuilder> assetBuilders) {
+    for (var assetBuilder : assetBuilders) {
+      if (assetBuilder.getName().equals(assetName)) {
+        return assetBuilder;
+      }
+    }
+    throw new IllegalStateException();
+  }
+
+  private static VariableBuilder getVariableBuilder(
+      String assetName, String variableName, List<AssetBuilder> assetBuilders) {
+    var assetBuilder = StepVariableBuilder.getAssetBuilder(assetName, assetBuilders);
+    for (var variableBuilder : assetBuilder.getVariables()) {
+      if (variableBuilder.getName().equals(variableName)) {
+        return variableBuilder;
+      }
+    }
+    var superAsset = assetBuilder.getSuperAsset();
+    if (superAsset != null) {
+      return StepVariableBuilder.getVariableBuilder(superAsset, variableName, assetBuilders);
+    }
+    throw new IllegalStateException();
+  }
+
   @Override
   public Asset getTarget(
       Asset sourceAsset, Map<String, Asset> assets, List<AssetBuilder> assetBuilders) {
@@ -46,17 +71,9 @@ public final class StepVariableBuilder extends StepReferenceBuilder {
       throw new IllegalArgumentException(
           String.format("Variable %s.%s not found", sourceAsset.getName(), this.getName()));
     }
-    for (var assetBuilder : assetBuilders) {
-      if (assetBuilder.getName().equals(sourceAsset.getName())) {
-        for (var variableBuilder : assetBuilder.getVariables()) {
-          if (variableBuilder.getName().equals(this.getName())) {
-            return variableBuilder
-                .getStepExpression()
-                .getTarget(sourceAsset, assets, assetBuilders);
-          }
-        }
-      }
-    }
-    throw new IllegalStateException();
+    return StepVariableBuilder.getVariableBuilder(
+            sourceAsset.getName(), this.getName(), assetBuilders)
+        .getStepExpression()
+        .getTarget(sourceAsset, assets, assetBuilders);
   }
 }
