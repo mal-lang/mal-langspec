@@ -1,0 +1,9 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "^org/mal_lang/langspec/lang\\.schema\\.json$"
+      }
+    ]
+  }
+}
