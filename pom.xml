@@ -20,7 +20,7 @@ limitations under the License.
   <parent>
     <groupId>org.mal-lang</groupId>
     <artifactId>mal-parent</artifactId>
-    <version>5</version>
+    <version>6</version>
     <relativePath/>
   </parent>
 
@@ -30,6 +30,7 @@ limitations under the License.
 
   <name>MAL Langspec</name>
   <description>A Java library for creating and using MAL languages.</description>
+  <url>${project.organization.url}/${project.artifactId}</url>
   <inceptionYear>2020</inceptionYear>
   <licenses>
     <license>
@@ -59,6 +60,7 @@ limitations under the License.
 
   <scm>
     <tag>HEAD</tag>
+    <url>https://github.com/mal-lang/${project.artifactId}</url>
   </scm>
 
   <dependencies>
