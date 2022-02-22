@@ -25,7 +25,7 @@ limitations under the License.
   </parent>
 
   <artifactId>mal-langspec</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <name>MAL Langspec</name>
@@ -59,7 +59,7 @@ limitations under the License.
   </developers>
 
   <scm>
-    <tag>HEAD</tag>
+    <tag>release/1.0.2</tag>
     <url>https://github.com/mal-lang/${project.artifactId}</url>
   </scm>
 
