@@ -40,8 +40,8 @@ MAL Langspec,org.mal_lang.langspec.step,StepReference,0,5,0,0,0,2,0,1,0,1
 MAL Langspec,org.mal_lang.langspec.step,StepVariable,16,55,1,1,3,15,2,3,1,3
 MAL Langspec,org.mal_lang.langspec.step,StepField,16,52,1,1,3,14,2,3,1,3
 MAL Langspec,org.mal_lang.langspec.step,StepAttackStep,16,51,1,1,3,14,2,3,1,3
-MAL Langspec,org.mal_lang.langspec.step,StepSubType,19,69,1,1,4,19,3,3,2,3
 MAL Langspec,org.mal_lang.langspec.step,StepTransitive,3,47,0,0,1,15,1,3,1,3
+MAL Langspec,org.mal_lang.langspec.step,StepSubType,19,69,1,1,4,19,3,3,2,3
 MAL Langspec,org.mal_lang.langspec.step,StepCollect,0,47,0,0,0,11,0,3,0,3
 MAL Langspec,org.mal_lang.langspec.step,StepDifference,0,51,0,0,0,11,0,3,0,3
 MAL Langspec,org.mal_lang.langspec.step,StepIntersection,0,51,0,0,0,11,0,3,0,3
@@ -59,12 +59,12 @@ MAL Langspec,org.mal_lang.langspec.ttc,TtcFunction,20,94,0,4,4,22,4,5,4,3
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDivision,12,9,0,0,3,3,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},11,21,0,0,3,5,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,29,0,0,4,7,1,2,1,2
-MAL Langspec,org.mal_lang.langspec.ttc,TtcSubtraction,12,9,0,0,3,3,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},30,21,4,0,6,5,4,2,2,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcSubtraction,12,9,0,0,3,3,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},9,21,0,0,3,5,1,2,1,2
+MAL Langspec,org.mal_lang.langspec.ttc,TtcAddition,12,9,0,0,3,3,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcExpression,22,25,1,3,5,6,3,4,2,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},25,28,2,0,4,7,2,2,1,2
-MAL Langspec,org.mal_lang.langspec.ttc,TtcAddition,12,9,0,0,3,3,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},20,21,0,0,4,5,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,28,0,0,4,7,1,2,1,2
 MAL Langspec,org.mal_lang.langspec.ttc,TtcDistribution.new TtcDistribution() {...},15,6,0,0,2,1,1,1,1,1
